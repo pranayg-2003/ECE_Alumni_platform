@@ -11,15 +11,15 @@ import PostCard from "../../components/post/PostCard";
 import LandingPageEditor from "../../components/admin/LandingPageEditor";
 
 // Enhanced stat card with icon and hover effect
-const StatCard = ({ icon, label, value, gradient, status }) => (
-  <div className={`bg-gradient-to-br ${gradient} rounded-2xl p-6 text-white shadow-lg transform hover:scale-105 transition-all duration-300`}>
+const StatCard = ({ icon, label, value, status }) => (
+  <div className="apple-glass-card p-6 transition hover:shadow-lg">
     <div className="flex items-center justify-between">
       <div>
-        <p className="text-sm font-semibold opacity-90">{label}</p>
-        <p className="text-4xl font-bold mt-2">{value}</p>
-        {status && <p className="text-xs opacity-75 mt-2">{status}</p>}
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">{label}</p>
+        <p className="mt-2 text-4xl font-semibold tabular-nums tracking-tight text-[#1d1d1f]">{value}</p>
+        {status && <p className="mt-2 text-xs text-neutral-500">{status}</p>}
       </div>
-      <div className="text-5xl opacity-20">{icon}</div>
+      <div className="text-4xl opacity-25 grayscale">{icon}</div>
     </div>
   </div>
 );
@@ -96,11 +96,11 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
+    <div className="dashboard-apple-bg font-apple min-h-screen">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-        <div className="flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white p-1 shadow-sm">
+      <div className="mx-auto max-w-7xl space-y-8 px-4 py-8">
+        <div className="flex flex-wrap gap-1 rounded-2xl border border-black/[0.06] bg-[#f5f5f7]/80 p-1">
           {[
             { id: "overview", label: "Overview & users" },
             { id: "landing", label: "Landing page" },
@@ -109,10 +109,10 @@ const AdminDashboard = () => {
               key={t.id}
               type="button"
               onClick={() => setAdminTab(t.id)}
-              className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+              className={`rounded-xl px-4 py-2.5 text-sm font-medium transition ${
                 adminTab === t.id
-                  ? "bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow"
-                  : "text-slate-600 hover:bg-slate-50"
+                  ? "bg-white text-[#1d1d1f] shadow-sm ring-1 ring-black/[0.06]"
+                  : "text-neutral-600 hover:bg-white/60"
               }`}
             >
               {t.label}
@@ -127,22 +127,16 @@ const AdminDashboard = () => {
         {adminTab === "overview" && (
           <>
         {/* Admin Banner */}
-        <div className="bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 rounded-3xl p-8 md:p-10 text-white shadow-2xl relative overflow-hidden group">
-          <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
-          <div className="absolute top-0 right-0 text-8xl opacity-10 transform translate-x-20 -translate-y-10">⚙️</div>
-          <div className="relative z-10">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-4xl font-bold mb-2">Admin Control Panel 🛡️</h1>
-                <p className="text-purple-200 text-base">
-                  Welcome, {user?.name}. Monitor and manage the mentorship platform.
-                </p>
-              </div>
-              <div className="text-6xl opacity-20">📊</div>
-            </div>
-            <div className="mt-4 flex gap-6 text-sm text-purple-200">
-              <span className="flex items-center gap-1">✓ All Systems Operational</span>
-              <span className="flex items-center gap-1">📈 Platform Status: Healthy</span>
+        <div className="auth-hero-apple relative overflow-hidden rounded-[28px] p-8 text-white shadow-[0_24px_80px_rgba(0,0,0,0.35)] md:p-10">
+          <div className="pointer-events-none absolute -right-16 top-0 h-56 w-56 rounded-full bg-[#2997ff]/15 blur-3xl" />
+          <div className="relative">
+            <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Admin</h1>
+            <p className="mt-2 max-w-xl text-[16px] text-white/55">
+              Welcome, {user?.name}. Monitor and manage the mentorship platform.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-4 text-[13px] text-white/45">
+              <span>Systems operational</span>
+              <span>Platform healthy</span>
             </div>
           </div>
         </div>
@@ -155,7 +149,6 @@ const AdminDashboard = () => {
               icon={stat.icon}
               label={stat.label}
               value={stat.value}
-              gradient={stat.gradient}
             />
           ))}
         </div>

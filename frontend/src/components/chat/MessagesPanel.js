@@ -13,6 +13,8 @@ const MessagesPanel = () => {
     setConversations,
     unreadCount,
     setUnreadCount,
+    pendingChatUser,
+    setPendingChatUser,
   } = useChat();
   const [selectedUser, setSelectedUser] = useState(null);
   const [loadingThread, setLoadingThread] = useState(false);
@@ -29,6 +31,13 @@ const MessagesPanel = () => {
       setActiveChat(null);
     }
   }, [messagesPanelOpen, setActiveChat]);
+
+  useEffect(() => {
+    if (!messagesPanelOpen || !pendingChatUser) return;
+    setSelectedUser(pendingChatUser);
+    setActiveChat(pendingChatUser);
+    setPendingChatUser(null);
+  }, [messagesPanelOpen, pendingChatUser, setActiveChat, setPendingChatUser]);
 
   useEffect(() => {
     const onKey = (e) => {

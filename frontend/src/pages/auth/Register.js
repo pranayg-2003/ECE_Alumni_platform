@@ -1,5 +1,5 @@
 // src/pages/auth/Register.js
-// Modern registration page with attractive design and animations
+// Apple-inspired registration — calm layout, glass card, subtle motion
 
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,26 +8,57 @@ import { toastApiError } from "../../utils/toast";
 import AuthHeroPanel from "../../components/landing/AuthHeroPanel";
 import { useLandingContent } from "../../hooks/useLandingContent";
 
-// Available options for dropdowns
-const BRANCHES = ["Computer Science", "Information Technology", "Electronics", "Mechanical", "Civil", "Electrical", "Chemical", "Other"];
-const INTERESTS = ["Web Development", "Mobile Apps", "AI/ML", "Data Science", "DevOps", "Cybersecurity", "UI/UX Design", "Blockchain", "Cloud Computing", "Research"];
-const SKILLS = ["JavaScript", "Python", "React", "Node.js", "Java", "C++", "SQL", "MongoDB", "AWS", "Docker", "Figma", "Git"];
+const BRANCHES = [
+  "Computer Science",
+  "Information Technology",
+  "Electronics",
+  "Mechanical",
+  "Civil",
+  "Electrical",
+  "Chemical",
+  "Other",
+];
+const INTERESTS = [
+  "Web Development",
+  "Mobile Apps",
+  "AI/ML",
+  "Data Science",
+  "DevOps",
+  "Cybersecurity",
+  "UI/UX Design",
+  "Blockchain",
+  "Cloud Computing",
+  "Research",
+];
+const SKILLS = [
+  "JavaScript",
+  "Python",
+  "React",
+  "Node.js",
+  "Java",
+  "C++",
+  "SQL",
+  "MongoDB",
+  "AWS",
+  "Docker",
+  "Figma",
+  "Git",
+];
 
 const Register = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
   const { landing } = useLandingContent();
 
-  // Form state — covers all possible fields
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-    role: "student",    // Default role
-    company: "",        // Alumni only
-    branch: "",         // Student only
-    year: "",           // Student only
+    role: "student",
+    company: "",
+    branch: "",
+    year: "",
     interests: [],
     skills: [],
   });
@@ -37,23 +68,17 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const submitLock = useRef(false);
 
-  // Handle text input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError("");
   };
 
-  // Toggle an item in an array field (interests / skills)
   const toggleArrayItem = (field, item) => {
     const currentArray = formData[field];
     if (currentArray.includes(item)) {
-      // Remove item
       setFormData({ ...formData, [field]: currentArray.filter((i) => i !== item) });
-    } else {
-      // Add item (max 5)
-      if (currentArray.length < 5) {
-        setFormData({ ...formData, [field]: [...currentArray, item] });
-      }
+    } else if (currentArray.length < 5) {
+      setFormData({ ...formData, [field]: [...currentArray, item] });
     }
   };
 
@@ -63,7 +88,6 @@ const Register = () => {
     submitLock.current = true;
     setError("");
 
-    // Client-side validation
     if (formData.password !== formData.confirmPassword) {
       submitLock.current = false;
       return setError("Passwords do not match.");
@@ -80,7 +104,6 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // Build payload (exclude confirmPassword)
       const payload = {
         name: formData.name.trim(),
         email: formData.email.trim(),
@@ -90,18 +113,16 @@ const Register = () => {
         skills: formData.skills,
       };
 
-      // Add role-specific fields
       if (formData.role === "alumni") {
         payload.company = formData.company.trim();
       }
       if (formData.role === "student") {
         payload.branch = formData.branch;
-        payload.year = parseInt(formData.year);
+        payload.year = parseInt(formData.year, 10);
       }
 
       const user = await register(payload);
 
-      // Redirect to role-specific dashboard
       const redirectMap = {
         student: "/feed",
         alumni: "/feed",
@@ -116,100 +137,109 @@ const Register = () => {
     }
   };
 
+  const inputClass =
+    "w-full rounded-2xl border border-black/[0.06] bg-[#f5f5f7] px-4 py-3.5 text-[17px] text-[#1d1d1f] outline-none transition duration-300 placeholder:text-neutral-400 focus:border-[#0071e3]/35 focus:bg-white focus:ring-2 focus:ring-[#0071e3]/20";
+
+  const chipBase =
+    "rounded-full border px-3.5 py-2 text-[12px] font-medium transition duration-300";
+
   return (
-    <div className="min-h-screen bg-slate-100 px-4 py-8 lg:px-8 lg:py-10">
-      <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-2 lg:gap-10">
+    <div className="auth-apple-page font-apple relative min-h-screen overflow-hidden px-4 py-10 lg:px-10 lg:py-12">
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div className="absolute -left-32 top-1/4 h-[420px] w-[420px] rounded-full bg-[#0071e3]/[0.07] blur-3xl animate-auth-float" />
+        <div className="absolute -right-24 bottom-0 h-[380px] w-[380px] rounded-full bg-[#5e5ce6]/[0.06] blur-3xl animate-auth-float-delayed" />
+      </div>
+
+      <div className="relative mx-auto grid max-w-6xl gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-12">
         <AuthHeroPanel landing={landing} />
 
         <div className="flex flex-col justify-center">
-          <div className="max-h-[calc(100vh-4rem)] overflow-y-auto rounded-3xl border border-slate-200 bg-white p-6 shadow-xl md:p-8">
-          <div className="mb-6 text-center lg:text-left">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-lg font-bold text-white shadow-md lg:mx-0">
-              M
-            </div>
-            <h1 className="text-2xl font-bold text-slate-900">Join MentorBridge</h1>
-            <p className="text-sm text-slate-500">Connect with mentors, grow your career</p>
-          </div>
-
-          {/* Error message with animation */}
-          {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg text-sm mb-6 flex items-center gap-3">
-              <span className="text-xl">⚠️</span>
-              <span>{error}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Role Selection — shown first so fields update dynamically */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 border border-blue-100">
-              <label className="block text-sm font-bold text-gray-700 mb-3">🎯 Who are you?</label>
-              <div className="grid grid-cols-2 gap-3">
-                {["student", "alumni"].map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, role: r })}
-                    className={`py-3 px-4 rounded-xl border-2 text-sm font-semibold capitalize transition-all transform hover:scale-105 ${
-                      formData.role === r
-                        ? "border-blue-600 bg-blue-600 text-white shadow-lg"
-                        : "border-gray-200 text-gray-600 bg-white hover:border-blue-400"
-                    }`}
-                  >
-                    {r === "student" ? "🎓 Student" : "💼 Alumni"}
-                  </button>
-                ))}
+          <div className="animate-auth-fade-up max-h-[calc(100vh-5rem)] overflow-y-auto rounded-[28px] border border-white/80 bg-white/75 p-6 shadow-[0_8px_40px_rgba(0,0,0,0.06),0_1px_0_rgba(255,255,255,0.8)_inset] backdrop-blur-2xl backdrop-saturate-150 md:p-9">
+            <div className="mb-8 text-center lg:text-left">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#1d1d1f] text-[15px] font-semibold tracking-tight text-white shadow-lg lg:mx-0">
+                M
               </div>
+              <h1 className="text-[28px] font-semibold leading-tight tracking-tight text-[#1d1d1f] md:text-[32px]">
+                Join MentorBridge.
+              </h1>
+              <p className="mt-2 text-[17px] text-neutral-500">Connect with mentors and grow your career.</p>
             </div>
 
-            {/* Basic Fields */}
-            <div className="space-y-4">
-              {/* Full Name */}
-              <div className="group">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">👤 Full Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="e.g. John Doe"
-                  required
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-gray-50 group-hover:bg-white"
-                />
+            {error && (
+              <div
+                className="animate-auth-fade-in mb-6 rounded-2xl border border-red-200/80 bg-red-50/90 px-4 py-3 text-[14px] text-red-800"
+                role="alert"
+              >
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <p className="mb-3 text-[13px] font-semibold text-[#1d1d1f]">I am a</p>
+                <div className="flex rounded-2xl bg-[#f5f5f7] p-1">
+                  {["student", "alumni"].map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, role: r })}
+                      className={`flex-1 rounded-[14px] py-2.5 text-[14px] font-medium capitalize transition duration-300 ${
+                        formData.role === r
+                          ? "bg-white text-[#1d1d1f] shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                          : "text-neutral-500 hover:text-[#1d1d1f]"
+                      }`}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {/* Email */}
-              <div className="group">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">📧 Email Address</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="you@example.com"
-                  required
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-gray-50 group-hover:bg-white"
-                />
-              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-2 block text-[13px] font-semibold text-[#1d1d1f]">Full name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Your name"
+                    required
+                    autoComplete="name"
+                    className={inputClass}
+                  />
+                </div>
 
-              {/* Password Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="group">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">🔐 Password</label>
-                  <div className="relative">
+                <div>
+                  <label className="mb-2 block text-[13px] font-semibold text-[#1d1d1f]">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="you@example.com"
+                    required
+                    autoComplete="email"
+                    className={inputClass}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-[13px] font-semibold text-[#1d1d1f]">Password</label>
                     <input
                       type={showPassword ? "text" : "password"}
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      placeholder="Min 6 characters"
+                      placeholder="At least 6 characters"
                       required
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-gray-50 group-hover:bg-white"
+                      autoComplete="new-password"
+                      className={inputClass}
                     />
                   </div>
-                </div>
-                <div className="group">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">✓ Confirm Password</label>
-                  <div className="relative">
+                  <div>
+                    <label className="mb-2 block text-[13px] font-semibold text-[#1d1d1f]">Confirm</label>
                     <input
                       type={showPassword ? "text" : "password"}
                       name="confirmPassword"
@@ -217,160 +247,161 @@ const Register = () => {
                       onChange={handleChange}
                       placeholder="Repeat password"
                       required
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-gray-50 group-hover:bg-white"
+                      autoComplete="new-password"
+                      className={inputClass}
                     />
                   </div>
                 </div>
+
+                <label className="flex cursor-pointer items-center gap-2.5 text-[14px] text-neutral-600">
+                  <input
+                    type="checkbox"
+                    checked={showPassword}
+                    onChange={() => setShowPassword(!showPassword)}
+                    className="h-4 w-4 rounded border-neutral-300 text-[#0071e3] focus:ring-[#0071e3]/30"
+                  />
+                  Show password
+                </label>
               </div>
 
-              {/* Show password checkbox */}
-              <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-gray-800">
-                <input
-                  type="checkbox"
-                  checked={showPassword}
-                  onChange={() => setShowPassword(!showPassword)}
-                  className="w-4 h-4 rounded border-gray-300"
-                />
-                <span>Show password</span>
-              </label>
-            </div>
+              {formData.role === "alumni" && (
+                <div className="animate-auth-fade-in rounded-2xl border border-black/[0.06] bg-[#f5f5f7]/60 p-4">
+                  <label className="mb-2 block text-[13px] font-semibold text-[#1d1d1f]">Current company</label>
+                  <input
+                    type="text"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
+                    placeholder="Company or organization"
+                    required
+                    className={inputClass}
+                  />
+                </div>
+              )}
 
-            {/* Role-specific fields with smooth transitions */}
-            {formData.role === "alumni" && (
-              <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100 animate-fade-in">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">💼 Current Company</label>
-                <input
-                  type="text"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleChange}
-                  placeholder="e.g. Google, Microsoft, Startup..."
-                  required
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-white"
-                />
-              </div>
-            )}
-
-            {formData.role === "student" && (
-              <div className="bg-green-50 rounded-2xl p-4 border border-green-100 space-y-4 animate-fade-in">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">🎓 Branch</label>
-                    <select
-                      name="branch"
-                      value={formData.branch}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-300 bg-white"
-                    >
-                      <option value="">Select branch</option>
-                      {BRANCHES.map((b) => (
-                        <option key={b} value={b}>{b}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">📅 Year</label>
-                    <select
-                      name="year"
-                      value={formData.year}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-300 bg-white"
-                    >
-                      <option value="">Select year</option>
-                      <option value="1">1st Year</option>
-                      <option value="2">2nd Year</option>
-                      <option value="3">3rd Year</option>
-                      <option value="4">4th Year</option>
-                    </select>
+              {formData.role === "student" && (
+                <div className="animate-auth-fade-in space-y-4 rounded-2xl border border-black/[0.06] bg-[#f5f5f7]/60 p-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="mb-2 block text-[13px] font-semibold text-[#1d1d1f]">Branch</label>
+                      <select
+                        name="branch"
+                        value={formData.branch}
+                        onChange={handleChange}
+                        required
+                        className={inputClass}
+                      >
+                        <option value="">Select</option>
+                        {BRANCHES.map((b) => (
+                          <option key={b} value={b}>
+                            {b}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-[13px] font-semibold text-[#1d1d1f]">Year</label>
+                      <select
+                        name="year"
+                        value={formData.year}
+                        onChange={handleChange}
+                        required
+                        className={inputClass}
+                      >
+                        <option value="">Select</option>
+                        <option value="1">1st year</option>
+                        <option value="2">2nd year</option>
+                        <option value="3">3rd year</option>
+                        <option value="4">4th year</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-
-            {/* Interests — multi-select chips */}
-            <div className="bg-purple-50 rounded-2xl p-4 border border-purple-100">
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
-                ⭐ Interests <span className="text-xs font-normal text-gray-500">(pick up to 5)</span>
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {INTERESTS.map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => toggleArrayItem("interests", item)}
-                    className={`px-3 py-2 rounded-full text-xs font-semibold border-2 transition-all transform hover:scale-105 ${
-                      formData.interests.includes(item)
-                        ? "bg-purple-600 text-white border-purple-600 shadow-md"
-                        : "bg-white text-gray-600 border-gray-300 hover:border-purple-400"
-                    }`}
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Skills — multi-select chips */}
-            <div className="bg-indigo-50 rounded-2xl p-4 border border-indigo-100">
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
-                🛠️ Skills <span className="text-xs font-normal text-gray-500">(pick up to 5)</span>
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {SKILLS.map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => toggleArrayItem("skills", item)}
-                    className={`px-3 py-2 rounded-full text-xs font-semibold border-2 transition-all transform hover:scale-105 ${
-                      formData.skills.includes(item)
-                        ? "bg-indigo-600 text-white border-indigo-600 shadow-md"
-                        : "bg-white text-gray-600 border-gray-300 hover:border-indigo-400"
-                    }`}
-                  >
-                    {item}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center gap-2 text-base"
-            >
-              {loading ? (
-                <>
-                  <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                  </svg>
-                  Creating account...
-                </>
-              ) : (
-                <>
-                  <span>Create Account</span>
-                  <span>→</span>
-                </>
               )}
-            </button>
-          </form>
 
-          <p className="mt-6 text-center text-sm text-slate-600">
-            Already have an account?{" "}
-            <Link to="/login" className="font-bold text-violet-700 hover:text-fuchsia-600">
-              Sign in
-            </Link>
-          </p>
+              <div className="rounded-2xl border border-black/[0.06] bg-[#fafafc] p-4">
+                <label className="mb-3 block text-[13px] font-semibold text-[#1d1d1f]">
+                  Interests <span className="font-normal text-neutral-500">(up to 5)</span>
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {INTERESTS.map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => toggleArrayItem("interests", item)}
+                      className={`${chipBase} border-black/[0.08] ${
+                        formData.interests.includes(item)
+                          ? "border-transparent bg-[#1d1d1f] text-white shadow-sm"
+                          : "bg-white text-neutral-600 hover:border-black/[0.12]"
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-black/[0.06] bg-[#fafafc] p-4">
+                <label className="mb-3 block text-[13px] font-semibold text-[#1d1d1f]">
+                  Skills <span className="font-normal text-neutral-500">(up to 5)</span>
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {SKILLS.map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => toggleArrayItem("skills", item)}
+                      className={`${chipBase} border-black/[0.08] ${
+                        formData.skills.includes(item)
+                          ? "border-transparent bg-[#1d1d1f] text-white shadow-sm"
+                          : "bg-white text-neutral-600 hover:border-black/[0.12]"
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-full bg-[#0071e3] py-3.5 text-[17px] font-medium text-white shadow-[0_1px_0_rgba(255,255,255,0.25)_inset] transition duration-300 hover:bg-[#0077ed] active:scale-[0.99] disabled:pointer-events-none disabled:opacity-45"
+              >
+                {loading ? (
+                  <span className="inline-flex items-center justify-center gap-2">
+                    <svg className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden>
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8H4z"
+                      />
+                    </svg>
+                    Creating account…
+                  </span>
+                ) : (
+                  "Create account"
+                )}
+              </button>
+            </form>
+
+            <p className="mt-8 text-center text-[15px] text-neutral-600 lg:text-left">
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                className="font-medium text-[#0071e3] underline-offset-4 transition hover:underline"
+              >
+                Sign in
+              </Link>
+            </p>
           </div>
         </div>
       </div>
 
-      <div className="mt-4 text-center text-xs text-slate-500 lg:hidden">
-        <Link to="/" className="font-medium text-violet-700">
-          ← Back to landing
+      <div className="relative mt-6 text-center text-[13px] text-neutral-500 lg:hidden">
+        <Link to="/" className="font-medium text-[#0071e3] underline-offset-4 hover:underline">
+          Back to landing
         </Link>
       </div>
     </div>

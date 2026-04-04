@@ -108,6 +108,29 @@ const UserSchema = new mongoose.Schema(
       max: 4,
     },
 
+    // Profile extras (LinkedIn-style, optional)
+    socialLinks: {
+      type: [
+        {
+          title: { type: String, trim: true, maxlength: 80 },
+          url: { type: String, trim: true, maxlength: 2000 },
+        },
+      ],
+      default: [],
+    },
+
+    achievements: {
+      type: [
+        {
+          title: { type: String, trim: true, maxlength: 160 },
+          description: { type: String, trim: true, maxlength: 600 },
+          issuer: { type: String, trim: true, maxlength: 120 },
+          year: { type: Number, min: 1950, max: 2100 },
+        },
+      ],
+      default: [],
+    },
+
     // Account status
     isActive: {
       type: Boolean,

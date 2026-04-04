@@ -224,35 +224,31 @@ import { toastApiError } from "../../utils/toast";
 
 /* ================= SIDEBAR ================= */
 const Sidebar = ({ user }) => (
-  <div className="bg-white rounded-xl shadow p-4">
+  <div className="apple-glass-card p-5">
     <div className="text-center">
-      <div className="w-16 h-16 mx-auto rounded-full bg-gray-300 mb-2"></div>
-      <h2 className="font-semibold">{user?.name}</h2>
-      <p className="text-sm text-gray-500">
-        {user?.branch} • Year {user?.year}
+      <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-[#1d1d1f] text-lg font-semibold text-white">
+        {user?.name?.charAt(0)?.toUpperCase() || "S"}
+      </div>
+      <h2 className="text-[16px] font-semibold text-[#1d1d1f]">{user?.name}</h2>
+      <p className="mt-1 text-[13px] text-neutral-500">
+        {user?.branch} · Year {user?.year}
       </p>
     </div>
-
-    <div className="mt-4 border-t pt-4 text-sm space-y-2">
-      <p className="hover:bg-gray-100 px-2 py-1 rounded cursor-pointer">
-        🏠 Feed
-      </p>
-      <p className="hover:bg-gray-100 px-2 py-1 rounded cursor-pointer">
-        👥 My Network
-      </p>
-      <p className="hover:bg-gray-100 px-2 py-1 rounded cursor-pointer">
-        💬 Messages
-      </p>
+    <div className="mt-5 space-y-1 border-t border-black/[0.06] pt-4 text-[14px] text-neutral-600">
+      <p className="rounded-xl px-3 py-2 hover:bg-[#f5f5f7]">Community feed</p>
+      <p className="rounded-xl px-3 py-2 hover:bg-[#f5f5f7]">Mentor network</p>
+      <p className="rounded-xl px-3 py-2 hover:bg-[#f5f5f7]">Messages</p>
     </div>
   </div>
 );
 
 /* ================= RIGHT PANEL ================= */
 const RightPanel = () => (
-  <div className="bg-white p-4 rounded-xl shadow">
-    <h3 className="font-semibold mb-2">💡 Tips</h3>
-    <p className="text-sm text-gray-500">
-      Connect with alumni based on your career goals and interests.
+  <div className="apple-glass-card p-5">
+    <div className="h-0.5 w-8 rounded-full bg-[#0071e3]" />
+    <h3 className="mt-4 text-[16px] font-semibold text-[#1d1d1f]">Tips</h3>
+    <p className="mt-2 text-[14px] leading-relaxed text-neutral-600">
+      Connect with alumni who align with your goals and interests.
     </p>
   </div>
 );
@@ -260,53 +256,53 @@ const RightPanel = () => (
 /* ================= ALUMNI CARD ================= */
 const AlumniCard = ({ alumni, requestStatus, onSendRequest, loading }) => {
   return (
-    <div className="bg-white p-4 rounded-lg border hover:shadow-sm transition">
+    <div className="apple-glass-card p-5 transition hover:shadow-lg">
       <div className="flex items-center gap-3">
-        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center font-bold">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#1d1d1f] text-[15px] font-semibold text-white">
           {alumni.name.charAt(0)}
         </div>
-
-        <div>
-          <h3 className="font-semibold text-gray-800">{alumni.name}</h3>
-          <p className="text-sm text-gray-500">{alumni.company}</p>
+        <div className="min-w-0">
+          <h3 className="font-semibold text-[#1d1d1f]">{alumni.name}</h3>
+          <p className="truncate text-[13px] text-neutral-500">{alumni.company}</p>
         </div>
       </div>
-
-      <p className="text-sm text-gray-500 mt-1">{alumni.jobTitle}</p>
-
-      {/* Skills */}
-      <div className="flex flex-wrap gap-2 mt-3">
-        {alumni.skills?.slice(0, 3).map((skill) => (
-          <span key={skill} className="text-xs bg-gray-100 px-2 py-1 rounded">
+      <p className="mt-2 text-[14px] text-neutral-600">{alumni.jobTitle}</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {alumni.skills?.slice(0, 4).map((skill) => (
+          <span
+            key={skill}
+            className="rounded-full bg-[#f5f5f7] px-2.5 py-1 text-[11px] font-medium text-[#1d1d1f] ring-1 ring-black/[0.06]"
+          >
             {skill}
           </span>
         ))}
       </div>
-
-      {/* Bio */}
       {alumni.bio && (
-        <p className="text-sm text-gray-600 mt-3 line-clamp-2">{alumni.bio}</p>
+        <p className="mt-3 line-clamp-2 text-[14px] text-neutral-600">{alumni.bio}</p>
       )}
-
-      {/* Buttons */}
       {requestStatus === "accepted" ? (
-        <button className="mt-4 px-4 py-1 bg-green-600 text-white rounded-full">
+        <button
+          type="button"
+          className="mt-4 rounded-full bg-[#34c759] px-5 py-2 text-[13px] font-medium text-white"
+        >
           Connected
         </button>
       ) : requestStatus === "pending" ? (
         <button
+          type="button"
           disabled
-          className="mt-4 px-4 py-1 bg-gray-300 text-gray-500 rounded-full"
+          className="mt-4 rounded-full bg-[#f5f5f7] px-5 py-2 text-[13px] font-medium text-neutral-400"
         >
           Pending
         </button>
       ) : (
         <button
+          type="button"
           onClick={() => onSendRequest(alumni)}
           disabled={loading}
-          className="mt-4 px-4 py-1 border border-blue-600 text-blue-600 rounded-full hover:bg-blue-50"
+          className="mt-4 rounded-full border border-[#0071e3] px-5 py-2 text-[13px] font-medium text-[#0071e3] transition hover:bg-[#0071e3]/8 disabled:opacity-50"
         >
-          {loading ? "Sending..." : "Connect"}
+          {loading ? "Sending…" : "Connect"}
         </button>
       )}
     </div>
@@ -369,10 +365,10 @@ const StudentDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f3f2ef]">
+    <div className="dashboard-apple-bg font-apple min-h-screen">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-12 gap-6">
+      <div className="mx-auto grid max-w-7xl grid-cols-12 gap-6 px-4 py-8">
         {/* LEFT SIDEBAR */}
         <div className="col-span-3">
           <Sidebar user={user} />
@@ -380,44 +376,62 @@ const StudentDashboard = () => {
 
         {/* MAIN CONTENT */}
         <div className="col-span-6 space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
             <button
               type="button"
               onClick={() => navigate("/feed")}
-              className="rounded-xl border border-blue-100 bg-white p-4 text-left shadow-sm transition hover:border-blue-300 hover:shadow-md"
+              className="apple-glass-card p-4 text-left transition hover:shadow-lg"
             >
-              <p className="text-xs font-bold uppercase text-blue-600">Student</p>
-              <p className="mt-1 font-semibold text-gray-900">Community feed</p>
-              <p className="mt-1 text-xs text-gray-500">Posts, media & discussions</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#0071e3]">Feed</p>
+              <p className="mt-1 font-semibold text-[#1d1d1f]">Community</p>
+              <p className="mt-1 text-[12px] text-neutral-500">Posts and discussions</p>
             </button>
             <button
               type="button"
               onClick={() =>
-                document.querySelector('[placeholder="Search alumni..."]')?.focus()
+                document.querySelector('input[placeholder="Search alumni…"]')?.focus()
               }
-              className="rounded-xl border border-emerald-100 bg-white p-4 text-left shadow-sm transition hover:border-emerald-300 hover:shadow-md"
+              className="apple-glass-card p-4 text-left transition hover:shadow-lg"
             >
-              <p className="text-xs font-bold uppercase text-emerald-600">Discover</p>
-              <p className="mt-1 font-semibold text-gray-900">Search mentors</p>
-              <p className="mt-1 text-xs text-gray-500">Use the bar in the header</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#0071e3]">Discover</p>
+              <p className="mt-1 font-semibold text-[#1d1d1f]">Search mentors</p>
+              <p className="mt-1 text-[12px] text-neutral-500">Use the header search</p>
             </button>
             <button
               type="button"
               onClick={() => navigate("/chat")}
-              className="rounded-xl border border-violet-100 bg-white p-4 text-left shadow-sm transition hover:border-violet-300 hover:shadow-md"
+              className="apple-glass-card p-4 text-left transition hover:shadow-lg"
             >
-              <p className="text-xs font-bold uppercase text-violet-600">Connect</p>
-              <p className="mt-1 font-semibold text-gray-900">Messages</p>
-              <p className="mt-1 text-xs text-gray-500">Chat after a match</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#0071e3]">Connect</p>
+              <p className="mt-1 font-semibold text-[#1d1d1f]">Messages</p>
+              <p className="mt-1 text-[12px] text-neutral-500">Chat after a match</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/initiatives")}
+              className="apple-glass-card p-4 text-left transition hover:shadow-lg"
+            >
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#0071e3]">Give back</p>
+              <p className="mt-1 font-semibold text-[#1d1d1f]">Funding &amp; events</p>
+              <p className="mt-1 text-[12px] text-neutral-500">College drives &amp; Meet sessions</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/referrals")}
+              className="apple-glass-card p-4 text-left transition hover:shadow-lg lg:col-span-1"
+            >
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#0071e3]">Referrals</p>
+              <p className="mt-1 font-semibold text-[#1d1d1f]">Seek intros</p>
+              <p className="mt-1 text-[12px] text-neutral-500">Post what you need; alumni browse the board</p>
             </button>
           </div>
 
-          <h2 className="font-semibold text-gray-700 pt-2">
-            Explore Alumni ({alumni.length})
+          <h2 className="pt-2 text-[20px] font-semibold tracking-tight text-[#1d1d1f]">
+            Explore alumni ({alumni.length})
           </h2>
 
           {loadingAlumni ? (
-            <p>Loading...</p>
+            <p className="text-[15px] text-neutral-500">Loading…</p>
           ) : (
             alumni.map((alumnus) => (
               <AlumniCard

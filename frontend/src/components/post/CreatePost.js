@@ -95,25 +95,22 @@ const CreatePost = () => {
 
   return (
     <div
-      className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-gradient-to-br from-white via-violet-50/40 to-indigo-50/50 shadow-lg shadow-indigo-100/40"
+      className="apple-glass-card relative overflow-hidden"
       onDragOver={(e) => {
         e.preventDefault();
         e.stopPropagation();
       }}
       onDrop={onDrop}
     >
-      <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-violet-400/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-12 -left-8 h-32 w-32 rounded-full bg-indigo-400/15 blur-2xl" />
-
-      <div className="relative border-b border-slate-100/90 bg-white/60 px-5 py-4 backdrop-blur-sm">
+      <div className="relative border-b border-black/[0.06] bg-white/70 px-5 py-4 backdrop-blur-sm">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-bold text-white shadow-md shadow-violet-500/25">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#1d1d1f] text-sm font-semibold text-white shadow-md">
             {user?.name?.charAt(0)?.toUpperCase() || "U"}
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-900">{user?.name}</p>
-            <p className="text-xs text-slate-500">
-              Drag files anywhere on this card or use + to attach
+            <p className="text-[15px] font-semibold text-[#1d1d1f]">{user?.name}</p>
+            <p className="text-[12px] text-neutral-500">
+              Drag files onto this card or tap + to attach
             </p>
           </div>
         </div>
@@ -126,7 +123,7 @@ const CreatePost = () => {
           onChange={(e) => setContent(e.target.value)}
           rows={4}
           maxLength={2000}
-          className="w-full resize-none rounded-xl border border-slate-200 bg-white/90 px-4 py-3 text-sm text-slate-800 shadow-inner shadow-slate-100/50 outline-none ring-0 transition placeholder:text-slate-400 focus:border-violet-300 focus:ring-2 focus:ring-violet-200/80"
+          className="w-full resize-none rounded-2xl border border-black/[0.08] bg-[#f5f5f7] px-4 py-3 text-[15px] text-[#1d1d1f] outline-none transition placeholder:text-neutral-400 focus:border-[#0071e3]/35 focus:bg-white focus:ring-2 focus:ring-[#0071e3]/15"
         />
 
         <input
@@ -142,12 +139,12 @@ const CreatePost = () => {
           }}
         />
 
-        <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
+        <div className="flex flex-wrap items-center gap-2 border-t border-black/[0.06] pt-4">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
             {staged.map((item) => (
               <div
                 key={item.id}
-                className="group relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm"
+                className="group relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-black/[0.08] bg-white shadow-sm"
                 title={item.file.name}
               >
                 {item.preview ? (
@@ -176,7 +173,7 @@ const CreatePost = () => {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-white/80 text-slate-500 transition hover:border-violet-400 hover:bg-violet-50 hover:text-violet-700"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-black/[0.12] bg-[#f5f5f7] text-neutral-500 transition hover:border-[#0071e3]/40 hover:bg-white hover:text-[#0071e3]"
                 title="Add photos or documents"
                 aria-label="Add attachment"
               >
@@ -193,7 +190,7 @@ const CreatePost = () => {
             type="button"
             onClick={handlePost}
             disabled={busy || !content.trim()}
-            className="inline-flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-violet-500/25 transition hover:from-violet-700 hover:to-indigo-700 disabled:cursor-not-allowed disabled:opacity-55"
+            className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#0071e3] px-5 py-2.5 text-[14px] font-medium text-white shadow-sm transition hover:bg-[#0077ed] disabled:cursor-not-allowed disabled:opacity-55"
           >
             {uploadingMedia
               ? "Uploading…"
