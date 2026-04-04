@@ -1,0 +1,73 @@
+# ==============================
+# Node modules
+# ==============================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==============================
+# Environment variables
+# ==============================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ==============================
+# Logs
+# ==============================
+logs
+*.log
+
+# ==============================
+# OS files
+# ==============================
+.DS_Store
+Thumbs.db
+
+# ==============================
+# Build folders
+# ==============================
+/build
+/dist
+/client/build
+/server/build
+
+# ==============================
+# Coverage
+# ==============================
+coverage/
+
+# ==============================
+# Editor files
+# ==============================
+.vscode/
+.idea/
+*.swp
+
+# ==============================
+# MongoDB local files (optional)
+# ==============================
+data/
+*.db
+
+# ==============================
+# React specific
+# ==============================
+/client/node_modules
+/client/.env
+
+# ==============================
+# Backend specific
+# ==============================
+/server/node_modules
+/server/.env
+
+# ==============================
+# Misc
+# ==============================
+*.pid
+*.seed
+*.pid.lock
