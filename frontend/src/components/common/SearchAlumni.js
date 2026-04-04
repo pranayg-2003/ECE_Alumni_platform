@@ -69,51 +69,48 @@ const SearchAlumni = ({ isOpen, onClose }) => {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Modal */}
-      <div className="fixed top-0 left-0 right-0 z-50 pt-20 px-4">
+      <div className="fixed left-0 right-0 top-0 z-50 px-4 pt-16 font-apple sm:pt-20">
         <div
-          className="bg-white rounded-lg shadow-xl max-w-2xl mx-auto overflow-hidden"
+          className="mx-auto max-w-2xl overflow-hidden rounded-[24px] border border-black/[0.08] bg-white/95 shadow-[0_24px_80px_rgba(0,0,0,0.18)] backdrop-blur-2xl"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Search Header */}
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">Search Alumni</h2>
+          <div className="border-b border-black/[0.06] bg-[#1d1d1f] p-5">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-[20px] font-semibold tracking-tight text-white">Search alumni</h2>
               <button
+                type="button"
                 onClick={onClose}
-                className="text-white hover:text-gray-200 text-2xl"
+                className="rounded-full p-2 text-white/70 transition hover:bg-white/10 hover:text-white"
+                aria-label="Close"
               >
-                ✕
+                <span className="text-xl leading-none">×</span>
               </button>
             </div>
-
-            {/* Search Input */}
             <input
               type="text"
-              placeholder="Search by name, skills, or company... (e.g., harshit, react)"
+              placeholder="Name, skills, or company…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-[15px] text-white outline-none placeholder:text-white/45 focus:border-[#2997ff]/60 focus:ring-2 focus:ring-[#2997ff]/30"
               autoFocus
             />
           </div>
 
-          {/* Results Container */}
-          <div className="max-h-96 overflow-y-auto p-4">
+          <div className="max-h-[min(420px,70vh)] overflow-y-auto p-4">
             {/* Loading State */}
             {loading && (
               <div className="flex justify-center items-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#0071e3] border-t-transparent" />
               </div>
             )}
 
             {/* Error State */}
             {error && !loading && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="rounded-2xl border border-red-200/80 bg-red-50/90 px-4 py-3 text-[14px] text-red-800">
                 {error}
               </div>
             )}
@@ -124,7 +121,7 @@ const SearchAlumni = ({ isOpen, onClose }) => {
                 {searchResults.map((alumni) => (
                   <div
                     key={alumni._id}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                    className="rounded-2xl border border-black/[0.08] bg-[#f5f5f7]/50 p-4 transition hover:bg-white hover:shadow-md"
                   >
                     {/* Alumni Header */}
                     <div className="flex items-start justify-between mb-2">
@@ -151,10 +148,10 @@ const SearchAlumni = ({ isOpen, onClose }) => {
                         disabled={
                           sentRequests.has(alumni._id) || sendingId === alumni._id
                         }
-                        className={`ml-4 px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                        className={`ml-4 shrink-0 rounded-full px-4 py-2 text-[13px] font-medium transition ${
                           sentRequests.has(alumni._id)
-                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                            : "bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700"
+                            ? "cursor-not-allowed bg-[#f5f5f7] text-neutral-400"
+                            : "bg-[#0071e3] text-white hover:bg-[#0077ed]"
                         }`}
                       >
                         {sendingId === alumni._id ? (
@@ -171,17 +168,17 @@ const SearchAlumni = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* Alumni Bio & Skills */}
-                    {(alumni.bio || alumni.skills.length > 0) && (
+                    {(alumni.bio || (alumni.skills && alumni.skills.length > 0)) && (
                       <div className="mt-3 space-y-2">
                         {alumni.bio && (
                           <p className="text-sm text-gray-700">{alumni.bio}</p>
                         )}
-                        {alumni.skills.length > 0 && (
+                        {alumni.skills && alumni.skills.length > 0 && (
                           <div className="flex flex-wrap gap-2">
                             {alumni.skills.slice(0, 3).map((skill, idx) => (
                               <span
                                 key={idx}
-                                className="inline-block bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full"
+                                className="inline-block rounded-full bg-[#1d1d1f] px-3 py-1 text-[11px] font-medium text-white"
                               >
                                 {skill}
                               </span>
@@ -217,7 +214,7 @@ const SearchAlumni = ({ isOpen, onClose }) => {
             {/* Initial State */}
             {!searchQuery && (
               <div className="text-center py-8 text-gray-500">
-                <p>💡 Type an alumni name, skill, or company to search</p>
+                <p>Type a name, skill, or company to search.</p>
               </div>
             )}
           </div>

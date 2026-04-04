@@ -9,31 +9,31 @@ const Feed = () => {
   const { posts, loading } = usePost();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="dashboard-apple-bg font-apple min-h-screen">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 p-4 lg:grid-cols-12 lg:gap-8 lg:p-6">
         <div className="lg:col-span-3">
           <ProfileSection />
         </div>
 
-        <div className="lg:col-span-6 space-y-4">
+        <div className="space-y-4 lg:col-span-6">
           <CreatePost />
           {loading ? (
-            <p className="text-sm text-gray-500">Loading posts...</p>
+            <p className="text-[15px] text-neutral-500">Loading posts…</p>
           ) : (
             posts.map((post) => <PostCard key={post._id} post={post} />)
           )}
         </div>
 
-        <div className="lg:col-span-3 space-y-4">
-          <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm overflow-hidden">
-            <div className="h-1 w-full bg-gradient-to-r from-pink-500 to-purple-600" />
-            <h3 className="font-semibold text-gray-800 mt-3">Post tips</h3>
-            <ul className="mt-3 text-sm text-gray-600 space-y-2">
-              <li>Add a clear photo or a PDF to support your update.</li>
-              <li>Keep captions readable — short paragraphs work well.</li>
-              <li>You can mix images with documents in one post.</li>
+        <div className="space-y-4 lg:col-span-3">
+          <div className="apple-glass-card overflow-hidden p-5">
+            <div className="h-0.5 w-full rounded-full bg-[#0071e3]/80" />
+            <h3 className="mt-4 text-[17px] font-semibold tracking-tight text-[#1d1d1f]">Post tips</h3>
+            <ul className="mt-3 space-y-2.5 text-[14px] leading-relaxed text-neutral-600">
+              <li>Add a clear photo or PDF to support your update.</li>
+              <li>Short, readable paragraphs work best.</li>
+              <li>Mix images with documents in one post when it helps.</li>
             </ul>
           </div>
         </div>

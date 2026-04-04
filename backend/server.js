@@ -63,6 +63,8 @@ app.use("/api/chat", require("./routes/chatRoutes"));
 app.use("/api/posts", require("./routes/postRoutes"));
 app.use("/api/upload", require("./routes/uploadRoutes"));
 app.use("/api/site", require("./routes/siteRoutes"));
+app.use("/api/community", require("./routes/communityRoutes"));
+app.use("/api/referrals", require("./routes/referralRoutes"));
 
 // Health check route — useful to verify server is running
 app.get("/", (req, res) => {
@@ -75,6 +77,8 @@ app.get("/", (req, res) => {
       chat: "/api/chat",
       posts: "/api/posts",
       upload: "/api/upload",
+      community: "/api/community",
+      referrals: "/api/referrals",
     },
   });
 });

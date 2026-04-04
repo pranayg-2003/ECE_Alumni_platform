@@ -21,7 +21,10 @@ api.interceptors.request.use(
   (config) => {
     const url = `${config.baseURL || ""}${config.url || ""}`.toLowerCase();
     const isPublicAuth =
-      url.includes("auth/login") || url.includes("auth/register");
+      url.includes("auth/login") ||
+      url.includes("auth/register") ||
+      url.includes("auth/forgot-password") ||
+      url.includes("auth/reset-password");
 
     // Do not send JWT on login/register — avoids mixing sessions and odd server edge cases
     if (isPublicAuth) {
@@ -54,7 +57,7 @@ api.interceptors.response.use(
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       const path = window.location.pathname;
-      if (path !== "/login" && path !== "/register") {
+      if (path !== "/login" && path !== "/register" && path !== "/forgot-password") {
         if (hadSession) {
           toast.error("Session expired. Please sign in again.");
         }
@@ -154,6 +157,88 @@ export const fetchLandingContent = async () => {
 
 export const updateLandingContent = async (landing) => {
   const response = await api.put("/site/landing", { landing });
+  return response.data;
+};
+
+/** College funding campaigns & alumni events (Google Meet) */
+export const fetchFundingCampaigns = async () => {
+  const response = await api.get("/community/funding");
+  return response.data;
+};
+
+export const createFundingCampaign = async (payload) => {
+  const response = await api.post("/community/funding", payload);
+  return response.data;
+};
+
+export const updateFundingCampaign = async (id, payload) => {
+  const response = await api.put(`/community/funding/${id}`, payload);
+  return response.data;
+};
+
+export const deleteFundingCampaign = async (id) => {
+  const response = await api.delete(`/community/funding/${id}`);
+  return response.data;
+};
+
+export const fetchRazorpayMeta = async () => {
+  const response = await api.get("/community/payments/razorpay-meta");
+  return response.data;
+};
+
+export const createFundingPayOrder = async (campaignId, amountRupees) => {
+  const response = await api.post(`/community/funding/${campaignId}/order`, { amountRupees });
+  return response.data;
+};
+
+export const verifyFundingPay = async (campaignId, body) => {
+  const response = await api.post(`/community/funding/${campaignId}/verify-payment`, body);
+  return response.data;
+};
+
+export const fetchAlumniEvents = async () => {
+  const response = await api.get("/community/events");
+  return response.data;
+};
+
+export const createAlumniEvent = async (payload) => {
+  const response = await api.post("/community/events", payload);
+  return response.data;
+};
+
+export const updateAlumniEvent = async (id, payload) => {
+  const response = await api.put(`/community/events/${id}`, payload);
+  return response.data;
+};
+
+export const deleteAlumniEvent = async (id) => {
+  const response = await api.delete(`/community/events/${id}`);
+  return response.data;
+};
+
+/** Student referral requests visible to alumni */
+export const fetchReferralBoard = async (params) => {
+  const response = await api.get("/referrals/board", { params });
+  return response.data;
+};
+
+export const fetchMyReferralSeeks = async () => {
+  const response = await api.get("/referrals/mine");
+  return response.data;
+};
+
+export const createReferralSeek = async (payload) => {
+  const response = await api.post("/referrals", payload);
+  return response.data;
+};
+
+export const updateReferralSeek = async (id, payload) => {
+  const response = await api.put(`/referrals/${id}`, payload);
+  return response.data;
+};
+
+export const deleteReferralSeekApi = async (id) => {
+  const response = await api.delete(`/referrals/${id}`);
   return response.data;
 };
 

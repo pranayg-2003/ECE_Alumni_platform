@@ -5,7 +5,14 @@ const express = require("express");
 const router = express.Router();
 
 // Import controller functions
-const { register, login, getMe, updateProfile } = require("../controllers/authController");
+const {
+  register,
+  login,
+  getMe,
+  updateProfile,
+  forgotPassword,
+  resetPassword,
+} = require("../controllers/authController");
 
 // Import middleware
 const { protect } = require("../middleware/auth");
@@ -19,6 +26,9 @@ router.post("/register", register);
 
 // POST /api/auth/login — Login and get token
 router.post("/login", login);
+
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 // =============================================
 // PRIVATE ROUTES (token required)

@@ -4,11 +4,11 @@ import ProfileSection from "../components/common/ProfileSection";
 
 const Profile = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="dashboard-apple-bg font-apple min-h-screen">
       <Navbar />
-      <div className="max-w-5xl mx-auto p-4">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-4">
-          My Profile
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+        <h1 className="mb-6 text-[28px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[32px]">
+          Profile
         </h1>
         <ProfileSection />
       </div>

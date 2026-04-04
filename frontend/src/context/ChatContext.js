@@ -19,6 +19,8 @@ export const ChatProvider = ({ children }) => {
   const [unreadCount, setUnreadCount] = useState(0); // Total unread messages
   const [onlineUsers, setOnlineUsers] = useState(new Set()); // Users currently online
   const [messagesPanelOpen, setMessagesPanelOpen] = useState(false);
+  /** When set with `openMessagesWithUser`, MessagesPanel opens directly to this peer. */
+  const [pendingChatUser, setPendingChatUser] = useState(null);
 
   const openMessagesPanel = useCallback(() => setMessagesPanelOpen(true), []);
   const closeMessagesPanel = useCallback(() => setMessagesPanelOpen(false), []);
@@ -26,6 +28,12 @@ export const ChatProvider = ({ children }) => {
     () => setMessagesPanelOpen((v) => !v),
     [],
   );
+
+  const openMessagesWithUser = useCallback((peer) => {
+    if (!peer || !peer._id) return;
+    setPendingChatUser(peer);
+    setMessagesPanelOpen(true);
+  }, []);
 
   // Unread badge (students & alumni)
   useEffect(() => {
@@ -260,6 +268,9 @@ export const ChatProvider = ({ children }) => {
     openMessagesPanel,
     closeMessagesPanel,
     toggleMessagesPanel,
+    pendingChatUser,
+    setPendingChatUser,
+    openMessagesWithUser,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;

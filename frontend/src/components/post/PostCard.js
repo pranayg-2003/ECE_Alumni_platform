@@ -3,8 +3,10 @@ import { usePost } from "../../context/PostContext";
 import { useAuth } from "../../context/AuthContext";
 
 const accent = {
-  gradient: "from-violet-600 to-indigo-600",
-  text: "text-violet-700",
+  bar: "bg-[#0071e3]",
+  avatar: "bg-[#1d1d1f]",
+  text: "text-[#0071e3]",
+  btn: "bg-[#0071e3] hover:bg-[#0077ed]",
 };
 
 const PostMedia = ({ post }) => {
@@ -64,7 +66,7 @@ const PostMedia = ({ post }) => {
                 href={f.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm transition hover:border-violet-200 hover:bg-violet-50/50"
+                className="flex items-center gap-3 rounded-2xl border border-black/[0.08] bg-[#f5f5f7] px-4 py-3 text-sm transition hover:border-[#0071e3]/25 hover:bg-white"
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-lg shadow-sm">
                   📎
@@ -73,7 +75,7 @@ const PostMedia = ({ post }) => {
                   <span className="block truncate font-medium text-slate-800">
                     {f.originalName || "Download file"}
                   </span>
-                  <span className="text-xs text-violet-600">Open or download</span>
+                  <span className="text-xs text-[#0071e3]">Open or download</span>
                 </span>
               </a>
             </li>
@@ -120,16 +122,14 @@ const PostCard = ({ post }) => {
   };
 
   return (
-    <article className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-md shadow-slate-200/40">
-      <div
-        className={`h-1 w-full bg-gradient-to-r ${accent.gradient}`}
-      />
+    <article className="apple-glass-card relative overflow-hidden">
+      <div className={`h-0.5 w-full ${accent.bar}`} />
 
       <div className="space-y-4 p-5">
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <div
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${accent.gradient} text-sm font-bold text-white shadow-sm`}
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${accent.avatar} text-sm font-semibold text-white shadow-sm`}
             >
               {authorName.charAt(0).toUpperCase()}
             </div>
@@ -168,7 +168,7 @@ const PostCard = ({ post }) => {
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
               rows={4}
-              className="w-full resize-none rounded-xl border border-slate-200 p-3 text-sm outline-none focus:ring-2 focus:ring-violet-200"
+              className="w-full resize-none rounded-2xl border border-black/[0.08] bg-[#f5f5f7] p-3 text-sm outline-none focus:border-[#0071e3]/35 focus:bg-white focus:ring-2 focus:ring-[#0071e3]/15"
             />
             <p className="text-xs text-slate-400">
               Attachments can’t be changed when editing. Update text only.
@@ -184,7 +184,7 @@ const PostCard = ({ post }) => {
               <button
                 type="button"
                 onClick={saveEdit}
-                className={`rounded-xl px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r ${accent.gradient} shadow-sm`}
+                className={`rounded-full px-5 py-2 text-sm font-medium text-white ${accent.btn} shadow-sm`}
               >
                 Save
               </button>
@@ -215,13 +215,13 @@ const PostCard = ({ post }) => {
           <input
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            className="min-w-0 flex-1 rounded-full border border-slate-200 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-200"
+            className="min-w-0 flex-1 rounded-full border border-black/[0.08] bg-[#f5f5f7] px-4 py-2 text-sm outline-none focus:border-[#0071e3]/35 focus:bg-white focus:ring-2 focus:ring-[#0071e3]/15"
             placeholder="Write a comment…"
           />
           <button
             type="button"
             onClick={handleComment}
-            className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r ${accent.gradient} disabled:opacity-50`}
+            className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium text-white ${accent.btn} disabled:opacity-50`}
             disabled={isEditing}
           >
             Send

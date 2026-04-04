@@ -126,6 +126,7 @@ import { PostProvider } from "./context/PostContext"; // ✅ NEW
 // Pages
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 import StudentDashboard from "./pages/dashboards/StudentDashboard";
 import AlumniDashboard from "./pages/dashboards/AlumniDashboard";
 import AdminDashboard from "./pages/dashboards/AdminDashboard";
@@ -133,6 +134,8 @@ import ChatDashboard from "./pages/dashboards/ChatDashboard";
 import Feed from "./pages/Feed"; // ✅ NEW
 import Profile from "./pages/Profile";
 import LandingPage from "./pages/LandingPage";
+import InitiativesPage from "./pages/InitiativesPage";
+import ReferralsPage from "./pages/ReferralsPage";
 
 // Components
 import ProtectedRoute from "./components/common/ProtectedRoute";
@@ -198,6 +201,7 @@ function App() {
               {/* PUBLIC */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
 
               {/* 🔥 FEED (MAIN PAGE LIKE LINKEDIN) */}
               <Route
@@ -213,6 +217,24 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={["student", "alumni", "admin"]}>
                     <Profile />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/initiatives"
+                element={
+                  <ProtectedRoute allowedRoles={["student", "alumni", "admin"]}>
+                    <InitiativesPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/referrals"
+                element={
+                  <ProtectedRoute allowedRoles={["student", "alumni", "admin"]}>
+                    <ReferralsPage />
                   </ProtectedRoute>
                 }
               />
