@@ -3,6 +3,7 @@
 // This ensures we don't repeat the base URL in every component
 
 import axios from "axios";
+import toast from "react-hot-toast";
 
 // Create Axios instance with default config
 const api = axios.create({
@@ -18,12 +19,18 @@ const api = axios.create({
 // Automatically attach JWT token to every request
 api.interceptors.request.use(
   (config) => {
-    // Get token from localStorage
-    const token = localStorage.getItem("token");
+    const url = `${config.baseURL || ""}${config.url || ""}`.toLowerCase();
+    const isPublicAuth =
+      url.includes("auth/login") || url.includes("auth/register");
 
-    if (token) {
-      // Add Authorization header with Bearer token
-      config.headers.Authorization = `Bearer ${token}`;
+    // Do not send JWT on login/register — avoids mixing sessions and odd server edge cases
+    if (isPublicAuth) {
+      delete config.headers.Authorization;
+    } else {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
 
     if (config.data instanceof FormData) {
@@ -43,11 +50,15 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      const hadSession = !!localStorage.getItem("token");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       const path = window.location.pathname;
       if (path !== "/login" && path !== "/register") {
-        window.location.href = "/login";
+        if (hadSession) {
+          toast.error("Session expired. Please sign in again.");
+        }
+        window.location.href = "/";
       }
     }
     return Promise.reject(error);
@@ -133,6 +144,16 @@ export const uploadPostMedia = async (files) => {
 
 export const updateMyProfile = async (payload) => {
   const response = await api.put("/auth/profile", payload);
+  return response.data;
+};
+
+export const fetchLandingContent = async () => {
+  const response = await api.get("/site/landing");
+  return response.data;
+};
+
+export const updateLandingContent = async (landing) => {
+  const response = await api.put("/site/landing", { landing });
   return response.data;
 };
 

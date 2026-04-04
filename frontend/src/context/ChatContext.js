@@ -5,6 +5,7 @@ import React, { createContext, useState, useCallback, useEffect } from "react";
 import { io } from "socket.io-client";
 import { useAuth } from "./AuthContext";
 import api from "../utils/api";
+import { toastApiError } from "../utils/toast";
 
 export const ChatContext = createContext();
 
@@ -36,8 +37,8 @@ export const ChatProvider = ({ children }) => {
         if (response.data.success) {
           setUnreadCount(response.data.unreadCount);
         }
-      } catch (error) {
-        console.error("Error fetching unread count:", error);
+      } catch {
+        /* Polling: avoid toasting repeatedly */
       }
     };
 
@@ -156,7 +157,7 @@ export const ChatProvider = ({ children }) => {
           setMessages(response.data.data);
         }
       } catch (error) {
-        console.error("Error loading messages:", error);
+        toastApiError(error, "Could not load messages.");
       }
     };
 
@@ -197,7 +198,7 @@ export const ChatProvider = ({ children }) => {
           message: messageText,
         });
       } catch (error) {
-        console.error("Error saving message:", error);
+        toastApiError(error, "Message could not be saved.");
       }
     },
     [socket, user],

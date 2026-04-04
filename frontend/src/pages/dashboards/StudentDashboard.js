@@ -216,9 +216,11 @@
 
 // export default StudentDashboard;
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Navbar from "../../components/layout/Navbar";
 import api from "../../utils/api";
+import { toastApiError } from "../../utils/toast";
 
 /* ================= SIDEBAR ================= */
 const Sidebar = ({ user }) => (
@@ -313,6 +315,7 @@ const AlumniCard = ({ alumni, requestStatus, onSendRequest, loading }) => {
 
 /* ================= MAIN DASHBOARD ================= */
 const StudentDashboard = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const [alumni, setAlumni] = useState([]);
@@ -330,7 +333,7 @@ const StudentDashboard = () => {
       const res = await api.get("/users/alumni");
       setAlumni(res.data.data);
     } catch (err) {
-      console.error(err);
+      toastApiError(err, "Could not load alumni.");
     } finally {
       setLoadingAlumni(false);
     }
@@ -341,7 +344,7 @@ const StudentDashboard = () => {
       const res = await api.get("/users/my-requests");
       setRequests(res.data.data);
     } catch (err) {
-      console.error(err);
+      toastApiError(err, "Could not load your requests.");
     }
   };
 
@@ -359,7 +362,7 @@ const StudentDashboard = () => {
       });
       fetchRequests();
     } catch (err) {
-      console.error(err);
+      toastApiError(err, "Could not send request.");
     } finally {
       setSendingRequest(null);
     }
@@ -377,7 +380,39 @@ const StudentDashboard = () => {
 
         {/* MAIN CONTENT */}
         <div className="col-span-6 space-y-4">
-          <h2 className="font-semibold text-gray-700">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <button
+              type="button"
+              onClick={() => navigate("/feed")}
+              className="rounded-xl border border-blue-100 bg-white p-4 text-left shadow-sm transition hover:border-blue-300 hover:shadow-md"
+            >
+              <p className="text-xs font-bold uppercase text-blue-600">Student</p>
+              <p className="mt-1 font-semibold text-gray-900">Community feed</p>
+              <p className="mt-1 text-xs text-gray-500">Posts, media & discussions</p>
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                document.querySelector('[placeholder="Search alumni..."]')?.focus()
+              }
+              className="rounded-xl border border-emerald-100 bg-white p-4 text-left shadow-sm transition hover:border-emerald-300 hover:shadow-md"
+            >
+              <p className="text-xs font-bold uppercase text-emerald-600">Discover</p>
+              <p className="mt-1 font-semibold text-gray-900">Search mentors</p>
+              <p className="mt-1 text-xs text-gray-500">Use the bar in the header</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/chat")}
+              className="rounded-xl border border-violet-100 bg-white p-4 text-left shadow-sm transition hover:border-violet-300 hover:shadow-md"
+            >
+              <p className="text-xs font-bold uppercase text-violet-600">Connect</p>
+              <p className="mt-1 font-semibold text-gray-900">Messages</p>
+              <p className="mt-1 text-xs text-gray-500">Chat after a match</p>
+            </button>
+          </div>
+
+          <h2 className="font-semibold text-gray-700 pt-2">
             Explore Alumni ({alumni.length})
           </h2>
 

@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { uploadPostMedia } from "../../utils/api";
+import { toast, toastApiError } from "../../utils/toast";
 
 const PencilIcon = ({ className }) => (
   <svg
@@ -98,7 +99,7 @@ const ProfileSection = () => {
     try {
       const res = await uploadPostMedia([file]);
       if (!res.success || !res.data?.[0]?.url) {
-        setUploadError(res.message || "Upload failed.");
+        toast.error(res.message || "Upload failed.");
         return;
       }
       const url = res.data[0].url;
@@ -106,9 +107,7 @@ const ProfileSection = () => {
         field === "cover" ? { coverImage: url } : { profilePicture: url },
       );
     } catch (err) {
-      setUploadError(
-        err.response?.data?.message || err.message || "Upload failed.",
-      );
+      toastApiError(err, "Upload failed.");
     } finally {
       setUploadKind(null);
     }
@@ -135,9 +134,7 @@ const ProfileSection = () => {
       await updateProfile(payload);
       setShowEdit(false);
     } catch (err) {
-      setUploadError(
-        err.response?.data?.message || err.message || "Could not save profile.",
-      );
+      toastApiError(err, "Could not save profile.");
     } finally {
       setSaving(false);
     }

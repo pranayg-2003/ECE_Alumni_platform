@@ -18,8 +18,9 @@ const UserSchema = new mongoose.Schema(
       required: [true, "Please provide an email"],
       unique: true, // No two users can have the same email
       lowercase: true,
+      // Allow common TLDs (.info, .online, …); avoid the old \w{2,3} limit
       match: [
-        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         "Please provide a valid email",
       ],
     },

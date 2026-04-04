@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { useChat } from "../../context/ChatContext";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../utils/api";
+import { toastApiError } from "../../utils/toast";
 
 const ChatList = ({ onSelectChat }) => {
   const { user } = useAuth();
@@ -19,7 +20,7 @@ const ChatList = ({ onSelectChat }) => {
           setConversations(response.data.data);
         }
       } catch (error) {
-        console.error("Error fetching conversations:", error);
+        toastApiError(error, "Could not load conversations.");
       }
     };
 

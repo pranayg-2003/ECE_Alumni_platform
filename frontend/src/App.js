@@ -111,6 +111,7 @@
 
 // export default App;
 import React from "react";
+import { Toaster } from "react-hot-toast";
 import {
   BrowserRouter as Router,
   Routes,
@@ -131,6 +132,7 @@ import AdminDashboard from "./pages/dashboards/AdminDashboard";
 import ChatDashboard from "./pages/dashboards/ChatDashboard";
 import Feed from "./pages/Feed"; // ✅ NEW
 import Profile from "./pages/Profile";
+import LandingPage from "./pages/LandingPage";
 
 // Components
 import ProtectedRoute from "./components/common/ProtectedRoute";
@@ -143,19 +145,23 @@ const GlobalMessagesPanel = () => {
   return <MessagesPanel />;
 };
 
-/* ================= ROOT REDIRECT ================= */
-const RootRedirect = () => {
+/* ================= PUBLIC HOME: landing for guests ================= */
+const PublicHome = () => {
   const { user, loading } = useAuth();
-
-  if (loading) return null;
-
-  if (!user) return <Navigate to="/login" replace />;
-
-  if (user.role === "admin") {
-    return <Navigate to="/dashboard/admin" replace />;
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
+        Loading…
+      </div>
+    );
   }
-
-  return <Navigate to="/feed" replace />;
+  if (user) {
+    if (user.role === "admin") {
+      return <Navigate to="/dashboard/admin" replace />;
+    }
+    return <Navigate to="/feed" replace />;
+  }
+  return <LandingPage />;
 };
 
 function App() {
@@ -163,13 +169,31 @@ function App() {
     <AuthProvider>
       <ChatProvider>
         <PostProvider>
-          {" "}
-          {/* ✅ NEW */}
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              duration: 4200,
+              style: {
+                background: "#0f172a",
+                color: "#f8fafc",
+                borderRadius: "12px",
+                padding: "12px 16px",
+                fontSize: "0.925rem",
+                maxWidth: "min(420px, 92vw)",
+              },
+              success: {
+                iconTheme: { primary: "#34d399", secondary: "#0f172a" },
+              },
+              error: {
+                iconTheme: { primary: "#f87171", secondary: "#0f172a" },
+              },
+            }}
+          />
           <Router>
             <GlobalMessagesPanel />
             <Routes>
-              {/* Root */}
-              <Route path="/" element={<RootRedirect />} />
+              {/* Root — marketing landing (guests) or redirect when logged in */}
+              <Route path="/" element={<PublicHome />} />
 
               {/* PUBLIC */}
               <Route path="/login" element={<Login />} />

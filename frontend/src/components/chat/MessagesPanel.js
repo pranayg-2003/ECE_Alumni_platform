@@ -3,6 +3,7 @@ import { useChat } from "../../context/ChatContext";
 import ChatList from "./ChatList";
 import ChatWindow from "./ChatWindow";
 import api from "../../utils/api";
+import { toastApiError } from "../../utils/toast";
 
 const MessagesPanel = () => {
   const {
@@ -51,7 +52,7 @@ const MessagesPanel = () => {
         setConversations(convRes.data.data);
       }
     } catch (err) {
-      console.error(err);
+      toastApiError(err, "Could not update conversation.");
     } finally {
       setLoadingThread(false);
     }

@@ -1,9 +1,12 @@
 // src/pages/auth/Register.js
 // Modern registration page with attractive design and animations
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { toastApiError } from "../../utils/toast";
+import AuthHeroPanel from "../../components/landing/AuthHeroPanel";
+import { useLandingContent } from "../../hooks/useLandingContent";
 
 // Available options for dropdowns
 const BRANCHES = ["Computer Science", "Information Technology", "Electronics", "Mechanical", "Civil", "Electrical", "Chemical", "Other"];
@@ -13,6 +16,7 @@ const SKILLS = ["JavaScript", "Python", "React", "Node.js", "Java", "C++", "SQL"
 const Register = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
+  const { landing } = useLandingContent();
 
   // Form state — covers all possible fields
   const [formData, setFormData] = useState({
@@ -31,6 +35,7 @@ const Register = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const submitLock = useRef(false);
 
   // Handle text input changes
   const handleChange = (e) => {
@@ -54,14 +59,22 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitLock.current) return;
+    submitLock.current = true;
     setError("");
 
     // Client-side validation
     if (formData.password !== formData.confirmPassword) {
+      submitLock.current = false;
       return setError("Passwords do not match.");
     }
     if (formData.password.length < 6) {
+      submitLock.current = false;
       return setError("Password must be at least 6 characters.");
+    }
+    if (formData.role === "alumni" && !formData.company?.trim()) {
+      submitLock.current = false;
+      return setError("Please enter your current company.");
     }
 
     setLoading(true);
@@ -69,8 +82,8 @@ const Register = () => {
     try {
       // Build payload (exclude confirmPassword)
       const payload = {
-        name: formData.name,
-        email: formData.email,
+        name: formData.name.trim(),
+        email: formData.email.trim(),
         password: formData.password,
         role: formData.role,
         interests: formData.interests,
@@ -79,7 +92,7 @@ const Register = () => {
 
       // Add role-specific fields
       if (formData.role === "alumni") {
-        payload.company = formData.company;
+        payload.company = formData.company.trim();
       }
       if (formData.role === "student") {
         payload.branch = formData.branch;
@@ -90,45 +103,37 @@ const Register = () => {
 
       // Redirect to role-specific dashboard
       const redirectMap = {
-        student: "/dashboard/student",
-        alumni: "/menteeProgram",
+        student: "/feed",
+        alumni: "/feed",
         admin: "/dashboard/admin",
       };
       navigate(redirectMap[user.role]);
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed. Please try again.");
+      toastApiError(err, "Registration failed. Please try again.");
     } finally {
       setLoading(false);
+      submitLock.current = false;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-500 to-indigo-600 flex items-center justify-center px-4 py-10 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-      </div>
+    <div className="min-h-screen bg-slate-100 px-4 py-8 lg:px-8 lg:py-10">
+      <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-2 lg:gap-10">
+        <AuthHeroPanel landing={landing} />
 
-      {/* Main container */}
-      <div className="relative w-full max-w-2xl">
-        <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8 md:p-10 border border-white/20">
-          {/* Header with animation */}
-          <div className="text-center mb-8 animate-fade-in">
-            {/* Logo */}
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transform hover:scale-105 transition-transform duration-300">
-              <span className="text-white font-bold text-3xl">M</span>
+        <div className="flex flex-col justify-center">
+          <div className="max-h-[calc(100vh-4rem)] overflow-y-auto rounded-3xl border border-slate-200 bg-white p-6 shadow-xl md:p-8">
+          <div className="mb-6 text-center lg:text-left">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-lg font-bold text-white shadow-md lg:mx-0">
+              M
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Join MentorBridge
-            </h1>
-            <p className="text-gray-500 text-sm mt-2">Connect with mentors, grow your career</p>
+            <h1 className="text-2xl font-bold text-slate-900">Join MentorBridge</h1>
+            <p className="text-sm text-slate-500">Connect with mentors, grow your career</p>
           </div>
 
           {/* Error message with animation */}
           {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg text-sm mb-6 animate-slide-in-top flex items-center gap-3">
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg text-sm mb-6 flex items-center gap-3">
               <span className="text-xl">⚠️</span>
               <span>{error}</span>
             </div>
@@ -353,79 +358,21 @@ const Register = () => {
             </button>
           </form>
 
-          {/* Footer link */}
-          <p className="text-center text-sm text-gray-600 mt-6">
+          <p className="mt-6 text-center text-sm text-slate-600">
             Already have an account?{" "}
-            <Link 
-              to="/login" 
-              className="text-blue-600 font-bold hover:text-purple-600 transition-colors underline-offset-2 hover:underline"
-            >
-              Sign in here
+            <Link to="/login" className="font-bold text-violet-700 hover:text-fuchsia-600">
+              Sign in
             </Link>
           </p>
-        </div>
-
-        {/* Bottom decorative element */}
-        <div className="mt-6 text-center text-white/60 text-xs">
-          <p>🚀 Start your mentorship journey today</p>
+          </div>
         </div>
       </div>
 
-      <style>{`
-        @keyframes blob {
-          0%, 100% {
-            transform: translate(0, 0) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-        }
-        
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes slide-in-top {
-          from {
-            opacity: 0;
-            transform: translateY(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out;
-        }
-
-        .animate-slide-in-top {
-          animation: slide-in-top 0.4s ease-out;
-        }
-      `}</style>
+      <div className="mt-4 text-center text-xs text-slate-500 lg:hidden">
+        <Link to="/" className="font-medium text-violet-700">
+          ← Back to landing
+        </Link>
+      </div>
     </div>
   );
 };

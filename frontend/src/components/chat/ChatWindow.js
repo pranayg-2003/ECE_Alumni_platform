@@ -47,8 +47,8 @@ const ChatWindow = ({ otherUser, onClose, variant = "page" }) => {
       const markAsRead = async () => {
         try {
           await api.put(`/chat/messages/mark-read/${otherUserIdStr}`);
-        } catch (error) {
-          console.error("Error marking messages as read:", error);
+        } catch {
+          /* Non-blocking: receipts can retry on next activity */
         }
       };
       markAsRead();

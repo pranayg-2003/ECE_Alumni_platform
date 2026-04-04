@@ -5,8 +5,10 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Navbar from "../../components/layout/Navbar";
 import api from "../../utils/api";
+import { toastApiError } from "../../utils/toast";
 import { usePost } from "../../context/PostContext";
 import PostCard from "../../components/post/PostCard";
+import LandingPageEditor from "../../components/admin/LandingPageEditor";
 
 // Enhanced stat card with icon and hover effect
 const StatCard = ({ icon, label, value, gradient, status }) => (
@@ -65,6 +67,7 @@ const AdminDashboard = () => {
   const [students, setStudents] = useState([]);
   const [alumni, setAlumni] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [adminTab, setAdminTab] = useState("overview"); // overview | landing
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,7 +79,7 @@ const AdminDashboard = () => {
         setStudents(studentsRes.data.data || []);
         setAlumni(alumniRes.data.data || []);
       } catch (err) {
-        console.error("Failed to fetch data:", err);
+        toastApiError(err, "Could not load users.");
       } finally {
         setLoading(false);
       }
@@ -97,6 +100,32 @@ const AdminDashboard = () => {
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+        <div className="flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white p-1 shadow-sm">
+          {[
+            { id: "overview", label: "Overview & users" },
+            { id: "landing", label: "Landing page" },
+          ].map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setAdminTab(t.id)}
+              className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+                adminTab === t.id
+                  ? "bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow"
+                  : "text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {adminTab === "landing" && (
+          <LandingPageEditor />
+        )}
+
+        {adminTab === "overview" && (
+          <>
         {/* Admin Banner */}
         <div className="bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 rounded-3xl p-8 md:p-10 text-white shadow-2xl relative overflow-hidden group">
           <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
@@ -308,6 +337,8 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
+          </>
+        )}
       </div>
     </div>
   );
