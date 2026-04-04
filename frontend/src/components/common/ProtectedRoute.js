@@ -22,17 +22,16 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     );
   }
 
-  // If not logged in, redirect to login page
+  // If not logged in, send to marketing landing (guests can open Log in / Sign up)
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // If roles are specified, check if user has permission
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    // Redirect to their own dashboard based on role
     const roleRedirects = {
-      student: "/dashboard/student",
-      alumni: "/menteeProgram",
+      student: "/feed",
+      alumni: "/feed",
       admin: "/dashboard/admin",
     };
     return <Navigate to={roleRedirects[user.role]} replace />;

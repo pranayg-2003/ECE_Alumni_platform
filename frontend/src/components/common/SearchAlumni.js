@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import { searchAlumni, sendMentorshipRequest } from "../../utils/api";
+import { toastApiError } from "../../utils/toast";
 
 const SearchAlumni = ({ isOpen, onClose }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,9 +34,10 @@ const SearchAlumni = ({ isOpen, onClose }) => {
           setError("No alumni found matching your search");
         }
       } catch (err) {
-        console.error("Search error details:", err);
-        const errorMsg = err.response?.data?.message || "Failed to search alumni. Please try again.";
-        setError(errorMsg);
+        toastApiError(
+          err,
+          "Failed to search alumni. Please try again.",
+        );
       } finally {
         setLoading(false);
       }
@@ -55,8 +57,7 @@ const SearchAlumni = ({ isOpen, onClose }) => {
       await sendMentorshipRequest(alumniId, "");
       setSentRequests((prev) => new Set([...prev, alumniId]));
     } catch (err) {
-      setError("Failed to send request. Please try again.");
-      console.error("Error sending request:", err);
+      toastApiError(err, "Failed to send request. Please try again.");
     } finally {
       setSendingId(null);
     }

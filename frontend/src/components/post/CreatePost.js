@@ -2,6 +2,7 @@ import React, { useCallback, useId, useRef, useState } from "react";
 import { usePost } from "../../context/PostContext";
 import { useAuth } from "../../context/AuthContext";
 import { uploadPostMedia } from "../../utils/api";
+import { toast, toastApiError } from "../../utils/toast";
 
 const ACCEPT =
   "image/jpeg,image/png,image/gif,image/webp,application/pdf,.pdf,.doc,.docx,.txt";
@@ -16,7 +17,6 @@ const CreatePost = () => {
   const fileInputRef = useRef(null);
   const [content, setContent] = useState("");
   const [staged, setStaged] = useState([]);
-  const [localError, setLocalError] = useState("");
   const [uploadingMedia, setUploadingMedia] = useState(false);
   const { addPost, submitting } = usePost();
   const { user } = useAuth();
@@ -32,7 +32,6 @@ const CreatePost = () => {
   const addFiles = (fileList) => {
     const next = Array.from(fileList || []);
     if (next.length === 0) return;
-    setLocalError("");
     const additions = next.map((file) => {
       const isImage = /^image\//i.test(file.type);
       return {
@@ -54,7 +53,6 @@ const CreatePost = () => {
 
   const handlePost = async () => {
     if (!content.trim()) return;
-    setLocalError("");
 
     let attachments = [];
     const files = staged.map((s) => s.file);
@@ -64,15 +62,13 @@ const CreatePost = () => {
       try {
         const res = await uploadPostMedia(files);
         if (!res.success) {
-          setLocalError(res.message || "Upload failed.");
+          toast.error(res.message || "Upload failed.");
           setUploadingMedia(false);
           return;
         }
         attachments = res.data || [];
       } catch (err) {
-        setLocalError(
-          err.response?.data?.message || err.message || "Upload failed.",
-        );
+        toastApiError(err, "Upload failed.");
         setUploadingMedia(false);
         return;
       }
@@ -145,12 +141,6 @@ const CreatePost = () => {
             e.target.value = "";
           }}
         />
-
-        {localError && (
-          <p className="text-sm text-red-600" role="alert">
-            {localError}
-          </p>
-        )}
 
         <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">

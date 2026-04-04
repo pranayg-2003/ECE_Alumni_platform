@@ -62,6 +62,7 @@ app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/chat", require("./routes/chatRoutes"));
 app.use("/api/posts", require("./routes/postRoutes"));
 app.use("/api/upload", require("./routes/uploadRoutes"));
+app.use("/api/site", require("./routes/siteRoutes"));
 
 // Health check route — useful to verify server is running
 app.get("/", (req, res) => {

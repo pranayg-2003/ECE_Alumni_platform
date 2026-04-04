@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useChat } from "../../context/ChatContext";
 import Navbar from "../../components/layout/Navbar";
 import api from "../../utils/api";
+import { toastApiError } from "../../utils/toast";
 
 const StatPill = ({ label, value, tone }) => {
   const tones = {
@@ -111,6 +113,7 @@ const RequestCard = ({
 };
 
 const AlumniDashboard = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { openMessagesPanel } = useChat();
   const [requests, setRequests] = useState([]);
@@ -128,7 +131,7 @@ const AlumniDashboard = () => {
       const res = await api.get("/users/incoming-requests");
       setRequests(res.data.data || []);
     } catch (err) {
-      console.error(err);
+      toastApiError(err, "Could not load requests.");
     } finally {
       setFetchingRequests(false);
     }
@@ -140,7 +143,7 @@ const AlumniDashboard = () => {
       await api.put(`/users/respond-request/${id}`, { status: "accepted" });
       fetchRequests();
     } catch (err) {
-      console.error(err);
+      toastApiError(err, "Could not accept request.");
     } finally {
       setLoading(null);
     }
@@ -152,7 +155,7 @@ const AlumniDashboard = () => {
       await api.put(`/users/respond-request/${id}`, { status: "rejected" });
       fetchRequests();
     } catch (err) {
-      console.error(err);
+      toastApiError(err, "Could not decline request.");
     } finally {
       setLoading(null);
     }
@@ -183,6 +186,36 @@ const AlumniDashboard = () => {
             </p>
           </div>
         </header>
+
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <button
+            type="button"
+            onClick={() => navigate("/feed")}
+            className="rounded-2xl border border-indigo-100 bg-white p-4 text-left shadow-sm transition hover:border-indigo-300"
+          >
+            <p className="text-xs font-bold uppercase text-indigo-600">Alumni</p>
+            <p className="mt-1 font-semibold text-slate-900">Professional feed</p>
+            <p className="mt-1 text-xs text-slate-500">Share wins &amp; mentor in public</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/profile")}
+            className="rounded-2xl border border-fuchsia-100 bg-white p-4 text-left shadow-sm transition hover:border-fuchsia-300"
+          >
+            <p className="text-xs font-bold uppercase text-fuchsia-600">Presence</p>
+            <p className="mt-1 font-semibold text-slate-900">Profile &amp; banner</p>
+            <p className="mt-1 text-xs text-slate-500">Headline, company &amp; story</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => openMessagesPanel()}
+            className="rounded-2xl border border-emerald-100 bg-white p-4 text-left shadow-sm transition hover:border-emerald-300"
+          >
+            <p className="text-xs font-bold uppercase text-emerald-600">Inbox</p>
+            <p className="mt-1 font-semibold text-slate-900">Mentee messages</p>
+            <p className="mt-1 text-xs text-slate-500">Reply without leaving the page</p>
+          </button>
+        </div>
 
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <StatPill label="Pending" value={pending.length} tone="amber" />

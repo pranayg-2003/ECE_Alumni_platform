@@ -4,6 +4,11 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
+const normalizeEmail = (value) => {
+  if (value == null) return "";
+  return String(value).trim().toLowerCase();
+};
+
 // ============================================
 // HELPER: Public user shape for API / client
 // ============================================
@@ -46,7 +51,12 @@ const generateToken = (userId) => {
 const register = async (req, res) => {
   try {
     // Destructure fields from request body
-    const { name, email, password, role, interests, skills, company, branch, year } = req.body;
+    let { name, email, password, role, interests, skills, company, branch, year } = req.body;
+
+    name = typeof name === "string" ? name.trim() : String(name ?? "").trim();
+    email = normalizeEmail(email);
+    company = typeof company === "string" ? company.trim() : company;
+    branch = typeof branch === "string" ? branch.trim() : branch;
 
     // --- Validation ---
     if (!name || !email || !password || !role) {
@@ -56,17 +66,16 @@ const register = async (req, res) => {
       });
     }
 
-    // Check if user already exists with this email
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const emailTaken = await User.exists({ email });
+    if (emailTaken) {
       return res.status(400).json({
         success: false,
-        message: "An account with this email already exists.",
+        message: `This email is already registered: ${email}`,
       });
     }
 
     // Validate role-specific fields
-    if (role === "alumni" && !company) {
+    if (role === "alumni" && (!company || !String(company).trim())) {
       return res.status(400).json({
         success: false,
         message: "Alumni must provide their company name.",
@@ -92,7 +101,7 @@ const register = async (req, res) => {
 
     // Add role-specific fields
     if (role === "alumni") {
-      userData.company = company;
+      userData.company = String(company).trim();
     }
     if (role === "student") {
       userData.branch = branch;
@@ -121,6 +130,20 @@ const register = async (req, res) => {
       return res.status(400).json({ success: false, message: messages.join(", ") });
     }
 
+    // Duplicate key (e.g. race with exists() check)
+    if (error.code === 11000) {
+      const dup =
+        error.keyValue && typeof error.keyValue === "object"
+          ? Object.values(error.keyValue)[0]
+          : null;
+      return res.status(400).json({
+        success: false,
+        message: dup
+          ? `This email is already registered: ${dup}`
+          : "An account with this email already exists.",
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: "Server error. Please try again.",
@@ -136,9 +159,10 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const emailNorm = normalizeEmail(email);
 
     // Validate input
-    if (!email || !password) {
+    if (!emailNorm || !password) {
       return res.status(400).json({
         success: false,
         message: "Please provide both email and password.",
@@ -147,7 +171,7 @@ const login = async (req, res) => {
 
     // Find user by email — we need password so use .select("+password")
     // (Password has select:false in schema, so we must explicitly include it)
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email: emailNorm }).select("+password");
 
     if (!user) {
       return res.status(401).json({

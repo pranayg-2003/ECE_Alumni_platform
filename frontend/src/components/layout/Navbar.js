@@ -15,7 +15,7 @@ const Navbar = () => {
   const handleLogout = () => {
     setMeMenuOpen(false);
     logout();
-    navigate("/login");
+    navigate("/");
   };
 
   useEffect(() => {
@@ -30,13 +30,7 @@ const Navbar = () => {
   }, [meMenuOpen]);
 
   const homeRoute =
-    user?.role === "admin"
-      ? "/dashboard/admin"
-      : user?.role === "student"
-        ? "/dashboard/student"
-        : user?.role === "alumni"
-          ? "/feed"
-          : "/feed";
+    user?.role === "admin" ? "/dashboard/admin" : "/feed";
 
   return (
     <>
@@ -87,6 +81,18 @@ const Navbar = () => {
                 <span className="text-lg">👤</span>
                 <span className="hidden sm:block">Profile</span>
               </button>
+
+              {user.role === "student" && (
+                <button
+                  type="button"
+                  onClick={() => navigate("/dashboard/student")}
+                  className="flex flex-col items-center cursor-pointer hover:text-black text-xs bg-transparent border-0 p-0 font-inherit"
+                  title="Browse alumni & send requests"
+                >
+                  <span className="text-lg">🔎</span>
+                  <span className="hidden sm:block">Network</span>
+                </button>
+              )}
 
               {user.role === "alumni" && (
                 <button

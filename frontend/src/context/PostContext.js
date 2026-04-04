@@ -12,6 +12,7 @@ import {
   addPostComment as addPostCommentApi,
   updatePost as updatePostApi,
 } from "../utils/api";
+import { toastApiError } from "../utils/toast";
 import { useAuth } from "./AuthContext";
 
 const PostContext = createContext();
@@ -23,16 +24,14 @@ export const PostProvider = ({ children }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
 
   const loadPosts = useCallback(async () => {
     try {
       setLoading(true);
       const body = await fetchPosts();
       setPosts(body.data || []);
-      setError("");
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to load posts.");
+      toastApiError(err, "Failed to load posts.");
     } finally {
       setLoading(false);
     }
@@ -44,7 +43,6 @@ export const PostProvider = ({ children }) => {
     if (!user) {
       setPosts([]);
       setLoading(false);
-      setError("");
       return;
     }
 
@@ -58,11 +56,11 @@ export const PostProvider = ({ children }) => {
       if (body.data) {
         setPosts((prev) => [body.data, ...prev]);
       }
-      setError("");
       return { success: true };
     } catch (err) {
-      const message = err.response?.data?.message || "Failed to create post.";
-      setError(message);
+      const message =
+        err.response?.data?.message || "Failed to create post.";
+      toastApiError(err, message);
       return { success: false, message };
     } finally {
       setSubmitting(false);
@@ -76,7 +74,7 @@ export const PostProvider = ({ children }) => {
         prev.map((post) => (post._id === id ? body.data : post)),
       );
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to update like.");
+      toastApiError(err, "Failed to update like.");
     }
   };
 
@@ -87,7 +85,7 @@ export const PostProvider = ({ children }) => {
         prev.map((post) => (post._id === id ? body.data : post)),
       );
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to add comment.");
+      toastApiError(err, "Failed to add comment.");
     }
   };
 
@@ -99,8 +97,9 @@ export const PostProvider = ({ children }) => {
       );
       return { success: body.success !== false };
     } catch (err) {
-      const message = err.response?.data?.message || "Failed to update post.";
-      setError(message);
+      const message =
+        err.response?.data?.message || "Failed to update post.";
+      toastApiError(err, message);
       return { success: false, message };
     }
   };
@@ -111,7 +110,6 @@ export const PostProvider = ({ children }) => {
         posts,
         loading,
         submitting,
-        error,
         addPost,
         likePost,
         addComment,
