@@ -17,22 +17,27 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 // Connect to MongoDB
 connectDB();
 
+/** Always allow these; CLIENT_ORIGIN adds more (comma-separated, no trailing slash). */
+const DEFAULT_CLIENT_ORIGINS = [
+  "http://localhost:3000",
+  "https://ece-alumni-platform.vercel.app",
+  "https://ece-alumni-platform-1j6i5lxw1-pranay-gupta-s-projects.vercel.app",
+];
+
 /**
- * Browser origins allowed for REST + Socket.io (comma-separated in CLIENT_ORIGIN).
- * No trailing slashes. Example: https://app.vercel.app,http://localhost:3000
+ * Browser origins allowed for REST + Socket.io.
+ * Merges CLIENT_ORIGIN with defaults so production Vercel isn’t dropped if env only lists a preview URL.
  */
 function parseClientOrigins() {
   const raw = process.env.CLIENT_ORIGIN;
-  if (raw && String(raw).trim()) {
-    return String(raw)
-      .split(",")
-      .map((o) => o.trim().replace(/\/$/, ""))
-      .filter(Boolean);
-  }
-  return [
-    "http://localhost:3000",
-    "https://ece-alumni-platform-1j6i5lxw1-pranay-gupta-s-projects.vercel.app",
-  ];
+  const fromEnv =
+    raw && String(raw).trim()
+      ? String(raw)
+          .split(",")
+          .map((o) => o.trim().replace(/\/$/, ""))
+          .filter(Boolean)
+      : [];
+  return [...new Set([...DEFAULT_CLIENT_ORIGINS, ...fromEnv])];
 }
 
 const allowedOrigins = parseClientOrigins();
