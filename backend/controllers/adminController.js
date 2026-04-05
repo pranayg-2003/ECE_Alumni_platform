@@ -4,6 +4,15 @@ const ChatMessage = require("../models/ChatMessage");
 const MentorshipRequest = require("../models/MentorshipRequest");
 const ReferralSeek = require("../models/ReferralSeek");
 
+const safeCount = async (label, fn) => {
+  try {
+    return await fn();
+  } catch (err) {
+    console.error(`[admin activity] ${label}:`, err.message || err);
+    return 0;
+  }
+};
+
 // @route GET /api/admin/activity
 // @access admin
 exports.getActivityOverview = async (req, res) => {
@@ -20,6 +29,7 @@ exports.getActivityOverview = async (req, res) => {
       activeUsers,
       inactiveUsers,
       posts,
+      postsAll,
       messages,
       mentorshipPending,
       mentorshipAccepted,
@@ -27,19 +37,20 @@ exports.getActivityOverview = async (req, res) => {
       signups7d,
       signups30d,
     ] = await Promise.all([
-      User.countDocuments(),
-      User.countDocuments({ role: "student" }),
-      User.countDocuments({ role: "alumni" }),
-      User.countDocuments({ role: "admin" }),
-      User.countDocuments({ isActive: true }),
-      User.countDocuments({ isActive: false }),
-      Post.countDocuments({ isPublished: true }),
-      ChatMessage.countDocuments(),
-      MentorshipRequest.countDocuments({ status: "pending" }),
-      MentorshipRequest.countDocuments({ status: "accepted" }),
-      ReferralSeek.countDocuments({ status: "open" }),
-      User.countDocuments({ createdAt: { $gte: day7 } }),
-      User.countDocuments({ createdAt: { $gte: day30 } }),
+      safeCount("users", () => User.countDocuments()),
+      safeCount("students", () => User.countDocuments({ role: "student" })),
+      safeCount("alumni", () => User.countDocuments({ role: "alumni" })),
+      safeCount("admins", () => User.countDocuments({ role: "admin" })),
+      safeCount("activeUsers", () => User.countDocuments({ isActive: true })),
+      safeCount("inactiveUsers", () => User.countDocuments({ isActive: false })),
+      safeCount("postsPublished", () => Post.countDocuments({ isPublished: true })),
+      safeCount("postsAll", () => Post.countDocuments()),
+      safeCount("messages", () => ChatMessage.countDocuments()),
+      safeCount("mentorshipPending", () => MentorshipRequest.countDocuments({ status: "pending" })),
+      safeCount("mentorshipAccepted", () => MentorshipRequest.countDocuments({ status: "accepted" })),
+      safeCount("referralOpen", () => ReferralSeek.countDocuments({ status: "open" })),
+      safeCount("signups7d", () => User.countDocuments({ createdAt: { $gte: day7 } })),
+      safeCount("signups30d", () => User.countDocuments({ createdAt: { $gte: day30 } })),
     ]);
 
     const recentUsers = await User.find()
@@ -59,6 +70,7 @@ exports.getActivityOverview = async (req, res) => {
           activeUsers,
           inactiveUsers,
           posts,
+          postsAll,
           messages,
           mentorshipPending,
           mentorshipAccepted,
@@ -81,7 +93,8 @@ exports.blockUser = async (req, res) => {
     const { userId } = req.params;
     const reason = typeof req.body?.reason === "string" ? req.body.reason.trim() : "";
 
-    if (String(userId) === String(req.user._id)) {
+    const adminSelf = req.user._id ?? req.user.id;
+    if (String(userId) === String(adminSelf)) {
       return res.status(400).json({ success: false, message: "You cannot block your own account." });
     }
 
@@ -133,5 +146,66 @@ exports.unblockUser = async (req, res) => {
   } catch (e) {
     console.error("unblockUser:", e);
     res.status(500).json({ success: false, message: "Could not unblock user." });
+  }
+};
+
+const postPopulateConfig = [
+  { path: "author", select: "name role profilePicture company branch year jobTitle email" },
+  { path: "comments.user", select: "name role profilePicture email" },
+];
+
+// @route GET /api/admin/posts
+// @access admin — full post list for moderation (published + drafts)
+exports.listPostsForModeration = async (req, res) => {
+  try {
+    let rawQ = typeof req.query.q === "string" ? req.query.q.trim() : "";
+    rawQ = rawQ.replace(/\0/g, "").slice(0, 200);
+    let authorRaw = typeof req.query.author === "string" ? req.query.author.trim() : "";
+    authorRaw = authorRaw.replace(/\0/g, "").slice(0, 120);
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 80, 1), 200);
+    const filter = {};
+    if (rawQ) {
+      const esc = rawQ.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      try {
+        filter.content = new RegExp(esc, "i");
+      } catch (regexErr) {
+        console.warn("listPostsForModeration regex:", regexErr.message);
+        return res.status(200).json({ success: true, count: 0, data: [] });
+      }
+    }
+
+    if (authorRaw) {
+      const escA = authorRaw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      let authorRegex;
+      try {
+        authorRegex = new RegExp(escA, "i");
+      } catch {
+        return res.status(200).json({ success: true, count: 0, data: [] });
+      }
+      const matchingUsers = await User.find({
+        $or: [{ name: authorRegex }, { email: authorRegex }],
+      })
+        .select("_id")
+        .lean();
+      if (matchingUsers.length === 0) {
+        return res.status(200).json({ success: true, count: 0, data: [] });
+      }
+      filter.author = { $in: matchingUsers.map((u) => u._id) };
+    }
+
+    const posts = await Post.find(filter)
+      .populate(postPopulateConfig)
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      count: posts.length,
+      data: posts,
+    });
+  } catch (e) {
+    console.error("listPostsForModeration:", e);
+    res.status(500).json({ success: false, message: "Could not load posts." });
   }
 };

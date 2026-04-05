@@ -273,52 +273,52 @@ const ProfileSection = ({ variant = "feed", children }) => {
           : `relative bg-neutral-300 ${isFeed ? "h-36 sm:h-40 md:h-44" : "h-36 sm:h-40 md:h-44"}`
       }
     >
-      {cover ? (
-        <img
-          src={cover}
-          alt=""
+        {cover ? (
+          <img
+            src={cover}
+            alt=""
           className={
             fullBleed
               ? "absolute inset-0 h-full w-full object-cover object-center"
               : "h-full w-full object-cover object-center"
           }
-        />
-      ) : (
-        <div
+          />
+        ) : (
+          <div
           className={
             fullBleed
               ? "absolute inset-0 h-full w-full bg-gradient-to-br from-[#1d1d1f] via-[#2d2d2f] to-[#424245]"
               : "h-full w-full bg-gradient-to-br from-[#1d1d1f] via-[#2d2d2f] to-[#424245]"
           }
-          aria-hidden
-        />
-      )}
-      <button
-        type="button"
-        onClick={() => coverInputRef.current?.click()}
-        disabled={!!uploadKind}
-        className="absolute right-3 top-3 z-[2] flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white shadow-md backdrop-blur-md transition hover:bg-black/55 disabled:opacity-50"
-        title="Change cover photo"
-        aria-label="Change cover photo"
-      >
-        {uploadKind === "cover" ? (
-          <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-        ) : (
-          <PencilIcon className="h-4 w-4" />
+            aria-hidden
+          />
         )}
-      </button>
-      <input
-        ref={coverInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          e.target.value = "";
-          if (f) uploadImageAndPatch(f, "cover");
-        }}
-      />
-    </div>
+        <button
+          type="button"
+          onClick={() => coverInputRef.current?.click()}
+          disabled={!!uploadKind}
+        className="absolute right-3 top-3 z-[2] flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white shadow-md backdrop-blur-md transition hover:bg-black/55 disabled:opacity-50"
+          title="Change cover photo"
+          aria-label="Change cover photo"
+        >
+          {uploadKind === "cover" ? (
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          ) : (
+            <PencilIcon className="h-4 w-4" />
+          )}
+        </button>
+        <input
+          ref={coverInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            e.target.value = "";
+            if (f) uploadImageAndPatch(f, "cover");
+          }}
+        />
+      </div>
   );
 
   const avatarBlock = (pageFb) => (
@@ -334,7 +334,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                 : "h-[7.25rem] w-[7.25rem]"
         }`}
       >
-        {avatar ? (
+              {avatar ? (
           <img src={avatar} alt="" className="h-full w-full object-cover" />
         ) : (
           <div
@@ -342,36 +342,36 @@ const ProfileSection = ({ variant = "feed", children }) => {
               pageFb ? "text-3xl sm:text-5xl" : isPage ? "text-4xl sm:text-5xl" : isFeed ? "text-2xl sm:text-3xl" : "text-3xl"
             }`}
           >
-            {user.name?.charAt(0)?.toUpperCase() || "U"}
-          </div>
-        )}
-      </div>
-      <button
-        type="button"
-        onClick={() => avatarInputRef.current?.click()}
-        disabled={!!uploadKind}
+                  {user.name?.charAt(0)?.toUpperCase() || "U"}
+                </div>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => avatarInputRef.current?.click()}
+              disabled={!!uploadKind}
         className="absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center rounded-full border border-black/[0.08] bg-white text-[#1d1d1f] shadow-md transition hover:bg-[#f5f5f7] disabled:opacity-50"
-        title="Change profile photo"
-        aria-label="Change profile photo"
-      >
-        {uploadKind === "avatar" ? (
+              title="Change profile photo"
+              aria-label="Change profile photo"
+            >
+              {uploadKind === "avatar" ? (
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#0071e3] border-t-transparent" />
-        ) : (
-          <PencilIcon className="h-4 w-4" />
-        )}
-      </button>
-      <input
-        ref={avatarInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          e.target.value = "";
-          if (f) uploadImageAndPatch(f, "avatar");
-        }}
-      />
-    </div>
+              ) : (
+                <PencilIcon className="h-4 w-4" />
+              )}
+            </button>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                e.target.value = "";
+                if (f) uploadImageAndPatch(f, "avatar");
+              }}
+            />
+          </div>
   );
 
   if (isPage) {
@@ -417,13 +417,13 @@ const ProfileSection = ({ variant = "feed", children }) => {
                   </p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowEdit((v) => !v)}
+          <button
+            type="button"
+            onClick={() => setShowEdit((v) => !v)}
                 className="hidden shrink-0 rounded-lg bg-[#e4e6eb] px-5 py-2 text-[15px] font-semibold text-[#1d1d1f] transition hover:bg-[#d8dadf] sm:inline-flex"
-              >
-                {showEdit ? "Close" : "Edit profile"}
-              </button>
+          >
+            {showEdit ? "Close" : "Edit profile"}
+          </button>
             </div>
           </div>
         </div>
@@ -442,7 +442,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#1d1d1f] text-[16px] font-bold text-white shadow-md">
                         {institutionInitial(user)}
                       </div>
-                      <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1">
                         <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#1877f2]">Program</p>
                         <p className="mt-1 text-[15px] font-semibold leading-snug text-[#1d1d1f]">
                           {studentBranchYear || "Add branch & year"}
@@ -936,8 +936,8 @@ const ProfileSection = ({ variant = "feed", children }) => {
           <div className="mt-4 flex w-full min-w-0 flex-col gap-4 border-b border-black/[0.06] pb-5">
             <div className="w-full min-w-0 text-center sm:text-left">
               <h3 className="text-balance text-[19px] font-semibold leading-tight tracking-tight text-[#1d1d1f] sm:text-[21px]">
-                {user.name}
-              </h3>
+              {user.name}
+            </h3>
               {feedSubtitle(user) ? (
                 <p className="mt-2 text-[14px] leading-snug text-neutral-600 sm:text-[15px]">{feedSubtitle(user)}</p>
               ) : null}
@@ -955,21 +955,21 @@ const ProfileSection = ({ variant = "feed", children }) => {
                 </p>
               )}
               <p className="mt-3 flex flex-wrap items-center justify-center gap-x-2 text-[13px] text-neutral-500 sm:justify-start sm:text-[14px]">
-                {user.location?.trim() ? (
+              {user.location?.trim() ? (
                   <span className="min-w-0">{user.location.trim()}</span>
-                ) : (
+              ) : (
                   <span className="text-neutral-400">Add your location</span>
-                )}
+              )}
                 <span className="text-neutral-300" aria-hidden>
                   ·
                 </span>
-                <a
-                  href={`mailto:${user.email}`}
+              <a
+                href={`mailto:${user.email}`}
                   className="font-medium text-[#0071e3] underline-offset-4 hover:underline"
-                >
+              >
                   Contact
-                </a>
-              </p>
+              </a>
+            </p>
             </div>
             {user.role === "student" && (
               <div className="relative w-full min-w-0 overflow-hidden rounded-2xl bg-gradient-to-br from-[#eef4ff] via-[#f5f5f7] to-[#e8f0fc] p-4 ring-1 ring-[#0071e3]/15">
@@ -985,8 +985,8 @@ const ProfileSection = ({ variant = "feed", children }) => {
                     <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#0071e3]">Program</p>
                     <p className="mt-1 text-[15px] font-semibold leading-snug text-[#1d1d1f]">
                       {studentBranchYear || "Add branch & year"}
-                    </p>
-                  </div>
+            </p>
+          </div>
                 </div>
               </div>
             )}
@@ -998,8 +998,8 @@ const ProfileSection = ({ variant = "feed", children }) => {
                 />
                 <div className="relative flex items-start gap-3">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#1d1d1f] text-[16px] font-bold text-white shadow-md">
-                    {institutionInitial(user)}
-                  </div>
+              {institutionInitial(user)}
+            </div>
                   <div className="min-w-0 flex-1 pt-0.5">
                     <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#0071e3]">Organization</p>
                     <p className="mt-1 text-[15px] font-semibold leading-snug text-[#1d1d1f]">
@@ -1036,7 +1036,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                 )}
                 <span className="text-neutral-300" aria-hidden>
                   ·
-                </span>
+            </span>
                 <a
                   href={`mailto:${user.email}`}
                   className="font-medium text-[#0071e3] underline-offset-4 hover:underline"
@@ -1044,11 +1044,11 @@ const ProfileSection = ({ variant = "feed", children }) => {
                   Contact
                 </a>
               </p>
-            </div>
+          </div>
             <div className="flex w-full min-w-0 shrink-0 items-center gap-4 rounded-2xl border border-black/[0.06] bg-gradient-to-br from-white to-[#f5f5f7] p-4 shadow-sm ring-1 ring-black/[0.04] lg:max-w-[min(100%,280px)]">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#1d1d1f] text-[18px] font-bold text-white shadow-md">
                 {institutionInitial(user)}
-              </div>
+        </div>
               <div className="min-w-0 flex-1 overflow-hidden">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-neutral-500">
                   {user.role === "student" ? "Program" : user.role === "alumni" ? "Organization" : "Access"}

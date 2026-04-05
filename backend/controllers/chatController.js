@@ -6,6 +6,46 @@ const User = require("../models/User");
 const MentorshipRequest = require("../models/MentorshipRequest");
 const StudentBlock = require("../models/StudentBlock");
 
+const previewFromMessageDoc = (m) => {
+  if (!m) return null;
+  const text = (m.message || "").trim();
+  const bits = [];
+  if (m.linkUrl) bits.push("Link");
+  const at = m.attachments || [];
+  const imgs = at.filter((x) => x.kind === "image").length;
+  const files = at.filter((x) => x.kind === "file").length;
+  if (imgs) bits.push(imgs === 1 ? "Photo" : `${imgs} photos`);
+  if (files) bits.push(files === 1 ? "File" : `${files} files`);
+  if (bits.length && text) return `${text} · ${bits.join(" · ")}`;
+  if (bits.length) return bits.join(" · ");
+  return text || null;
+};
+
+const normalizeChatAttachments = (raw) => {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((a) => a && typeof a.url === "string" && a.url.trim())
+    .slice(0, 6)
+    .map((a) => ({
+      url: a.url.trim().slice(0, 2000),
+      kind: a.kind === "image" ? "image" : "file",
+      name: String(a.name || "").trim().slice(0, 240),
+    }));
+};
+
+const sanitizeLinkUrl = (raw) => {
+  const s = typeof raw === "string" ? raw.trim() : "";
+  if (!s) return "";
+  try {
+    const withProto = /^https?:\/\//i.test(s) ? s : `https://${s}`;
+    const u = new URL(withProto);
+    if (u.protocol !== "http:" && u.protocol !== "https:") return "";
+    return u.href.slice(0, 2000);
+  } catch {
+    return "";
+  }
+};
+
 // @desc Get all messages between two users
 // @route GET /api/chat/messages/:otherUserId
 // @access Private
@@ -71,14 +111,24 @@ exports.getMessages = async (req, res) => {
 // @access Private
 exports.saveMessage = async (req, res) => {
   try {
-    const { receiverId, message } = req.body;
+    const { receiverId, message, attachments: rawAtt, linkUrl: rawLink } = req.body;
     const senderId = req.user.id;
 
-    // Validate input
-    if (!receiverId || !message) {
+    const text = typeof message === "string" ? message.trim().slice(0, 4000) : "";
+    const attachments = normalizeChatAttachments(rawAtt);
+    const linkUrl = sanitizeLinkUrl(rawLink);
+
+    if (!receiverId) {
       return res.status(400).json({
         success: false,
-        message: "Please provide receiverId and message",
+        message: "Please provide receiverId",
+      });
+    }
+
+    if (!text && attachments.length === 0 && !linkUrl) {
+      return res.status(400).json({
+        success: false,
+        message: "Add a message, at least one file, or a link.",
       });
     }
 
@@ -108,11 +158,12 @@ exports.saveMessage = async (req, res) => {
       });
     }
 
-    // Create and save the message
     const chatMessage = await ChatMessage.create({
       senderId,
       receiverId,
-      message,
+      message: text,
+      attachments,
+      linkUrl,
     });
 
     await chatMessage.populate("senderId", "name email");
@@ -196,7 +247,7 @@ exports.getConversations = async (req, res) => {
         return {
           connectionId: connection._id,
           otherUser,
-          lastMessage: lastMessage ? lastMessage.message : null,
+          lastMessage: lastMessage ? previewFromMessageDoc(lastMessage) : null,
           lastMessageTime: lastMessage ? lastMessage.createdAt : null,
           unreadCount,
         };

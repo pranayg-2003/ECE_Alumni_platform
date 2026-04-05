@@ -155,6 +155,11 @@ export const deletePost = async (postId) => {
   return response.data;
 };
 
+export const deletePostComment = async (postId, commentId) => {
+  const response = await api.delete(`/posts/${postId}/comments/${commentId}`);
+  return response.data;
+};
+
 /**
  * Upload images, video (MP4/WebM/MOV), and documents (PDF, DOC, DOCX, TXT) to Cloudinary via the API.
  * @param {File[]} files
@@ -286,6 +291,11 @@ export const deleteMyAccount = async (payload = {}) => {
 
 export const fetchAdminActivity = async () => {
   const response = await api.get("/admin/activity");
+  return response.data;
+};
+
+export const fetchAdminPosts = async (params) => {
+  const response = await api.get("/admin/posts", { params });
   return response.data;
 };
 

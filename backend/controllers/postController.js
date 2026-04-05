@@ -210,6 +210,42 @@ const deletePost = async (req, res) => {
   }
 };
 
+const deleteComment = async (req, res) => {
+  try {
+    const { id, commentId } = req.params;
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ success: false, message: "Post not found." });
+    }
+
+    const sub = post.comments.id(commentId);
+    if (!sub) {
+      return res.status(404).json({ success: false, message: "Comment not found." });
+    }
+
+    const isAdmin = req.user.role === "admin";
+    const commentUserId = sub.user?.toString ? sub.user.toString() : String(sub.user);
+    const isOwner = commentUserId === req.user.id;
+    if (!isAdmin && !isOwner) {
+      return res.status(403).json({ success: false, message: "Not authorized to remove this comment." });
+    }
+
+    sub.deleteOne();
+    await post.save();
+
+    const populatedPost = await Post.findById(post._id).populate(postPopulateConfig);
+
+    return res.status(200).json({
+      success: true,
+      message: "Comment removed.",
+      data: populatedPost,
+    });
+  } catch (error) {
+    console.error("Delete comment error:", error);
+    return res.status(500).json({ success: false, message: "Failed to remove comment." });
+  }
+};
+
 module.exports = {
   getPosts,
   createPost,
@@ -217,4 +253,5 @@ module.exports = {
   addCommentToPost,
   updatePost,
   deletePost,
+  deleteComment,
 };

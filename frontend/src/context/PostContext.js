@@ -12,6 +12,7 @@ import {
   addPostComment as addPostCommentApi,
   updatePost as updatePostApi,
   deletePost as deletePostApi,
+  deletePostComment as deletePostCommentApi,
 } from "../utils/api";
 import { toastApiError } from "../utils/toast";
 import { useAuth } from "./AuthContext";
@@ -94,6 +95,19 @@ export const PostProvider = ({ children }) => {
     }
   };
 
+  const removeComment = async (postId, commentId) => {
+    try {
+      const body = await deletePostCommentApi(postId, commentId);
+      setPosts((prev) =>
+        prev.map((post) => (post._id === postId && body.data ? body.data : post)),
+      );
+      return { success: true };
+    } catch (err) {
+      toastApiError(err, "Failed to remove comment.");
+      return { success: false };
+    }
+  };
+
   const updatePost = async (id, payload) => {
     try {
       const body = await updatePostApi(id, payload);
@@ -129,9 +143,11 @@ export const PostProvider = ({ children }) => {
         posts,
         loading,
         submitting,
+        loadPosts,
         addPost,
         likePost,
         addComment,
+        removeComment,
         updatePost,
         deletePost,
       }}

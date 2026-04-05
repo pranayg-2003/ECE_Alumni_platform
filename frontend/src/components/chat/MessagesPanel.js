@@ -84,7 +84,7 @@ const MessagesPanel = () => {
       />
 
       <aside
-        className="font-apple fixed right-0 top-14 z-[70] flex h-[calc(100dvh-3.5rem)] w-full max-w-[420px] flex-col overflow-hidden rounded-tl-[28px] border-l border-black/[0.08] bg-[#f5f5f7] shadow-[0_0_0_1px_rgba(0,0,0,0.04),-24px_0_80px_rgba(0,0,0,0.12)] sm:rounded-tl-[32px]"
+        className="font-apple fixed right-0 top-14 z-[70] flex h-[calc(100dvh-3.5rem)] w-full max-w-[420px] flex-col overflow-hidden rounded-none border-l border-black/[0.08] bg-[#f5f5f7] shadow-[0_0_0_1px_rgba(0,0,0,0.04),-24px_0_80px_rgba(0,0,0,0.12)]"
         role="dialog"
         aria-modal="true"
         aria-labelledby="messages-panel-title"
@@ -108,7 +108,7 @@ const MessagesPanel = () => {
             <button
               type="button"
               onClick={handleClosePanel}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-xl leading-none text-white transition hover:bg-white/20"
+              className="flex h-10 w-10 items-center justify-center rounded-none bg-white/10 text-xl leading-none text-white transition hover:bg-white/20"
               aria-label="Close"
             >
               ×

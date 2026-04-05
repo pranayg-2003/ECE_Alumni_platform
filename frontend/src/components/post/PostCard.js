@@ -114,7 +114,7 @@ const PostMedia = ({ post }) => {
 };
 
 const PostCard = ({ post }) => {
-  const { likePost, addComment, updatePost, deletePost } = usePost();
+  const { likePost, addComment, removeComment, updatePost, deletePost } = usePost();
   const { user } = useAuth();
   const [comment, setComment] = useState("");
   const [commentsOpen, setCommentsOpen] = useState(false);
@@ -134,6 +134,11 @@ const PostCard = ({ post }) => {
     !!user &&
     (user.role === "admin" ||
       (!!post.author?._id && post.author._id.toString() === user.id.toString()));
+
+  const isAdmin = user?.role === "admin";
+
+  const canRemoveComment = (c) =>
+    isAdmin || (c.user?._id && String(c.user._id) === String(user?.id));
 
   const startEdit = () => {
     setEditContent(post.content || "");
@@ -177,15 +182,27 @@ const PostCard = ({ post }) => {
             </div>
           </div>
 
-          {canEdit && !isEditing && (
-            <button
-              type="button"
-              onClick={startEdit}
-              className={`shrink-0 rounded-full border border-slate-200 px-4 py-2 text-[13px] font-semibold text-slate-600 transition hover:bg-slate-50 ${accent.text}`}
-            >
-              Edit
-            </button>
-          )}
+          <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+            {isAdmin && !isEditing && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting}
+                className="rounded-full border border-red-200 bg-red-50 px-4 py-2 text-[13px] font-semibold text-red-700 transition hover:bg-red-100 disabled:opacity-50"
+              >
+                {deleting ? "…" : "Remove post"}
+              </button>
+            )}
+            {canEdit && !isEditing && (
+              <button
+                type="button"
+                onClick={startEdit}
+                className={`rounded-full border border-slate-200 px-4 py-2 text-[13px] font-semibold text-slate-600 transition hover:bg-slate-50 ${accent.text}`}
+              >
+                Edit
+              </button>
+            )}
+          </div>
         </div>
 
         {!isEditing ? (
@@ -289,10 +306,27 @@ const PostCard = ({ post }) => {
                 <li className="text-[14px] text-slate-400">No comments yet.</li>
               ) : (
                 (post.comments || []).map((c) => (
-                  <li key={c._id} className="text-[15px] text-slate-700">
-                    <span className="font-semibold text-slate-900">{c.user?.name || "User"}</span>
-                    <span className="text-slate-400"> · </span>
-                    {c.text}
+                  <li
+                    key={c._id}
+                    className="flex flex-wrap items-start justify-between gap-2 rounded-xl bg-slate-50/80 px-3 py-2 text-[15px] text-slate-700"
+                  >
+                    <span className="min-w-0">
+                      <span className="font-semibold text-slate-900">{c.user?.name || "User"}</span>
+                      <span className="text-slate-400"> · </span>
+                      {c.text}
+                    </span>
+                    {canRemoveComment(c) && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!window.confirm("Remove this comment?")) return;
+                          removeComment(post._id, c._id);
+                        }}
+                        className="shrink-0 text-[12px] font-semibold text-red-600 hover:underline"
+                      >
+                        Remove
+                      </button>
+                    )}
                   </li>
                 ))
               )}

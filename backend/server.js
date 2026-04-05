@@ -137,23 +137,33 @@ io.on("connection", (socket) => {
   // Handle real-time message sending
   socket.on("send_message", (data) => {
     try {
-      const { senderId, receiverId, message } = data;
+      const { senderId, receiverId, message, attachments, linkUrl, _id, createdAt } = data || {};
 
-      if (!senderId || !receiverId || !message) {
+      const text = message != null ? String(message).trim() : "";
+      const att = Array.isArray(attachments) ? attachments : [];
+      const link = linkUrl != null ? String(linkUrl).trim() : "";
+      const hasBody = text.length > 0 || att.length > 0 || link.length > 0;
+
+      if (!senderId || !receiverId || !hasBody) {
         socket.emit("message_error", {
           error: "Missing required fields",
         });
         return;
       }
 
-      const receiverSocketId = activeUsers.get(receiverId);
+      const receiverSocketId = activeUsers.get(String(receiverId));
 
       // If receiver is online, send message in real-time
       if (receiverSocketId) {
         io.to(receiverSocketId).emit("receive_message", {
+          _id,
           senderId,
-          message,
-          timestamp: new Date(),
+          receiverId,
+          message: text,
+          attachments: att,
+          linkUrl: link,
+          createdAt: createdAt || new Date(),
+          timestamp: createdAt || new Date(),
         });
         console.log(`💬 Real-time message: ${senderId} → ${receiverId}`);
       } else {

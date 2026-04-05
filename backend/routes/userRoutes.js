@@ -80,16 +80,12 @@ router.post("/block-student", protect, authorize("alumni"), blockStudent);
 router.delete("/block-student/:studentId", protect, authorize("alumni"), unblockStudent);
 router.get("/blocked-students", protect, authorize("alumni"), listBlockedStudents);
 
+// Admin-only static paths MUST be registered before /:id or "all" is treated as an ObjectId.
+router.get("/all", protect, authorize("admin"), getAllUsers);
+router.get("/stats", protect, authorize("admin"), getPlatformStats);
+
 // GET /api/users/:id — Get single alumni profile
 // Accessible by: all logged-in users
 router.get("/:id", protect, getAlumniProfile);
-
-// GET /api/users/all — Get all users
-// Accessible by: admin only
-router.get("/all", protect, authorize("admin"), getAllUsers);
-
-// GET /api/users/stats — Get platform statistics
-// Accessible by: admin only
-router.get("/stats", protect, authorize("admin"), getPlatformStats);
 
 module.exports = router;

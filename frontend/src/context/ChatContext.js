@@ -127,20 +127,34 @@ export const ChatProvider = ({ children }) => {
     if (!socket) return;
 
     const handleReceiveMessage = async (data) => {
-      const { senderId, message, timestamp } = data;
+      const {
+        senderId,
+        receiverId,
+        message,
+        timestamp,
+        attachments,
+        linkUrl,
+        _id,
+        createdAt,
+      } = data;
 
-      // Only add message if it's part of the active chat
       if (activeChat && String(activeChat._id) === String(senderId)) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            _id: Math.random(),
-            senderId,
-            message,
-            createdAt: timestamp,
-            isRead: false,
-          },
-        ]);
+        setMessages((prev) => {
+          if (_id && prev.some((m) => String(m._id) === String(_id))) return prev;
+          return [
+            ...prev,
+            {
+              _id: _id || Math.random(),
+              senderId,
+              receiverId,
+              message: message || "",
+              attachments: Array.isArray(attachments) ? attachments : [],
+              linkUrl: linkUrl || "",
+              createdAt: createdAt || timestamp,
+              isRead: false,
+            },
+          ];
+        });
       }
     };
 
@@ -172,41 +186,47 @@ export const ChatProvider = ({ children }) => {
     loadMessages();
   }, [activeChat, user]);
 
-  // Send a message
+  // Send a message (text, optional attachments from upload, optional link)
   const sendMessage = useCallback(
-    async (receiverId, messageText) => {
+    async (receiverId, messageText, extras = {}) => {
       if (!socket || !user) return;
 
-      const data = {
-        senderId: user.id,
-        receiverId,
-        message: messageText,
-      };
+      const { attachments = [], linkUrl: extraLink = "" } = extras;
+      const text = (messageText || "").trim();
+      const link = (extraLink || "").trim();
 
-      // Add to local state immediately for optimistic UI
-      setMessages((prev) => [
-        ...prev,
-        {
-          _id: Math.random(),
+      if (!text && (!attachments || attachments.length === 0) && !link) return;
+
+      try {
+        const response = await api.post("/chat/messages", {
+          receiverId,
+          message: text,
+          attachments,
+          linkUrl: link,
+        });
+
+        if (!response.data?.success || !response.data.data) {
+          throw new Error(response.data?.message || "Failed to save message.");
+        }
+
+        const saved = response.data.data;
+
+        setMessages((prev) => {
+          if (prev.some((m) => String(m._id) === String(saved._id))) return prev;
+          return [...prev, saved];
+        });
+
+        socket.emit("send_message", {
+          _id: saved._id,
           senderId: user.id,
           receiverId,
-          message: messageText,
-          createdAt: new Date(),
-          isRead: false,
-        },
-      ]);
-
-      // Emit via socket (real-time)
-      socket.emit("send_message", data);
-
-      // Save to database
-      try {
-        await api.post("/chat/messages", {
-          receiverId,
-          message: messageText,
+          message: saved.message || "",
+          attachments: saved.attachments || [],
+          linkUrl: saved.linkUrl || "",
+          createdAt: saved.createdAt,
         });
       } catch (error) {
-        toastApiError(error, "Message could not be saved.");
+        toastApiError(error, "Message could not be sent.");
       }
     },
     [socket, user],

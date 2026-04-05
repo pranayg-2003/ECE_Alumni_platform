@@ -19,11 +19,32 @@ const ChatMessageSchema = new mongoose.Schema(
       required: true,
     },
 
-    // The actual message content
+    // Text (optional if attachments or link are present)
     message: {
       type: String,
-      required: [true, "Please provide a message"],
+      default: "",
       trim: true,
+      maxlength: 4000,
+    },
+
+    /** Shared files (images + documents from upload) */
+    attachments: {
+      type: [
+        {
+          url: { type: String, required: true, trim: true },
+          kind: { type: String, enum: ["image", "file"], default: "file" },
+          name: { type: String, default: "", trim: true, maxlength: 240 },
+        },
+      ],
+      default: [],
+    },
+
+    /** Optional highlighted URL (https only) */
+    linkUrl: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 2000,
     },
 
     // To track if message has been read by receiver
