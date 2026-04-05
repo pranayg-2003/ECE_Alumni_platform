@@ -4,7 +4,7 @@
 import React, { createContext, useState, useCallback, useEffect } from "react";
 import { io } from "socket.io-client";
 import { useAuth } from "./AuthContext";
-import api from "../utils/api";
+import api, { socketBaseURL } from "../utils/api";
 import { toastApiError } from "../utils/toast";
 
 export const ChatContext = createContext();
@@ -59,15 +59,12 @@ export const ChatProvider = ({ children }) => {
   useEffect(() => {
     if (!user) return;
 
-    const newSocket = io(
-      process.env.REACT_APP_API_URL || "http://localhost:5000",
-      {
-        reconnection: true,
-        reconnectionDelay: 1000,
-        reconnectionDelayMax: 5000,
-        reconnectionAttempts: 5,
-      },
-    );
+    const newSocket = io(socketBaseURL || "http://localhost:5000", {
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: 5,
+    });
 
     newSocket.on("connect", () => {
       console.log("✅ Connected to server");

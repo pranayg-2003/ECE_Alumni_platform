@@ -17,6 +17,26 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 // Connect to MongoDB
 connectDB();
 
+/**
+ * Browser origins allowed for REST + Socket.io (comma-separated in CLIENT_ORIGIN).
+ * No trailing slashes. Example: https://app.vercel.app,http://localhost:3000
+ */
+function parseClientOrigins() {
+  const raw = process.env.CLIENT_ORIGIN;
+  if (raw && String(raw).trim()) {
+    return String(raw)
+      .split(",")
+      .map((o) => o.trim().replace(/\/$/, ""))
+      .filter(Boolean);
+  }
+  return [
+    "http://localhost:3000",
+    "https://ece-alumni-platform-1j6i5lxw1-pranay-gupta-s-projects.vercel.app",
+  ];
+}
+
+const allowedOrigins = parseClientOrigins();
+
 // Initialize Express app
 const app = express();
 
@@ -26,7 +46,7 @@ const server = http.createServer(app);
 // Initialize Socket.io with CORS settings
 const io = new Server(server, {
   cors: {
-    origin: "https://ece-alumni-platform-1j6i5lxw1-pranay-gupta-s-projects.vercel.app/-platform-1j6i5lxw1-pranay-gupta-s-projects.vercel.app",
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -36,10 +56,10 @@ const io = new Server(server, {
 // MIDDLEWARE
 // ============================================
 
-// Enable CORS so our React frontend (on port 3000) can talk to this server
+// Enable CORS so the React app (local or Vercel) can call this API
 app.use(
   cors({
-    origin: "https://ece-alumni-platform-1j6i5lxw1-pranay-gupta-s-projects.vercel.app/", // React dev server
+    origin: allowedOrigins,
     credentials: true,
   }),
 );

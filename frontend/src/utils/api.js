@@ -5,9 +5,17 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 
+/** REST base, e.g. https://api.example.com/api — set REACT_APP_API_URL on Vercel / production build */
+const apiBaseURL = (
+  process.env.REACT_APP_API_URL || "http://localhost:5000/api"
+).replace(/\/$/, "");
+
+/** Socket.io origin (same host as API, without /api) */
+export const socketBaseURL = apiBaseURL.replace(/\/api$/i, "");
+
 // Create Axios instance with default config
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // Backend server URL
+  baseURL: apiBaseURL,
   headers: {
     "Content-Type": "application/json",
   },
