@@ -22,6 +22,7 @@ const DEFAULT_CLIENT_ORIGINS = [
   "http://localhost:3000",
   "https://ece-alumni-platform.vercel.app",
   "https://ece-alumni-platform-1j6i5lxw1-pranay-gupta-s-projects.vercel.app",
+  "https://ece-alumni-platform-6aei1bzlr-pranay-gupta-s-projects.vercel.app"
 ];
 
 /**
