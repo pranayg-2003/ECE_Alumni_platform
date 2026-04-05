@@ -507,6 +507,13 @@ const forgotPassword = async (req, res) => {
         return genericOk();
       }
       console.error("forgot-password mail error:", mailErr);
+      if (mailErr.code === "EMAIL_SEND_TIMEOUT" || msg === "EMAIL_SEND_TIMEOUT") {
+        return res.status(503).json({
+          success: false,
+          message:
+            "Email delivery timed out. Check that SMTP_USER and SMTP_PASS (Gmail App Password) are set on the server, then try again.",
+        });
+      }
       const isAuthFail =
         mailErr.code === "EAUTH" ||
         mailErr.responseCode === 535 ||

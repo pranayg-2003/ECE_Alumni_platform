@@ -267,6 +267,16 @@ server.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📦 Environment: ${process.env.NODE_ENV || "development"}`);
   console.log(`🔌 WebSocket (Socket.io) enabled`);
+  try {
+    const { isSmtpConfigured } = require("./utils/email");
+    if (!isSmtpConfigured()) {
+      console.warn(
+        "⚠️  SMTP_USER / SMTP_PASS not set — forgot-password codes and registration welcome emails will not be sent. Add them in Render → Environment (Gmail App Password).",
+      );
+    }
+  } catch {
+    /* ignore */
+  }
 });
 
 module.exports = { app, io };

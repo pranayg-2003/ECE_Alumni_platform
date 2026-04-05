@@ -6,18 +6,38 @@ const smtpPass = () => String(process.env.SMTP_PASS || "").replace(/\s+/g, "");
 
 const isSmtpConfigured = () => !!(smtpUser() && smtpPass());
 
+/** Avoid hanging past Render/proxy limits (502 + no CORS if the process never responds). */
+const SEND_MAIL_TIMEOUT_MS = Number(process.env.SMTP_SEND_TIMEOUT_MS) || 25_000;
+
 let transporter;
+
+const withTimeout = (promise, ms, code) => {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      const err = new Error(code);
+      err.code = code;
+      reject(err);
+    }, ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+};
 
 const getTransporter = () => {
   if (!isSmtpConfigured()) return null;
   if (!transporter) {
     const user = smtpUser();
     const pass = smtpPass();
+    // Port 587 + STARTTLS is often more reliable on PaaS (Render, etc.) than 465.
     transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
+      port: 587,
+      secure: false,
+      requireTLS: true,
       auth: { user, pass },
+      connectionTimeout: 15_000,
+      greetingTimeout: 15_000,
+      socketTimeout: 20_000,
     });
   }
   return transporter;
@@ -47,12 +67,16 @@ It expires in 10 minutes. If you didn't request this, you can ignore this email.
   }
 
   try {
-    await transport.sendMail({
-      from: `"${appName}" <${from}>`,
-      to: toEmail,
-      subject,
-      text,
-    });
+    await withTimeout(
+      transport.sendMail({
+        from: `"${appName}" <${from}>`,
+        to: toEmail,
+        subject,
+        text,
+      }),
+      SEND_MAIL_TIMEOUT_MS,
+      "EMAIL_SEND_TIMEOUT",
+    );
   } catch (err) {
     const code = err.responseCode || err.code;
     console.error(
@@ -116,13 +140,22 @@ Sign in anytime to connect, learn, and grow with the community.
     return;
   }
 
-  await transport.sendMail({
-    from: `"${appName}" <${from}>`,
-    to: toEmail,
-    subject,
-    text,
-    html,
-  });
+  try {
+    await withTimeout(
+      transport.sendMail({
+        from: `"${appName}" <${from}>`,
+        to: toEmail,
+        subject,
+        text,
+        html,
+      }),
+      SEND_MAIL_TIMEOUT_MS,
+      "EMAIL_SEND_TIMEOUT",
+    );
+  } catch (err) {
+    console.error("[email] welcome sendMail failed:", err.code || err.message);
+    throw err;
+  }
 }
 
 module.exports = {
