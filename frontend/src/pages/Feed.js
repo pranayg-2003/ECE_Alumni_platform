@@ -13,8 +13,8 @@ const Feed = () => {
       <Navbar />
 
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 p-4 lg:grid-cols-12 lg:gap-8 lg:p-6">
-        <div className="lg:col-span-3">
-          <ProfileSection />
+        <div className="min-w-0 lg:col-span-3">
+          <ProfileSection variant="feed" />
         </div>
 
         <div className="space-y-4 lg:col-span-6">

@@ -161,7 +161,7 @@ const PublicHome = () => {
   }
   if (user) {
     if (user.role === "admin") {
-      return <Navigate to="/dashboard/admin" replace />;
+      return <Navigate to="/admin" replace />;
     }
     return <Navigate to="/feed" replace />;
   }
@@ -272,13 +272,14 @@ function App() {
               />
 
               <Route
-                path="/dashboard/admin"
+                path="/admin"
                 element={
                   <ProtectedRoute allowedRoles={["admin"]}>
                     <AdminDashboard />
                   </ProtectedRoute>
                 }
               />
+              <Route path="/dashboard/admin" element={<Navigate to="/admin" replace />} />
 
               {/* CHAT */}
               <Route

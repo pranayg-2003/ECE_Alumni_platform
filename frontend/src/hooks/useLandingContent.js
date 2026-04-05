@@ -26,6 +26,11 @@ const FALLBACK = {
   timeline: [],
   closingTitle: "Join the line that keeps ECE human.",
   closingSubtitle: "Create an account to explore alumni, the feed, and conversations.",
+  heroImageUrl: "",
+  heroVideoUrl: "",
+  heroYoutubeUrl: "",
+  departmentImageUrl: "",
+  gallery: [],
 };
 
 export function useLandingContent() {

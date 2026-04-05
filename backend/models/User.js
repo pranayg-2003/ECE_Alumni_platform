@@ -136,6 +136,19 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
+    /** Set when admin deactivates the account (shown only in admin tooling) */
+    blockedReason: {
+      type: String,
+      default: "",
+      maxlength: 500,
+      trim: true,
+    },
+
+    blockedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     // Automatically adds createdAt and updatedAt fields

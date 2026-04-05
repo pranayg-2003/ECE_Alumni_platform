@@ -11,6 +11,7 @@ import {
   toggleLikePost as toggleLikePostApi,
   addPostComment as addPostCommentApi,
   updatePost as updatePostApi,
+  deletePost as deletePostApi,
 } from "../utils/api";
 import { toastApiError } from "../utils/toast";
 import { useAuth } from "./AuthContext";
@@ -70,9 +71,11 @@ export const PostProvider = ({ children }) => {
   const likePost = async (id) => {
     try {
       const body = await toggleLikePostApi(id);
-      setPosts((prev) =>
-        prev.map((post) => (post._id === id ? body.data : post)),
-      );
+      setPosts((prev) => {
+        const idx = prev.findIndex((p) => p._id === id);
+        if (idx === -1 && body.data) return [body.data, ...prev];
+        return prev.map((post) => (post._id === id ? body.data : post));
+      });
     } catch (err) {
       toastApiError(err, "Failed to update like.");
     }
@@ -81,9 +84,11 @@ export const PostProvider = ({ children }) => {
   const addComment = async (id, text) => {
     try {
       const body = await addPostCommentApi(id, text);
-      setPosts((prev) =>
-        prev.map((post) => (post._id === id ? body.data : post)),
-      );
+      setPosts((prev) => {
+        const idx = prev.findIndex((p) => p._id === id);
+        if (idx === -1 && body.data) return [body.data, ...prev];
+        return prev.map((post) => (post._id === id ? body.data : post));
+      });
     } catch (err) {
       toastApiError(err, "Failed to add comment.");
     }
@@ -92,13 +97,27 @@ export const PostProvider = ({ children }) => {
   const updatePost = async (id, payload) => {
     try {
       const body = await updatePostApi(id, payload);
-      setPosts((prev) =>
-        prev.map((p) => (p._id === id ? body.data : p)),
-      );
+      setPosts((prev) => {
+        const idx = prev.findIndex((p) => p._id === id);
+        if (idx === -1 && body.data) return [body.data, ...prev];
+        return prev.map((p) => (p._id === id ? body.data : p));
+      });
       return { success: body.success !== false };
     } catch (err) {
       const message =
         err.response?.data?.message || "Failed to update post.";
+      toastApiError(err, message);
+      return { success: false, message };
+    }
+  };
+
+  const deletePost = async (id) => {
+    try {
+      await deletePostApi(id);
+      setPosts((prev) => prev.filter((p) => p._id !== id));
+      return { success: true };
+    } catch (err) {
+      const message = err.response?.data?.message || "Failed to delete post.";
       toastApiError(err, message);
       return { success: false, message };
     }
@@ -114,6 +133,7 @@ export const PostProvider = ({ children }) => {
         likePost,
         addComment,
         updatePost,
+        deletePost,
       }}
     >
       {children}

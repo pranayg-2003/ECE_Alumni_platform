@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useChat } from "../../context/ChatContext";
 import Navbar from "../../components/layout/Navbar";
-import api from "../../utils/api";
+import api, { blockStudentApi, fetchBlockedStudents, unblockStudentApi } from "../../utils/api";
 import { toastApiError } from "../../utils/toast";
+import toast from "react-hot-toast";
 
 const StatPill = ({ label, value }) => (
   <div className="apple-glass-card px-5 py-4">
@@ -19,6 +20,7 @@ const RequestCard = ({
   onReject,
   loading,
   onOpenMessages,
+  onBlockStudent,
 }) => {
   const student = request.studentId;
   const status = request.status;
@@ -79,17 +81,37 @@ const RequestCard = ({
               >
                 {loading === "reject" ? "…" : "Decline"}
               </button>
+              {onBlockStudent && student?._id && (
+                <button
+                  type="button"
+                  onClick={() => onBlockStudent(student._id, student.name)}
+                  className="rounded-full border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-800 transition hover:bg-red-100"
+                >
+                  Block student
+                </button>
+              )}
             </div>
           )}
 
           {status === "accepted" && (
-            <button
-              type="button"
-              onClick={onOpenMessages}
-              className="mt-4 rounded-full bg-[#0071e3] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#0077ed]"
-            >
-              Open messages
-            </button>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => onOpenMessages?.(student)}
+                className="rounded-full bg-[#0071e3] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#0077ed]"
+              >
+                Open messages
+              </button>
+              {onBlockStudent && student?._id && (
+                <button
+                  type="button"
+                  onClick={() => onBlockStudent(student._id, student.name)}
+                  className="rounded-full border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-800 transition hover:bg-red-100"
+                >
+                  Block student
+                </button>
+              )}
+            </div>
           )}
 
           {status === "rejected" && (
@@ -104,18 +126,16 @@ const RequestCard = ({
 const AlumniDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { openMessagesPanel } = useChat();
+  const { openMessagesPanel, openMessagesWithUser } = useChat();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(null);
   const [fetchingRequests, setFetchingRequests] = useState(true);
+  const [blockModal, setBlockModal] = useState(null);
+  const [blockReason, setBlockReason] = useState("");
+  const [blockSaving, setBlockSaving] = useState(false);
+  const [blockedRows, setBlockedRows] = useState([]);
 
-  useEffect(() => {
-    fetchRequests();
-    const interval = setInterval(fetchRequests, 15000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchRequests = async () => {
+  const fetchRequests = useCallback(async () => {
     try {
       const res = await api.get("/users/incoming-requests");
       setRequests(res.data.data || []);
@@ -124,7 +144,23 @@ const AlumniDashboard = () => {
     } finally {
       setFetchingRequests(false);
     }
-  };
+  }, []);
+
+  const loadBlocked = useCallback(async () => {
+    try {
+      const res = await fetchBlockedStudents();
+      if (res.success) setBlockedRows(res.data || []);
+    } catch {
+      /* optional */
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRequests();
+    loadBlocked();
+    const interval = setInterval(fetchRequests, 15000);
+    return () => clearInterval(interval);
+  }, [fetchRequests, loadBlocked]);
 
   const handleAccept = async (id) => {
     setLoading("accept");
@@ -147,6 +183,40 @@ const AlumniDashboard = () => {
       toastApiError(err, "Could not decline request.");
     } finally {
       setLoading(null);
+    }
+  };
+
+  const submitBlock = async () => {
+    if (!blockModal?.id) return;
+    if (blockReason.trim().length < 5) {
+      toast.error("Please add a short reason (at least 5 characters).");
+      return;
+    }
+    setBlockSaving(true);
+    try {
+      await blockStudentApi(blockModal.id, blockReason.trim());
+      toast.success("Student blocked. They can’t message or request you again.");
+      setBlockModal(null);
+      setBlockReason("");
+      fetchRequests();
+      loadBlocked();
+    } catch (err) {
+      toastApiError(err, "Could not block student.");
+    } finally {
+      setBlockSaving(false);
+    }
+  };
+
+  const handleUnblock = async (studentId) => {
+    const id =
+      studentId && typeof studentId === "object" && studentId._id ? studentId._id : studentId;
+    if (!id) return;
+    try {
+      await unblockStudentApi(String(id));
+      toast.success("Student unblocked.");
+      loadBlocked();
+    } catch (err) {
+      toastApiError(err, "Could not unblock.");
     }
   };
 
@@ -296,7 +366,8 @@ const AlumniDashboard = () => {
                       onAccept={handleAccept}
                       onReject={handleReject}
                       loading={loading}
-                      onOpenMessages={openMessagesPanel}
+                      onOpenMessages={openMessagesWithUser}
+                      onBlockStudent={(id, name) => setBlockModal({ id, name })}
                     />
                   ))}
                 </div>
@@ -322,7 +393,8 @@ const AlumniDashboard = () => {
                       onAccept={handleAccept}
                       onReject={handleReject}
                       loading={loading}
-                      onOpenMessages={openMessagesPanel}
+                      onOpenMessages={openMessagesWithUser}
+                      onBlockStudent={(id, name) => setBlockModal({ id, name })}
                     />
                   ))}
                 </div>
@@ -342,7 +414,8 @@ const AlumniDashboard = () => {
                       onAccept={handleAccept}
                       onReject={handleReject}
                       loading={loading}
-                      onOpenMessages={openMessagesPanel}
+                      onOpenMessages={openMessagesWithUser}
+                      onBlockStudent={(id, name) => setBlockModal({ id, name })}
                     />
                   ))}
                 </div>
@@ -351,26 +424,110 @@ const AlumniDashboard = () => {
           </main>
 
           <aside className="lg:col-span-3">
-            <div className="apple-glass-card sticky top-24 p-5">
-              <h3 className="font-semibold text-[#1d1d1f]">At a glance</h3>
-              <dl className="mt-4 space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <dt className="text-neutral-500">Pending</dt>
-                  <dd className="font-semibold text-[#1d1d1f]">{pending.length}</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-neutral-500">Mentees</dt>
-                  <dd className="font-semibold text-[#1d1d1f]">{accepted.length}</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-neutral-500">Declined</dt>
-                  <dd className="font-semibold text-[#1d1d1f]">{rejected.length}</dd>
-                </div>
-              </dl>
+            <div className="sticky top-24 space-y-4">
+              <div className="apple-glass-card p-5">
+                <h3 className="font-semibold text-[#1d1d1f]">At a glance</h3>
+                <dl className="mt-4 space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <dt className="text-neutral-500">Pending</dt>
+                    <dd className="font-semibold text-[#1d1d1f]">{pending.length}</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-neutral-500">Mentees</dt>
+                    <dd className="font-semibold text-[#1d1d1f]">{accepted.length}</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-neutral-500">Declined</dt>
+                    <dd className="font-semibold text-[#1d1d1f]">{rejected.length}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div className="apple-glass-card p-5">
+                <h3 className="font-semibold text-[#1d1d1f]">Blocked students</h3>
+                <p className="mt-1 text-[12px] leading-snug text-neutral-500">
+                  Blocked students can’t send requests or message you. Pending requests are declined automatically.
+                </p>
+                {blockedRows.length === 0 ? (
+                  <p className="mt-3 text-[13px] text-neutral-400">No blocks yet.</p>
+                ) : (
+                  <ul className="mt-3 space-y-2">
+                    {blockedRows.map((row) => {
+                      const stu = row.student;
+                      const sid = stu?._id || stu;
+                      if (!sid) return null;
+                      return (
+                        <li
+                          key={String(row._id)}
+                          className="flex items-start justify-between gap-2 rounded-xl border border-black/[0.06] bg-[#f5f5f7]/50 px-3 py-2"
+                        >
+                          <div className="min-w-0">
+                            <p className="truncate text-[13px] font-medium text-[#1d1d1f]">{stu?.name || "Student"}</p>
+                            <p className="text-[11px] text-neutral-500 line-clamp-2">{row.reason}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleUnblock(sid)}
+                            className="shrink-0 rounded-full border border-black/[0.1] bg-white px-2.5 py-1 text-[11px] font-semibold text-[#0071e3]"
+                          >
+                            Unblock
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
             </div>
           </aside>
         </div>
       </div>
+
+      {blockModal && (
+        <div
+          className="fixed inset-0 z-[80] flex items-end justify-center bg-black/40 p-4 sm:items-center"
+          role="dialog"
+          aria-modal
+          aria-labelledby="block-modal-title"
+        >
+          <div className="w-full max-w-md rounded-[24px] bg-white p-6 shadow-2xl">
+            <h2 id="block-modal-title" className="text-lg font-semibold text-[#1d1d1f]">
+              Block {blockModal.name || "this student"}?
+            </h2>
+            <p className="mt-2 text-[14px] leading-relaxed text-neutral-600">
+              They won’t be able to send mentorship requests or chat with you. Please give a brief reason (for your
+              records).
+            </p>
+            <textarea
+              value={blockReason}
+              onChange={(e) => setBlockReason(e.target.value)}
+              rows={4}
+              placeholder="Reason for blocking (min. 5 characters)"
+              className="mt-4 w-full resize-y rounded-2xl border border-black/[0.08] bg-[#f5f5f7] px-4 py-3 text-[15px] outline-none focus:ring-2 focus:ring-[#0071e3]/25"
+            />
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setBlockModal(null);
+                  setBlockReason("");
+                }}
+                className="rounded-full px-5 py-2.5 text-[14px] font-medium text-neutral-600 hover:bg-black/[0.04]"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={submitBlock}
+                disabled={blockSaving}
+                className="rounded-full bg-red-600 px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                {blockSaving ? "Blocking…" : "Block"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -216,40 +216,17 @@
 
 // export default StudentDashboard;
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useChat } from "../../context/ChatContext";
 import Navbar from "../../components/layout/Navbar";
 import api from "../../utils/api";
 import { toastApiError } from "../../utils/toast";
 
-/* ================= SIDEBAR ================= */
-const Sidebar = ({ user }) => (
-  <div className="apple-glass-card p-5">
-    <div className="text-center">
-      <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-[#1d1d1f] text-lg font-semibold text-white">
-        {user?.name?.charAt(0)?.toUpperCase() || "S"}
-      </div>
-      <h2 className="text-[16px] font-semibold text-[#1d1d1f]">{user?.name}</h2>
-      <p className="mt-1 text-[13px] text-neutral-500">
-        {user?.branch} · Year {user?.year}
-      </p>
-    </div>
-    <div className="mt-5 space-y-1 border-t border-black/[0.06] pt-4 text-[14px] text-neutral-600">
-      <p className="rounded-xl px-3 py-2 hover:bg-[#f5f5f7]">Community feed</p>
-      <p className="rounded-xl px-3 py-2 hover:bg-[#f5f5f7]">Mentor network</p>
-      <p className="rounded-xl px-3 py-2 hover:bg-[#f5f5f7]">Messages</p>
-    </div>
-  </div>
-);
-
-/* ================= RIGHT PANEL ================= */
-const RightPanel = () => (
-  <div className="apple-glass-card p-5">
-    <div className="h-0.5 w-8 rounded-full bg-[#0071e3]" />
-    <h3 className="mt-4 text-[16px] font-semibold text-[#1d1d1f]">Tips</h3>
-    <p className="mt-2 text-[14px] leading-relaxed text-neutral-600">
-      Connect with alumni who align with your goals and interests.
-    </p>
+const StatPill = ({ label, value }) => (
+  <div className="apple-glass-card px-5 py-4">
+    <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-neutral-500">{label}</p>
+    <p className="mt-1 text-3xl font-semibold tabular-nums tracking-tight text-[#1d1d1f]">{value}</p>
   </div>
 );
 
@@ -296,39 +273,44 @@ const AlumniCard = ({ alumni, requestStatus, onSendRequest, loading }) => {
     );
   };
 
+  const subline = [alumni.jobTitle, alumni.company].filter(Boolean).join(" · ") || "Alumni";
+
   return (
-    <div className="apple-glass-card p-5 transition hover:shadow-lg">
-      <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#1d1d1f] text-[15px] font-semibold text-white">
-          {alumni.name.charAt(0)}
+    <article className="apple-glass-card group overflow-hidden transition hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)]">
+      <div className="h-2 bg-gradient-to-r from-[#1d1d1f] via-[#2d2d2f] to-[#0071e3]" aria-hidden />
+      <div className="px-5 pb-5 pt-5">
+        <div className="flex gap-4">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-black/[0.06] bg-[#1d1d1f] text-lg font-semibold text-white shadow-md">
+            {alumni.name.charAt(0)}
+          </div>
+          <div className="min-w-0 flex-1 pt-0.5">
+            <h3 className="text-lg font-semibold leading-snug text-[#1d1d1f]">{alumni.name}</h3>
+            <p className="mt-1 line-clamp-2 text-[14px] leading-snug text-neutral-600">{subline}</p>
+          </div>
         </div>
-        <div className="min-w-0">
-          <h3 className="font-semibold text-[#1d1d1f]">{alumni.name}</h3>
-          <p className="truncate text-[13px] text-neutral-500">{alumni.company}</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {alumni.skills?.slice(0, 5).map((skill) => (
+            <span
+              key={skill}
+              className="rounded-full bg-[#f5f5f7] px-3 py-1 text-[12px] font-medium text-[#1d1d1f] ring-1 ring-black/[0.06]"
+            >
+              {skill}
+            </span>
+          ))}
         </div>
+        {alumni.bio && (
+          <p className="mt-3 line-clamp-3 text-[14px] leading-relaxed text-neutral-600">{alumni.bio}</p>
+        )}
+        {statusAction()}
       </div>
-      <p className="mt-2 text-[14px] text-neutral-600">{alumni.jobTitle}</p>
-      <div className="mt-3 flex flex-wrap gap-2">
-        {alumni.skills?.slice(0, 4).map((skill) => (
-          <span
-            key={skill}
-            className="rounded-full bg-[#f5f5f7] px-2.5 py-1 text-[11px] font-medium text-[#1d1d1f] ring-1 ring-black/[0.06]"
-          >
-            {skill}
-          </span>
-        ))}
-      </div>
-      {alumni.bio && (
-        <p className="mt-3 line-clamp-2 text-[14px] text-neutral-600">{alumni.bio}</p>
-      )}
-      {statusAction()}
-    </div>
+    </article>
   );
 };
 
 /* ================= MAIN DASHBOARD ================= */
 const StudentDashboard = () => {
   const navigate = useNavigate();
+  const { openMessagesPanel } = useChat();
   const { user } = useAuth();
 
   const [alumni, setAlumni] = useState([]);
@@ -385,76 +367,96 @@ const StudentDashboard = () => {
     }
   };
 
+  const acceptedCount = requests.filter((r) => r.status === "accepted").length;
+  const pendingCount = requests.filter((r) => r.status === "pending").length;
+
+  const actionCard =
+    "apple-glass-card min-h-[128px] rounded-[20px] p-6 text-left transition hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] active:scale-[0.99]";
+
   return (
     <div className="dashboard-apple-bg font-apple min-h-screen">
       <Navbar />
 
-      <div className="mx-auto grid max-w-7xl grid-cols-12 gap-6 px-4 py-8">
-        {/* LEFT SIDEBAR */}
-        <div className="col-span-3">
-          <Sidebar user={user} />
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        <header className="auth-hero-apple relative overflow-hidden rounded-[28px] p-8 text-white shadow-[0_24px_80px_rgba(0,0,0,0.35)] md:p-10">
+          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#2997ff]/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-16 left-1/4 h-48 w-48 rounded-full bg-white/[0.06] blur-2xl" />
+          <div className="relative">
+            <p className="text-[13px] font-medium text-white/60">Mentor network</p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight md:text-[34px]">
+              Welcome, {user?.name?.split(" ")[0] || "Student"}
+            </h1>
+            <p className="mt-2 max-w-xl text-[16px] text-white/70">
+              {user?.branch ? `${user.branch}` : "Your program"}
+              {user?.year != null ? ` · Year ${user.year}` : ""}
+              {" · "}
+              Discover alumni and send mentorship requests.
+            </p>
+          </div>
+        </header>
+
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <StatPill label="Connected mentors" value={acceptedCount} />
+          <StatPill label="Requests pending" value={pendingCount} />
+          <StatPill label="Alumni on platform" value={alumni.length} />
         </div>
 
-        {/* MAIN CONTENT */}
-        <div className="col-span-6 space-y-4">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            <button
-              type="button"
-              onClick={() => navigate("/feed")}
-              className="apple-glass-card p-4 text-left transition hover:shadow-lg"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#0071e3]">Feed</p>
-              <p className="mt-1 font-semibold text-[#1d1d1f]">Community</p>
-              <p className="mt-1 text-[12px] text-neutral-500">Posts and discussions</p>
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                document.querySelector('input[placeholder="Search alumni…"]')?.focus()
-              }
-              className="apple-glass-card p-4 text-left transition hover:shadow-lg"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#0071e3]">Discover</p>
-              <p className="mt-1 font-semibold text-[#1d1d1f]">Search mentors</p>
-              <p className="mt-1 text-[12px] text-neutral-500">Use the header search</p>
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate("/chat")}
-              className="apple-glass-card p-4 text-left transition hover:shadow-lg"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#0071e3]">Connect</p>
-              <p className="mt-1 font-semibold text-[#1d1d1f]">Messages</p>
-              <p className="mt-1 text-[12px] text-neutral-500">Chat after a match</p>
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate("/initiatives")}
-              className="apple-glass-card p-4 text-left transition hover:shadow-lg"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#0071e3]">Give back</p>
-              <p className="mt-1 font-semibold text-[#1d1d1f]">Funding &amp; events</p>
-              <p className="mt-1 text-[12px] text-neutral-500">College drives &amp; Meet sessions</p>
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate("/referrals")}
-              className="apple-glass-card p-4 text-left transition hover:shadow-lg lg:col-span-1"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#0071e3]">Referrals</p>
-              <p className="mt-1 font-semibold text-[#1d1d1f]">Seek intros</p>
-              <p className="mt-1 text-[12px] text-neutral-500">Post what you need; alumni browse the board</p>
-            </button>
-          </div>
+        <h2 className="mt-10 text-[13px] font-semibold uppercase tracking-[0.12em] text-neutral-500">Shortcuts</h2>
+        <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <button type="button" onClick={() => navigate("/feed")} className={actionCard}>
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-[#0071e3]">Feed</p>
+            <p className="mt-2 text-[18px] font-semibold text-[#1d1d1f]">Community</p>
+            <p className="mt-1.5 text-[14px] leading-snug text-neutral-600">Posts, updates, and discussions</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => document.querySelector('input[placeholder="Search alumni…"]')?.focus()}
+            className={actionCard}
+          >
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-[#0071e3]">Discover</p>
+            <p className="mt-2 text-[18px] font-semibold text-[#1d1d1f]">Search mentors</p>
+            <p className="mt-1.5 text-[14px] leading-snug text-neutral-600">Use the search bar in the header</p>
+          </button>
+          <button type="button" onClick={() => openMessagesPanel()} className={actionCard}>
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-[#0071e3]">Inbox</p>
+            <p className="mt-2 text-[18px] font-semibold text-[#1d1d1f]">Messages</p>
+            <p className="mt-1.5 text-[14px] leading-snug text-neutral-600">Chat after a mentor accepts</p>
+          </button>
+          <button type="button" onClick={() => navigate("/profile")} className={actionCard}>
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-[#0071e3]">Profile</p>
+            <p className="mt-2 text-[18px] font-semibold text-[#1d1d1f]">Your story</p>
+            <p className="mt-1.5 text-[14px] leading-snug text-neutral-600">Headline, branch, skills, links</p>
+          </button>
+          <button type="button" onClick={() => navigate("/initiatives")} className={actionCard}>
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-[#0071e3]">Initiatives</p>
+            <p className="mt-2 text-[18px] font-semibold text-[#1d1d1f]">Funding &amp; events</p>
+            <p className="mt-1.5 text-[14px] leading-snug text-neutral-600">Support drives and Meet sessions</p>
+          </button>
+          <button type="button" onClick={() => navigate("/referrals")} className={actionCard}>
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-[#0071e3]">Referrals</p>
+            <p className="mt-2 text-[18px] font-semibold text-[#1d1d1f]">Seek intros</p>
+            <p className="mt-1.5 text-[14px] leading-snug text-neutral-600">Post what you need; alumni browse</p>
+          </button>
+        </div>
 
-          <h2 className="pt-2 text-[20px] font-semibold tracking-tight text-[#1d1d1f]">
-            Explore alumni ({alumni.length})
+        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <h2 className="text-[22px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[24px]">
+            Explore alumni
+            <span className="ml-2 text-[17px] font-medium text-neutral-500">({alumni.length})</span>
           </h2>
+          <Link
+            to="/feed"
+            className="text-[14px] font-semibold text-[#0071e3] underline-offset-4 hover:underline"
+          >
+            Back to feed
+          </Link>
+        </div>
 
-          {loadingAlumni ? (
-            <p className="text-[15px] text-neutral-500">Loading…</p>
-          ) : (
-            alumni.map((alumnus) => (
+        {loadingAlumni ? (
+          <p className="mt-6 text-[16px] text-neutral-500">Loading alumni…</p>
+        ) : (
+          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {alumni.map((alumnus) => (
               <AlumniCard
                 key={alumnus._id}
                 alumni={alumnus}
@@ -462,13 +464,17 @@ const StudentDashboard = () => {
                 onSendRequest={handleSendRequest}
                 loading={sendingRequest === alumnus._id}
               />
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {/* RIGHT PANEL */}
-        <div className="col-span-3">
-          <RightPanel />
+        <div className="apple-glass-card mt-10 rounded-[24px] p-6">
+          <div className="h-1 w-10 rounded-full bg-[#0071e3]" />
+          <h3 className="mt-4 text-[18px] font-semibold text-[#1d1d1f]">Tips</h3>
+          <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-neutral-600">
+            Connect with alumni who align with your goals. Personalize your request message when you reach out — it
+            improves response rates.
+          </p>
         </div>
       </div>
     </div>

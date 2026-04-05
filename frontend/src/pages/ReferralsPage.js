@@ -211,6 +211,13 @@ const ReferralsPage = () => {
       name: stu.name,
       profilePicture: stu.profilePicture,
     };
+    const copyPitch = () => {
+      const text = `${row.title}\n\n${row.summary}`;
+      navigator.clipboard
+        .writeText(text)
+        .then(() => toast.success("Copied headline & details"))
+        .catch(() => toast.error("Could not copy"));
+    };
     return (
       <article className="apple-glass-card overflow-hidden transition hover:shadow-lg">
         <div className="border-b border-black/[0.06] bg-[#f5f5f7]/50 px-5 py-4">
@@ -278,36 +285,86 @@ const ReferralsPage = () => {
           <p className="mt-3 text-[12px] text-neutral-400">
             Posted {new Date(row.createdAt).toLocaleDateString(undefined, { dateStyle: "medium" })}
           </p>
-          {isAlumni && row.status === "open" && (
+          <div className="mt-4 flex flex-wrap gap-2">
             <button
               type="button"
-              onClick={() => openMessagesWithUser(peer)}
-              className="mt-4 rounded-full bg-[#0071e3] px-5 py-2.5 text-[14px] font-medium text-white shadow-sm transition hover:bg-[#0077ed]"
+              onClick={copyPitch}
+              className="rounded-full border border-black/[0.1] bg-white px-4 py-2.5 text-[14px] font-medium text-[#1d1d1f] shadow-sm transition hover:bg-[#f5f5f7]"
             >
-              Message {stu.name?.split(" ")[0] || "student"}
+              Copy pitch
             </button>
-          )}
+            {isAlumni && row.status === "open" && (
+              <button
+                type="button"
+                onClick={() => openMessagesWithUser(peer)}
+                className="rounded-full bg-[#0071e3] px-5 py-2.5 text-[14px] font-medium text-white shadow-sm transition hover:bg-[#0077ed]"
+              >
+                Message {stu.name?.split(" ")[0] || "student"}
+              </button>
+            )}
+          </div>
         </div>
       </article>
     );
   };
 
+  const openOnBoard = board.filter((r) => r.status === "open").length;
+
   return (
     <div className="dashboard-apple-bg font-apple min-h-screen">
       <Navbar />
 
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:max-w-5xl">
-        <header className="mb-8">
-          <h1 className="text-[28px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[32px]">
-            Referral board
-          </h1>
-          <p className="mt-2 max-w-2xl text-[16px] text-neutral-600">
-            {isStudent &&
-              "Post what you’re looking for—internship referrals, full-time intros, or research connections. Alumni browse open requests in one place."}
-            {showBoard &&
-              "Students who need a referral show up here. Filter by role type or branch, then reach out in Messages."}
-          </p>
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:max-w-6xl">
+        <header className="auth-hero-apple relative mb-8 overflow-hidden rounded-[28px] p-8 text-white shadow-[0_24px_80px_rgba(0,0,0,0.35)] md:p-10">
+          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#2997ff]/25 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-16 left-1/4 h-48 w-48 rounded-full bg-white/[0.08] blur-2xl" />
+          <div className="relative max-w-3xl">
+            <p className="text-[13px] font-medium text-white/65">MentorBridge · Referrals</p>
+            <h1 className="mt-2 text-[28px] font-semibold tracking-tight sm:text-[34px]">Referral board</h1>
+            <p className="mt-3 text-[16px] leading-relaxed text-white/75">
+              {isStudent &&
+                "Post what you need—internships, full-time intros, or research connections. Alumni browse open asks in one place."}
+              {showBoard &&
+                "Scan student asks, filter by branch or role type, copy a pitch in one tap, then follow up in Messages."}
+            </p>
+          </div>
         </header>
+
+        {showBoard && !boardLoading && (
+          <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="apple-glass-card px-5 py-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Open asks</p>
+              <p className="mt-1 text-3xl font-semibold tabular-nums text-[#1d1d1f]">{openOnBoard}</p>
+            </div>
+            <div className="apple-glass-card px-5 py-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Matching filter</p>
+              <p className="mt-1 text-3xl font-semibold tabular-nums text-[#1d1d1f]">{board.length}</p>
+            </div>
+            <div className="apple-glass-card px-5 py-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Status filter</p>
+              <p className="mt-1 text-lg font-semibold capitalize text-[#1d1d1f]">
+                {statusFilter === "all" ? "All statuses" : STATUS_LABELS[statusFilter] || statusFilter}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {isStudent && (
+          <div className="mb-8 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-[#0071e3]/15 bg-[#0071e3]/[0.06] p-4">
+              <p className="text-[12px] font-semibold text-[#0071e3]">Be specific</p>
+              <p className="mt-1 text-[13px] text-neutral-700">Roles, skills, and timeline help alumni respond faster.</p>
+            </div>
+            <div className="rounded-2xl border border-black/[0.06] bg-[#f5f5f7]/80 p-4">
+              <p className="text-[12px] font-semibold text-[#1d1d1f]">Add a link</p>
+              <p className="mt-1 text-[13px] text-neutral-700">Portfolio or resume links improve credibility.</p>
+            </div>
+            <div className="rounded-2xl border border-black/[0.06] bg-[#f5f5f7]/80 p-4">
+              <p className="text-[12px] font-semibold text-[#1d1d1f]">Update status</p>
+              <p className="mt-1 text-[13px] text-neutral-700">Mark filled or closed when you’re done so mentors aren’t guessing.</p>
+            </div>
+          </div>
+        )}
 
         {isStudent && (
           <section className="mb-10">

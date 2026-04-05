@@ -97,23 +97,30 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", close);
   }, [meMenuOpen]);
 
-  const homeRoute = user?.role === "admin" ? "/dashboard/admin" : "/feed";
+  const homeRoute = user?.role === "admin" ? "/admin" : "/feed";
 
   return (
     <>
-      <nav className="sticky top-0 z-50 border-b border-black/[0.08] bg-white/80 backdrop-blur-2xl backdrop-saturate-150">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 font-apple">
+      <nav className="sticky top-0 z-50 min-h-14 border-b border-black/[0.08] bg-white/80 backdrop-blur-2xl backdrop-saturate-150">
+        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 font-apple">
           <div
-            className="flex cursor-pointer items-center gap-2.5"
+            className="flex cursor-pointer items-center gap-3"
             onClick={() => navigate(homeRoute)}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => e.key === "Enter" && navigate(homeRoute)}
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#1d1d1f]">
-              <span className="text-[13px] font-semibold text-white">M</span>
+            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-[#1d1d1f] via-[#2d2d2f] to-[#0071e3] shadow-md ring-1 ring-black/[0.08]">
+              <span className="text-[11px] font-bold leading-none tracking-tight text-white">
+                M<span className="text-white/90">B</span>
+              </span>
             </div>
-            <span className="text-[17px] font-semibold tracking-tight text-[#1d1d1f]">MentorBridge</span>
+            <div className="flex flex-col leading-none">
+              <span className="text-[17px] font-semibold tracking-tight text-[#1d1d1f]">MentorBridge</span>
+              <span className="mt-0.5 hidden text-[10px] font-medium uppercase tracking-[0.14em] text-[#0071e3] sm:block">
+                Connect · Grow
+              </span>
+            </div>
           </div>
 
           {user && (user.role === "student" || user.role === "alumni") && (
@@ -135,7 +142,7 @@ const Navbar = () => {
             <div className="flex items-center gap-1 text-[#1d1d1f] sm:gap-2">
               <NavBtn
                 label="Home"
-                onClick={() => navigate(user.role === "admin" ? "/dashboard/admin" : "/feed")}
+                onClick={() => navigate(user.role === "admin" ? "/admin" : "/feed")}
               >
                 <IconHome />
               </NavBtn>
@@ -269,7 +276,7 @@ const Navbar = () => {
                         type="button"
                         onClick={() => {
                           setMeMenuOpen(false);
-                          navigate("/dashboard/admin");
+                          navigate("/admin");
                         }}
                         className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
                       >

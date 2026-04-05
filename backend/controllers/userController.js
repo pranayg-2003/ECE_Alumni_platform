@@ -3,6 +3,7 @@
 
 const User = require("../models/User");
 const MentorshipRequest = require("../models/MentorshipRequest");
+const StudentBlock = require("../models/StudentBlock");
 
 // ============================================
 // @route   GET /api/users/students
@@ -32,9 +33,17 @@ const getAllStudents = async (req, res) => {
 // ============================================
 const getAllAlumni = async (req, res) => {
   try {
-    const alumni = await User.find({ role: "alumni", isActive: true })
+    let alumni = await User.find({ role: "alumni", isActive: true })
       .select("-password")
       .sort({ createdAt: -1 });
+
+    if (req.user?.role === "student") {
+      const blockedAlumniIds = await StudentBlock.find({ studentId: req.user.id })
+        .distinct("alumniId")
+        .exec();
+      const hide = new Set(blockedAlumniIds.map((id) => String(id)));
+      alumni = alumni.filter((a) => !hide.has(String(a._id)));
+    }
 
     res.status(200).json({
       success: true,
@@ -117,7 +126,7 @@ const searchAlumni = async (req, res) => {
 
     // MongoDB search with regex (works without text index)
     // Searches across: name, bio, skills (array), company
-    const alumni = await User.find({
+    let alumni = await User.find({
       role: "alumni",
       isActive: true,
       $or: [
@@ -131,6 +140,14 @@ const searchAlumni = async (req, res) => {
       .select("-password") // Never send password
       .sort({ createdAt: -1 }) // Newest alumni first
       .limit(20); // Limit to 20 results for performance
+
+    if (req.user?.role === "student") {
+      const blockedAlumniIds = await StudentBlock.find({ studentId: req.user.id })
+        .distinct("alumniId")
+        .exec();
+      const hide = new Set(blockedAlumniIds.map((id) => String(id)));
+      alumni = alumni.filter((a) => !hide.has(String(a._id)));
+    }
 
     res.status(200).json({
       success: true,
@@ -166,7 +183,7 @@ const searchNetwork = async (req, res) => {
     const searchRegex = new RegExp(safe, "i");
     const me = req.user.id;
 
-    const users = await User.find({
+    let users = await User.find({
       _id: { $ne: me },
       isActive: true,
       role: { $in: ["alumni", "student"] },
@@ -185,6 +202,15 @@ const searchNetwork = async (req, res) => {
       .select("-password")
       .sort({ createdAt: -1 })
       .limit(30);
+
+    const blockedStudentIds = await StudentBlock.find({ alumniId: me })
+      .distinct("studentId")
+      .exec();
+    const hideStudents = new Set(blockedStudentIds.map((id) => String(id)));
+    users = users.filter((u) => {
+      if (u.role !== "student") return true;
+      return !hideStudents.has(String(u._id));
+    });
 
     res.status(200).json({
       success: true,
@@ -225,6 +251,19 @@ const sendMentorshipRequest = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Alumni not found or inactive",
+      });
+    }
+
+    const blocked = await StudentBlock.findOne({
+      alumniId,
+      studentId,
+    })
+      .select("_id")
+      .lean();
+    if (blocked) {
+      return res.status(403).json({
+        success: false,
+        message: "This mentor is not accepting requests from you.",
       });
     }
 
@@ -411,6 +450,96 @@ const respondToRequest = async (req, res) => {
   }
 };
 
+// ============================================
+// @route   POST /api/users/block-student
+// @desc    Alumni blocks a student (reason required)
+// @access  Private — alumni
+// ============================================
+const blockStudent = async (req, res) => {
+  try {
+    const alumniId = req.user.id;
+    const { studentId, reason } = req.body;
+    const reasonText = typeof reason === "string" ? reason.trim() : "";
+
+    if (!studentId) {
+      return res.status(400).json({ success: false, message: "studentId is required." });
+    }
+    if (reasonText.length < 5) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please give a short reason (at least 5 characters)." });
+    }
+
+    const student = await User.findById(studentId).select("role");
+    if (!student || student.role !== "student") {
+      return res.status(404).json({ success: false, message: "Student not found." });
+    }
+
+    await StudentBlock.create({ alumniId, studentId, reason: reasonText });
+
+    await MentorshipRequest.updateMany(
+      { alumniId, studentId, status: "pending" },
+      { status: "rejected", respondedAt: new Date(), responseMessage: "Blocked by mentor" },
+    );
+
+    res.status(201).json({ success: true, message: "Student blocked." });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({ success: false, message: "This student is already blocked." });
+    }
+    console.error("blockStudent:", error);
+    res.status(500).json({ success: false, message: "Could not block student." });
+  }
+};
+
+// ============================================
+// @route   DELETE /api/users/block-student/:studentId
+// @desc    Alumni unblocks a student
+// @access  Private — alumni
+// ============================================
+const unblockStudent = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const result = await StudentBlock.deleteOne({
+      alumniId: req.user.id,
+      studentId,
+    });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ success: false, message: "No block record found." });
+    }
+    res.status(200).json({ success: true, message: "Student unblocked." });
+  } catch (error) {
+    console.error("unblockStudent:", error);
+    res.status(500).json({ success: false, message: "Could not unblock." });
+  }
+};
+
+// ============================================
+// @route   GET /api/users/blocked-students
+// @desc    List students this alumni has blocked
+// @access  Private — alumni
+// ============================================
+const listBlockedStudents = async (req, res) => {
+  try {
+    const rows = await StudentBlock.find({ alumniId: req.user.id })
+      .populate("studentId", "name email branch year profilePicture")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const data = rows.map((r) => ({
+      _id: r._id,
+      reason: r.reason,
+      createdAt: r.createdAt,
+      student: r.studentId,
+    }));
+
+    res.status(200).json({ success: true, count: data.length, data });
+  } catch (error) {
+    console.error("listBlockedStudents:", error);
+    res.status(500).json({ success: false, message: "Could not load blocked list." });
+  }
+};
+
 module.exports = {
   getAllStudents,
   getAllAlumni,
@@ -423,4 +552,7 @@ module.exports = {
   getMyRequests,
   getIncomingRequests,
   respondToRequest,
+  blockStudent,
+  unblockStudent,
+  listBlockedStudents,
 };

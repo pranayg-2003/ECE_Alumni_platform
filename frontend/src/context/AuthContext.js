@@ -5,6 +5,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import api, { updateMyProfile } from "../utils/api";
 
+const clearSession = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+};
+
 // Create the context
 const AuthContext = createContext(null);
 
@@ -36,8 +41,7 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem("user", JSON.stringify(u));
         } catch (error) {
           // Token is invalid or expired — clear storage
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
+          clearSession();
           setUser(null);
         }
       }
@@ -81,8 +85,13 @@ export const AuthProvider = ({ children }) => {
   // LOGOUT FUNCTION
   // ============================================
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    clearSession();
+    setUser(null);
+  };
+
+  const deleteAccount = async (payload = {}) => {
+    await api.delete("/auth/account", { data: payload || {} });
+    clearSession();
     setUser(null);
   };
 
@@ -102,6 +111,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    deleteAccount,
     updateProfile,
     isAuthenticated: !!user, // Boolean: true if user is logged in
   };

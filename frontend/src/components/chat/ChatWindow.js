@@ -1,5 +1,4 @@
-// components/chat/ChatWindow.js
-// The main chat interface where messages are displayed and user can type
+// components/chat/ChatWindow.js — chat thread (MentorBridge styling)
 
 import React, { useState, useEffect, useRef } from "react";
 import { useChat } from "../../context/ChatContext";
@@ -9,7 +8,6 @@ import api from "../../utils/api";
 const ChatWindow = ({ otherUser, onClose, variant = "page" }) => {
   const { user } = useAuth();
   const {
-    activeChat,
     setActiveChat,
     messages,
     sendMessage,
@@ -24,38 +22,31 @@ const ChatWindow = ({ otherUser, onClose, variant = "page" }) => {
   const typingTimeoutRef = useRef(null);
   const messagesEndRef = useRef(null);
 
-  // Convert otherUser._id to string for consistent comparisons
   const otherUserIdStr = String(otherUser._id);
 
-  // Set active chat when component opens
   useEffect(() => {
     setActiveChat(otherUser);
   }, [otherUser, setActiveChat]);
 
-  // Mark messages as read in real-time when new messages arrive
   useEffect(() => {
-    const hasUnreadMessages = messages.some(
-      (msg) => {
-        const senderIdStr = typeof msg.senderId === "object" 
-          ? String(msg.senderId._id) 
-          : String(msg.senderId);
-        return senderIdStr === otherUserIdStr && !msg.isRead;
-      }
-    );
+    const hasUnreadMessages = messages.some((msg) => {
+      const senderIdStr =
+        typeof msg.senderId === "object" ? String(msg.senderId._id) : String(msg.senderId);
+      return senderIdStr === otherUserIdStr && !msg.isRead;
+    });
 
     if (hasUnreadMessages) {
       const markAsRead = async () => {
         try {
           await api.put(`/chat/messages/mark-read/${otherUserIdStr}`);
         } catch {
-          /* Non-blocking: receipts can retry on next activity */
+          /* non-blocking */
         }
       };
       markAsRead();
     }
   }, [messages, otherUserIdStr]);
 
-  // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -64,45 +55,36 @@ const ChatWindow = ({ otherUser, onClose, variant = "page" }) => {
     scrollToBottom();
   }, [messages]);
 
-  // Handle typing
   const handleInputChange = (e) => {
     setMessageInput(e.target.value);
 
-    // Emit typing indicator
     if (!isTyping) {
       setIsTyping(true);
       emitTyping(otherUserIdStr);
     }
 
-    // Clear previous timeout
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
 
-    // Set new timeout to stop typing indicator
     typingTimeoutRef.current = setTimeout(() => {
       setIsTyping(false);
       emitStopTyping(otherUserIdStr);
     }, 1000);
   };
 
-  // Handle send message
   const handleSendMessage = (e) => {
     e.preventDefault();
 
     if (!messageInput.trim()) return;
 
-    // Send the message
     sendMessage(otherUserIdStr, messageInput);
 
-    // Clear input
     setMessageInput("");
     setIsTyping(false);
 
-    // Stop typing indicator
     emitStopTyping(otherUserIdStr);
 
-    // Clear timeout
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
@@ -110,72 +92,80 @@ const ChatWindow = ({ otherUser, onClose, variant = "page" }) => {
 
   const isUserOnline = onlineUsers.has(otherUserIdStr);
   const isUserTyping = typingUsers.has(otherUserIdStr);
+  const initial = otherUser.name?.charAt(0)?.toUpperCase() || "?";
 
   const shellClass =
     variant === "panel"
-      ? "flex h-full min-h-0 flex-1 flex-col bg-white"
-      : "flex h-screen flex-col bg-white";
+      ? "flex h-full min-h-0 flex-1 flex-col bg-[#f5f5f7]"
+      : "flex h-screen min-h-0 flex-col bg-[#f5f5f7]";
 
   return (
     <div className={shellClass}>
-      {/* Header */}
-      <div className="border-b border-gray-200 p-4 flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-            {otherUser.name.charAt(0).toUpperCase()}
+      <div className="flex shrink-0 items-center justify-between gap-3 border-b border-black/[0.06] bg-white px-4 py-3.5 shadow-sm">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="relative shrink-0">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1d1d1f] text-[15px] font-semibold text-white ring-2 ring-[#f5f5f7]">
+              {initial}
+            </div>
+            {isUserOnline && (
+              <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-[#34c759]" />
+            )}
           </div>
-          <div>
-            <h2 className="font-semibold text-gray-800">{otherUser.name}</h2>
-            <p className="text-sm text-gray-500">
-              {isUserOnline ? (
-                <span className="text-green-500">● Online</span>
+          <div className="min-w-0">
+            <h2 className="truncate text-[16px] font-semibold text-[#1d1d1f]">{otherUser.name}</h2>
+            <p className="text-[12px] font-medium text-neutral-500">
+              {isUserTyping ? (
+                <span className="text-[#0071e3]">Typing…</span>
+              ) : isUserOnline ? (
+                <span className="text-[#34c759]">Active now</span>
               ) : (
-                <span className="text-gray-400">● Offline</span>
+                <span>Offline</span>
               )}
             </p>
           </div>
         </div>
-        <button
-          onClick={onClose}
-          className="text-gray-500 hover:text-gray-700 text-2xl"
-        >
-          ✕
-        </button>
+        {variant !== "panel" && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-neutral-400 transition hover:bg-[#f5f5f7] hover:text-[#1d1d1f]"
+            aria-label="Close chat"
+          >
+            ✕
+          </button>
+        )}
       </div>
 
-      {/* Messages Area */}
-      <div className="min-h-0 flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-3 py-4 sm:px-4">
         {messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-gray-400">
-            <p>No messages yet. Start the conversation!</p>
+          <div className="flex h-full min-h-[200px] flex-col items-center justify-center rounded-[20px] border border-dashed border-black/[0.08] bg-white/60 px-6 py-10 text-center">
+            <p className="text-[15px] font-medium text-[#1d1d1f]">Start the conversation</p>
+            <p className="mt-2 max-w-xs text-[13px] leading-relaxed text-neutral-500">
+              Send a quick hello or share what you’d like help with—messages stay between you two.
+            </p>
           </div>
         ) : (
           messages.map((msg) => {
-            // Handle both object and string senderId (from API population)
             const senderIdStr =
-              typeof msg.senderId === "object"
-                ? msg.senderId._id
-                : msg.senderId;
+              typeof msg.senderId === "object" ? msg.senderId._id : msg.senderId;
             const isOwnMessage = String(senderIdStr) === String(user.id);
 
             return (
               <div
                 key={msg._id}
-                className={`flex ${
-                  isOwnMessage ? "justify-end" : "justify-start"
-                }`}
+                className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-xs px-4 py-2 rounded-lg ${
+                  className={`max-w-[85%] rounded-[20px] px-4 py-2.5 shadow-sm sm:max-w-[75%] ${
                     isOwnMessage
-                      ? "bg-blue-500 text-white rounded-br-none"
-                      : "bg-gray-200 text-gray-800 rounded-bl-none"
+                      ? "rounded-br-md bg-gradient-to-br from-[#0071e3] to-[#005bbf] text-white"
+                      : "rounded-bl-md border border-black/[0.06] bg-white text-[#1d1d1f]"
                   }`}
                 >
-                  <p className="text-sm">{msg.message}</p>
+                  <p className="text-[15px] leading-relaxed">{msg.message}</p>
                   <p
-                    className={`text-xs mt-1 ${
-                      isOwnMessage ? "text-blue-100" : "text-gray-500"
+                    className={`mt-1.5 text-[11px] font-medium tabular-nums ${
+                      isOwnMessage ? "text-white/70" : "text-neutral-400"
                     }`}
                   >
                     {new Date(msg.createdAt).toLocaleTimeString([], {
@@ -189,37 +179,45 @@ const ChatWindow = ({ otherUser, onClose, variant = "page" }) => {
           })
         )}
 
-        {/* Typing indicator */}
         {isUserTyping && (
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+          <div className="flex justify-start pl-1">
+            <div className="flex items-center gap-1.5 rounded-2xl border border-black/[0.06] bg-white px-4 py-2.5 shadow-sm">
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-neutral-400" />
+              <span
+                className="h-1.5 w-1.5 animate-bounce rounded-full bg-neutral-400"
+                style={{ animationDelay: "0.15s" }}
+              />
+              <span
+                className="h-1.5 w-1.5 animate-bounce rounded-full bg-neutral-400"
+                style={{ animationDelay: "0.3s" }}
+              />
+            </div>
           </div>
         )}
 
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
       <form
         onSubmit={handleSendMessage}
-        className="border-t border-gray-200 p-4 flex gap-2"
+        className="shrink-0 border-t border-black/[0.06] bg-white p-3 sm:p-4"
       >
-        <input
-          type="text"
-          value={messageInput}
-          onChange={handleInputChange}
-          placeholder="Type a message..."
-          className="flex-1 border-gray-300 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button
-          type="submit"
-          disabled={!messageInput.trim()}
-          className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white px-6 py-2 rounded-full font-semibold transition"
-        >
-          Send
-        </button>
+        <div className="flex items-end gap-2 rounded-[22px] border border-black/[0.08] bg-[#f5f5f7] p-1.5 pl-4 shadow-inner focus-within:border-[#0071e3]/35 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#0071e3]/15">
+          <input
+            type="text"
+            value={messageInput}
+            onChange={handleInputChange}
+            placeholder="Message…"
+            className="min-w-0 flex-1 border-0 bg-transparent py-2.5 text-[15px] text-[#1d1d1f] outline-none placeholder:text-neutral-400"
+          />
+          <button
+            type="submit"
+            disabled={!messageInput.trim()}
+            className="shrink-0 rounded-full bg-[#0071e3] px-5 py-2.5 text-[14px] font-semibold text-white shadow-sm transition hover:bg-[#0077ed] disabled:cursor-not-allowed disabled:opacity-35"
+          >
+            Send
+          </button>
+        </div>
       </form>
     </div>
   );

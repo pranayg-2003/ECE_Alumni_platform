@@ -25,6 +25,16 @@ const spotlightSchema = new mongoose.Schema(
     role: { type: String, default: "" },
     company: { type: String, default: "" },
     contribution: { type: String, default: "" },
+    imageUrl: { type: String, default: "" },
+  },
+  { _id: false },
+);
+
+const galleryItemSchema = new mongoose.Schema(
+  {
+    url: { type: String, default: "" },
+    kind: { type: String, enum: ["image", "video"], default: "image" },
+    caption: { type: String, default: "" },
   },
   { _id: false },
 );
@@ -45,11 +55,15 @@ const siteSettingsSchema = new mongoose.Schema(
       heroTitle: { type: String, default: "" },
       heroSubtitle: { type: String, default: "" },
       heroBadge: { type: String, default: "" },
+      heroImageUrl: { type: String, default: "" },
+      heroVideoUrl: { type: String, default: "" },
+      heroYoutubeUrl: { type: String, default: "" },
       successStories: { type: [successStorySchema], default: [] },
       departmentEyebrow: { type: String, default: "" },
       departmentTitle: { type: String, default: "" },
       departmentBody: { type: String, default: "" },
       departmentHighlight: { type: String, default: "" },
+      departmentImageUrl: { type: String, default: "" },
       stats: { type: [statItemSchema], default: [] },
       spotlights: { type: [spotlightSchema], default: [] },
       impactTitle: { type: String, default: "" },
@@ -59,6 +73,7 @@ const siteSettingsSchema = new mongoose.Schema(
       timeline: { type: [timelineItemSchema], default: [] },
       closingTitle: { type: String, default: "" },
       closingSubtitle: { type: String, default: "" },
+      gallery: { type: [galleryItemSchema], default: [] },
     },
   },
   { timestamps: true },

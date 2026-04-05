@@ -11,6 +11,7 @@ const uploadBuffer = (buffer, options) =>
   });
 
 const ALLOWED_IMAGE = /^image\/(jpeg|jpg|png|gif|webp)$/i;
+const ALLOWED_VIDEO = /^video\/(mp4|webm|quicktime)$/i;
 const ALLOWED_DOC = [
   "application/pdf",
   "application/msword",
@@ -38,16 +39,17 @@ const uploadPostMedia = async (req, res) => {
     for (const file of files) {
       const mime = file.mimetype || "";
       const isImage = ALLOWED_IMAGE.test(mime);
+      const isVideo = ALLOWED_VIDEO.test(mime);
       const isDoc = ALLOWED_DOC.includes(mime);
 
-      if (!isImage && !isDoc) {
+      if (!isImage && !isVideo && !isDoc) {
         return res.status(400).json({
           success: false,
-          message: `Unsupported file type: ${mime || "unknown"}. Use images (JPEG, PNG, GIF, WebP) or PDF/DOC/DOCX/TXT.`,
+          message: `Unsupported file type: ${mime || "unknown"}. Use images, video (MP4, WebM, MOV), or PDF/DOC/DOCX/TXT.`,
         });
       }
 
-      const resourceType = isImage ? "image" : "raw";
+      const resourceType = isVideo ? "video" : isImage ? "image" : "raw";
       const folder = process.env.CLOUDINARY_FOLDER || "mentorship-posts";
 
       const uploaded = await uploadBuffer(file.buffer, {
@@ -60,7 +62,7 @@ const uploadPostMedia = async (req, res) => {
       results.push({
         url: uploaded.secure_url,
         publicId: uploaded.public_id,
-        resourceType: isImage ? "image" : "raw",
+        resourceType: isVideo ? "video" : isImage ? "image" : "raw",
         originalName: file.originalname || "file",
         mimeType: mime,
       });

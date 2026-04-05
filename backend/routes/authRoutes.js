@@ -12,6 +12,7 @@ const {
   updateProfile,
   forgotPassword,
   resetPassword,
+  deleteAccount,
 } = require("../controllers/authController");
 
 // Import middleware
@@ -39,5 +40,7 @@ router.post("/reset-password", resetPassword);
 router.get("/me", protect, getMe);
 
 router.put("/profile", protect, updateProfile);
+
+router.delete("/account", protect, deleteAccount);
 
 module.exports = router;

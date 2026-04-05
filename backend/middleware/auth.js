@@ -44,6 +44,14 @@ const protect = async (req, res, next) => {
       });
     }
 
+    if (!req.user.isActive) {
+      return res.status(403).json({
+        success: false,
+        code: "ACCOUNT_DISABLED",
+        message: "Your account has been deactivated. Please contact admin.",
+      });
+    }
+
     // Move to the next middleware/route handler
     next();
   } catch (error) {

@@ -17,6 +17,9 @@ const {
   getMyRequests,
   getIncomingRequests,
   respondToRequest,
+  blockStudent,
+  unblockStudent,
+  listBlockedStudents,
 } = require("../controllers/userController");
 
 // Import middleware
@@ -72,6 +75,10 @@ router.put(
   authorize("alumni"),
   respondToRequest,
 );
+
+router.post("/block-student", protect, authorize("alumni"), blockStudent);
+router.delete("/block-student/:studentId", protect, authorize("alumni"), unblockStudent);
+router.get("/blocked-students", protect, authorize("alumni"), listBlockedStudents);
 
 // GET /api/users/:id — Get single alumni profile
 // Accessible by: all logged-in users

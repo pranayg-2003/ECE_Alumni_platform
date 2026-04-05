@@ -32,7 +32,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     const roleRedirects = {
       student: "/feed",
       alumni: "/feed",
-      admin: "/dashboard/admin",
+      admin: "/admin",
     };
     return <Navigate to={roleRedirects[user.role]} replace />;
   }

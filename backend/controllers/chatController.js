@@ -4,6 +4,7 @@
 const ChatMessage = require("../models/ChatMessage");
 const User = require("../models/User");
 const MentorshipRequest = require("../models/MentorshipRequest");
+const StudentBlock = require("../models/StudentBlock");
 
 // @desc Get all messages between two users
 // @route GET /api/chat/messages/:otherUserId
@@ -26,6 +27,16 @@ exports.getMessages = async (req, res) => {
       return res.status(403).json({
         success: false,
         message: "You can only chat with connected mentors/students",
+      });
+    }
+
+    const alumniId = connection.alumniId.toString();
+    const studentId = connection.studentId.toString();
+    const blocked = await StudentBlock.findOne({ alumniId, studentId }).select("_id").lean();
+    if (blocked) {
+      return res.status(403).json({
+        success: false,
+        message: "Messaging is not available for this connection.",
       });
     }
 
@@ -87,6 +98,16 @@ exports.saveMessage = async (req, res) => {
       });
     }
 
+    const alumniId = connection.alumniId.toString();
+    const studentId = connection.studentId.toString();
+    const blocked = await StudentBlock.findOne({ alumniId, studentId }).select("_id").lean();
+    if (blocked) {
+      return res.status(403).json({
+        success: false,
+        message: "Messaging is not available for this connection.",
+      });
+    }
+
     // Create and save the message
     const chatMessage = await ChatMessage.create({
       senderId,
@@ -120,12 +141,29 @@ exports.getConversations = async (req, res) => {
     const userId = req.user.id;
 
     // Get all accepted connections
-    const connections = await MentorshipRequest.find({
+    let connections = await MentorshipRequest.find({
       $or: [{ studentId: userId }, { alumniId: userId }],
       status: "accepted",
     })
       .populate("studentId", "name email avatar")
       .populate("alumniId", "name email avatar");
+
+    if (connections.length > 0) {
+      const blockRows = await StudentBlock.find({
+        $or: connections.map((c) => ({
+          alumniId: c.alumniId._id,
+          studentId: c.studentId._id,
+        })),
+      })
+        .select("alumniId studentId")
+        .lean();
+      const blockedPairs = new Set(
+        blockRows.map((b) => `${String(b.alumniId)}:${String(b.studentId)}`),
+      );
+      connections = connections.filter(
+        (c) => !blockedPairs.has(`${String(c.alumniId._id)}:${String(c.studentId._id)}`),
+      );
+    }
 
     // For each connection, get the last message
     const conversations = await Promise.all(
@@ -187,6 +225,26 @@ exports.markMessagesAsRead = async (req, res) => {
   try {
     const userId = req.user.id;
     const { otherUserId } = req.params;
+
+    const connection = await MentorshipRequest.findOne({
+      $or: [
+        { studentId: userId, alumniId: otherUserId },
+        { studentId: otherUserId, alumniId: userId },
+      ],
+      status: "accepted",
+    });
+    if (!connection) {
+      return res.status(403).json({ success: false, message: "Not connected." });
+    }
+    const blocked = await StudentBlock.findOne({
+      alumniId: connection.alumniId,
+      studentId: connection.studentId,
+    })
+      .select("_id")
+      .lean();
+    if (blocked) {
+      return res.status(403).json({ success: false, message: "Not available." });
+    }
 
     // Mark all unread messages from otherUser as read
     const result = await ChatMessage.updateMany(

@@ -66,6 +66,11 @@ const DEFAULT_LANDING = {
   closingTitle: "Join the line that keeps ECE human.",
   closingSubtitle:
     "Create an account to explore alumni, the feed, and conversations — built for our community.",
+  heroImageUrl: "",
+  heroVideoUrl: "",
+  heroYoutubeUrl: "",
+  departmentImageUrl: "",
+  gallery: [],
 };
 
 async function ensureLandingDoc() {
@@ -79,6 +84,20 @@ async function ensureLandingDoc() {
   return doc;
 }
 
+function sanitizeMediaUrl(v, maxLen = 2000) {
+  const s = String(v || "").trim().slice(0, maxLen);
+  if (!s) return "";
+  if (!/^https?:\/\//i.test(s)) return "";
+  return s;
+}
+
+function sanitizeYoutubeUrl(v) {
+  const s = String(v || "").trim().slice(0, 500);
+  if (!s) return "";
+  if (!/youtube\.com|youtu\.be/i.test(s)) return "";
+  return s;
+}
+
 function sanitizeSpotlights(arr) {
   if (!Array.isArray(arr)) return [];
   return arr
@@ -88,7 +107,21 @@ function sanitizeSpotlights(arr) {
       role: String(s.role || "").slice(0, 160),
       company: String(s.company || "").slice(0, 120),
       contribution: String(s.contribution || "").slice(0, 600),
+      imageUrl: sanitizeMediaUrl(s.imageUrl),
     }))
+    .slice(0, 12);
+}
+
+function sanitizeGallery(arr) {
+  if (!Array.isArray(arr)) return [];
+  return arr
+    .filter((g) => g && typeof g === "object")
+    .map((g) => ({
+      url: sanitizeMediaUrl(g.url),
+      kind: g.kind === "video" ? "video" : "image",
+      caption: String(g.caption || "").slice(0, 200),
+    }))
+    .filter((g) => g.url)
     .slice(0, 12);
 }
 
@@ -153,6 +186,19 @@ exports.updateLanding = async (req, res) => {
     L.heroSubtitle = str(landing.heroSubtitle, L.heroSubtitle);
     L.heroBadge = str(landing.heroBadge, L.heroBadge);
 
+    if (typeof landing.heroImageUrl === "string") {
+      L.heroImageUrl = sanitizeMediaUrl(landing.heroImageUrl);
+    }
+    if (typeof landing.heroVideoUrl === "string") {
+      L.heroVideoUrl = sanitizeMediaUrl(landing.heroVideoUrl);
+    }
+    if (typeof landing.heroYoutubeUrl === "string") {
+      L.heroYoutubeUrl = sanitizeYoutubeUrl(landing.heroYoutubeUrl);
+    }
+    if (typeof landing.departmentImageUrl === "string") {
+      L.departmentImageUrl = sanitizeMediaUrl(landing.departmentImageUrl);
+    }
+
     if (Array.isArray(landing.successStories)) {
       L.successStories = landing.successStories
         .filter((s) => s && typeof s === "object")
@@ -187,6 +233,10 @@ exports.updateLanding = async (req, res) => {
 
     L.closingTitle = str(landing.closingTitle, L.closingTitle);
     L.closingSubtitle = str(landing.closingSubtitle, L.closingSubtitle);
+
+    if (Array.isArray(landing.gallery)) {
+      L.gallery = sanitizeGallery(landing.gallery);
+    }
 
     await doc.save();
 

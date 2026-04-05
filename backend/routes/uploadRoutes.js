@@ -6,7 +6,7 @@ const { protect } = require("../middleware/auth");
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
-  limits: { fileSize: 12 * 1024 * 1024 },
+  limits: { fileSize: 45 * 1024 * 1024 },
 });
 
 const router = express.Router();

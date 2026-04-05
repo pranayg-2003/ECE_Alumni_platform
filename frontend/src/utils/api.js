@@ -68,6 +68,12 @@ api.interceptors.response.use(
         window.location.href = "/";
       }
     }
+    if (error.response?.status === 403 && error.response?.data?.code === "ACCOUNT_DISABLED") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      toast.error("Your account has been deactivated.");
+      window.location.href = "/login";
+    }
     return Promise.reject(error);
   },
 );
@@ -144,8 +150,13 @@ export const updatePost = async (postId, payload) => {
   return response.data;
 };
 
+export const deletePost = async (postId) => {
+  const response = await api.delete(`/posts/${postId}`);
+  return response.data;
+};
+
 /**
- * Upload images (JPEG, PNG, GIF, WebP) and documents (PDF, DOC, DOCX, TXT) to Cloudinary via the API.
+ * Upload images, video (MP4/WebM/MOV), and documents (PDF, DOC, DOCX, TXT) to Cloudinary via the API.
  * @param {File[]} files
  * @returns {Promise<{ success: boolean, data?: Array<{ url, resourceType, originalName, mimeType, publicId }>, message?: string }>}
  */
@@ -250,6 +261,41 @@ export const updateReferralSeek = async (id, payload) => {
 
 export const deleteReferralSeekApi = async (id) => {
   const response = await api.delete(`/referrals/${id}`);
+  return response.data;
+};
+
+export const blockStudentApi = async (studentId, reason) => {
+  const response = await api.post("/users/block-student", { studentId, reason });
+  return response.data;
+};
+
+export const unblockStudentApi = async (studentId) => {
+  const response = await api.delete(`/users/block-student/${studentId}`);
+  return response.data;
+};
+
+export const fetchBlockedStudents = async () => {
+  const response = await api.get("/users/blocked-students");
+  return response.data;
+};
+
+export const deleteMyAccount = async (payload = {}) => {
+  const response = await api.delete("/auth/account", { data: payload });
+  return response.data;
+};
+
+export const fetchAdminActivity = async () => {
+  const response = await api.get("/admin/activity");
+  return response.data;
+};
+
+export const adminBlockUser = async (userId, reason) => {
+  const response = await api.put(`/admin/users/${userId}/block`, { reason });
+  return response.data;
+};
+
+export const adminUnblockUser = async (userId) => {
+  const response = await api.put(`/admin/users/${userId}/unblock`);
   return response.data;
 };
 

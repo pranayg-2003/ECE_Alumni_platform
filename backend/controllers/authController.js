@@ -5,10 +5,19 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const PasswordResetOTP = require("../models/PasswordResetOTP");
+const Post = require("../models/Post");
+const ChatMessage = require("../models/ChatMessage");
+const MentorshipRequest = require("../models/MentorshipRequest");
+const ReferralSeek = require("../models/ReferralSeek");
+const StudentBlock = require("../models/StudentBlock");
+const FundingCampaign = require("../models/FundingCampaign");
+const FundingPayment = require("../models/FundingPayment");
+const AlumniEvent = require("../models/AlumniEvent");
 const jwt = require("jsonwebtoken");
 const {
   sendPasswordResetOtpEmail,
   isSmtpConfigured,
+  sendWelcomeEmail,
 } = require("../utils/email");
 
 const normalizeEmail = (value) => {
@@ -108,7 +117,18 @@ const generateToken = (userId) => {
 const register = async (req, res) => {
   try {
     // Destructure fields from request body
-    let { name, email, password, role, interests, skills, company, branch, year } = req.body;
+    let {
+      name,
+      email,
+      password,
+      role,
+      interests,
+      skills,
+      company,
+      branch,
+      year,
+      adminSecret,
+    } = req.body;
 
     name = typeof name === "string" ? name.trim() : String(name ?? "").trim();
     email = normalizeEmail(email);
@@ -121,6 +141,33 @@ const register = async (req, res) => {
         success: false,
         message: "Please provide name, email, password, and role.",
       });
+    }
+
+    if (!["student", "alumni", "admin"].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role.",
+      });
+    }
+
+    if (role === "admin") {
+      const sec = String(process.env.ADMIN_REGISTER_SECRET ?? "").trim();
+      const isProd = process.env.NODE_ENV === "production";
+      const minLen = isProd ? 8 : 4;
+      if (!sec || sec.length < minLen) {
+        return res.status(403).json({
+          success: false,
+          message: isProd
+            ? "Admin registration is disabled until ADMIN_REGISTER_SECRET is set in backend/.env (8+ characters). Restart the server after saving."
+            : "Admin registration needs ADMIN_REGISTER_SECRET in backend/.env (4+ characters in development, 8+ in production). Restart the server after saving.",
+        });
+      }
+      if (String(adminSecret || "").trim() !== sec) {
+        return res.status(403).json({
+          success: false,
+          message: "Invalid admin registration secret. It must match ADMIN_REGISTER_SECRET in backend/.env exactly.",
+        });
+      }
     }
 
     const emailTaken = await User.exists({ email });
@@ -167,6 +214,10 @@ const register = async (req, res) => {
 
     // Create user in database
     const user = await User.create(userData);
+
+    sendWelcomeEmail(user.email, user.name, user.role).catch((err) => {
+      console.warn("[auth] welcome email skipped:", err.message || err);
+    });
 
     // Generate JWT token for the new user
     const token = generateToken(user._id);
@@ -241,6 +292,7 @@ const login = async (req, res) => {
     if (!user.isActive) {
       return res.status(403).json({
         success: false,
+        code: "ACCOUNT_DISABLED",
         message: "Your account has been deactivated. Please contact admin.",
       });
     }
@@ -571,6 +623,72 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// ============================================
+// @route   DELETE /api/auth/account
+// @desc    Permanently delete own account and related data
+// @access  Private
+// ============================================
+const deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const role = req.user.role;
+    const email = req.user.email;
+    let reason = typeof req.body?.reason === "string" ? req.body.reason.trim() : "";
+
+    if (role === "alumni" && reason.length < 10) {
+      return res.status(400).json({
+        success: false,
+        message: "Alumni must provide a reason for deleting the account (at least 10 characters).",
+      });
+    }
+
+    console.info(
+      `[auth] account deletion user=${userId} role=${role} reason=${reason ? `"${reason.slice(0, 200)}"` : "(none)"}`,
+    );
+
+    const campaigns = await FundingCampaign.find({ createdBy: userId }).select("_id").lean();
+    const campaignIds = campaigns.map((c) => c._id);
+    if (campaignIds.length > 0) {
+      await FundingPayment.deleteMany({ campaign: { $in: campaignIds } });
+      await FundingCampaign.deleteMany({ _id: { $in: campaignIds } });
+    }
+    await FundingPayment.deleteMany({ donor: userId });
+    await AlumniEvent.deleteMany({ createdBy: userId });
+
+    await ReferralSeek.deleteMany({ studentId: userId });
+    await MentorshipRequest.deleteMany({
+      $or: [{ studentId: userId }, { alumniId: userId }],
+    });
+    await ChatMessage.deleteMany({
+      $or: [{ senderId: userId }, { receiverId: userId }],
+    });
+    await StudentBlock.deleteMany({
+      $or: [{ studentId: userId }, { alumniId: userId }],
+    });
+
+    await Post.deleteMany({ author: userId });
+    await Post.updateMany({ likes: userId }, { $pull: { likes: userId } });
+    await Post.updateMany(
+      { "comments.user": userId },
+      { $pull: { comments: { user: userId } } },
+    );
+
+    await PasswordResetOTP.deleteMany({ email: normalizeEmail(email) });
+    await User.deleteOne({ _id: userId });
+
+    res.status(200).json({
+      success: true,
+      message: "Your account has been deleted.",
+    });
+  } catch (error) {
+    console.error("deleteAccount Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Could not delete account. Please try again or contact support.",
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -578,4 +696,5 @@ module.exports = {
   updateProfile,
   forgotPassword,
   resetPassword,
+  deleteAccount,
 };

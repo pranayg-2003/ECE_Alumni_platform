@@ -298,24 +298,46 @@ const InitiativesPage = () => {
     <div className="dashboard-apple-bg font-apple min-h-screen">
       <Navbar />
 
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-        <div className="mb-8">
-          <h1 className="text-[28px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[32px]">
-            Initiatives
-          </h1>
-          <p className="mt-2 max-w-2xl text-[16px] text-neutral-600">
-            Fund college programs with secure Razorpay checkout, and host live sessions on Google Meet.
-          </p>
-        </div>
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:py-10">
+        <header className="relative mb-10 overflow-hidden rounded-[28px] border border-black/[0.06] bg-white/70 px-6 py-8 shadow-[0_20px_60px_rgba(0,0,0,0.06)] backdrop-blur-xl sm:px-10 sm:py-10">
+          <div
+            className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[#0071e3]/[0.12] blur-3xl"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-[#5e5ce6]/[0.1] blur-3xl"
+            aria-hidden
+          />
+          <div className="relative">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#0071e3]">Community</p>
+            <h1 className="mt-2 text-[32px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[40px]">
+              Initiatives
+            </h1>
+            <p className="mt-3 max-w-2xl text-[17px] leading-relaxed text-neutral-600 sm:text-[18px]">
+              Fund college programs with secure Razorpay checkout, and host live sessions on Google Meet — all in one
+              place.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#f5f5f7] px-4 py-2 text-[13px] font-medium text-[#1d1d1f] ring-1 ring-black/[0.06]">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
+                Secure payments
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#f5f5f7] px-4 py-2 text-[13px] font-medium text-[#1d1d1f] ring-1 ring-black/[0.06]">
+                <span className="h-2 w-2 rounded-full bg-[#0071e3]" aria-hidden />
+                Meet links
+              </span>
+            </div>
+          </div>
+        </header>
 
-        <div className="mb-6 flex flex-wrap gap-2 rounded-2xl border border-black/[0.06] bg-[#f5f5f7]/80 p-1">
+        <div className="mb-8 flex flex-wrap gap-2 rounded-[20px] border border-black/[0.08] bg-gradient-to-b from-[#f5f5f7] to-[#f5f5f7]/80 p-1.5 shadow-inner">
           <button
             type="button"
             onClick={() => setTab("funding")}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-[14px] font-medium transition sm:flex-none ${
+            className={`flex flex-1 items-center justify-center gap-2.5 rounded-[14px] px-5 py-3.5 text-[15px] font-semibold transition sm:flex-none ${
               tab === "funding"
-                ? "bg-white text-[#1d1d1f] shadow-sm ring-1 ring-black/[0.06]"
-                : "text-neutral-600 hover:bg-white/70"
+                ? "bg-white text-[#1d1d1f] shadow-[0_4px_24px_rgba(0,113,227,0.12)] ring-2 ring-[#0071e3]/25"
+                : "text-neutral-600 hover:bg-white/80 hover:text-[#1d1d1f]"
             }`}
           >
             <IconSpark />
@@ -324,10 +346,10 @@ const InitiativesPage = () => {
           <button
             type="button"
             onClick={() => setTab("events")}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-[14px] font-medium transition sm:flex-none ${
+            className={`flex flex-1 items-center justify-center gap-2.5 rounded-[14px] px-5 py-3.5 text-[15px] font-semibold transition sm:flex-none ${
               tab === "events"
-                ? "bg-white text-[#1d1d1f] shadow-sm ring-1 ring-black/[0.06]"
-                : "text-neutral-600 hover:bg-white/70"
+                ? "bg-white text-[#1d1d1f] shadow-[0_4px_24px_rgba(0,113,227,0.12)] ring-2 ring-[#0071e3]/25"
+                : "text-neutral-600 hover:bg-white/80 hover:text-[#1d1d1f]"
             }`}
           >
             <IconCalendar />
@@ -387,7 +409,7 @@ const InitiativesPage = () => {
           <button
             type="button"
             onClick={openCreateFunding}
-            className="mb-6 w-full rounded-full bg-[#0071e3] py-3 text-[15px] font-medium text-white shadow-sm transition hover:bg-[#0077ed] sm:w-auto sm:px-8"
+            className="mb-8 w-full rounded-full bg-[#0071e3] py-3.5 text-[16px] font-semibold text-white shadow-[0_8px_30px_rgba(0,113,227,0.35)] transition hover:bg-[#0077ed] active:scale-[0.99] sm:w-auto sm:px-10"
           >
             New funding campaign
           </button>
@@ -397,7 +419,7 @@ const InitiativesPage = () => {
           <button
             type="button"
             onClick={openCreateEvent}
-            className="mb-6 w-full rounded-full bg-[#0071e3] py-3 text-[15px] font-medium text-white shadow-sm transition hover:bg-[#0077ed] sm:w-auto sm:px-8"
+            className="mb-8 w-full rounded-full bg-[#0071e3] py-3.5 text-[16px] font-semibold text-white shadow-[0_8px_30px_rgba(0,113,227,0.35)] transition hover:bg-[#0077ed] active:scale-[0.99] sm:w-auto sm:px-10"
           >
             Publish Meet event
           </button>
@@ -413,9 +435,9 @@ const InitiativesPage = () => {
         {loading ? (
           <p className="text-[15px] text-neutral-500">Loading…</p>
         ) : tab === "funding" ? (
-          <ul className="space-y-4">
+          <ul className="space-y-5">
             {funding.length === 0 ? (
-              <li className="apple-glass-card p-8 text-center text-neutral-500">
+              <li className="apple-glass-card rounded-[24px] p-10 text-center text-[16px] leading-relaxed text-neutral-500">
                 No funding campaigns yet.
                 {canOrganize(user) && " Create one to collect contributions for the college."}
               </li>
@@ -426,11 +448,16 @@ const InitiativesPage = () => {
                 const manage = user && (user.role === "admin" || isOwner(user, c));
                 const showRzp = canUseRazorpay(c, razorpayEnabled);
                 return (
-                  <li key={c._id} className="apple-glass-card overflow-hidden p-5 sm:p-6">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
+                  <li
+                    key={c._id}
+                    className="apple-glass-card group overflow-hidden rounded-[24px] p-5 transition-shadow duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] sm:p-7"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-4">
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <h2 className="text-[18px] font-semibold text-[#1d1d1f]">{c.title}</h2>
+                          <h2 className="text-[20px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[22px]">
+                            {c.title}
+                          </h2>
                           {!c.isActive && (
                             <span className="rounded-full bg-neutral-200 px-2 py-0.5 text-[11px] font-medium text-neutral-600">
                               Inactive
@@ -447,21 +474,21 @@ const InitiativesPage = () => {
                           {c.createdBy?.company ? ` · ${c.createdBy.company}` : ""}
                         </p>
                         {c.description ? (
-                          <p className="mt-3 whitespace-pre-line text-[15px] leading-relaxed text-neutral-700">
+                          <p className="mt-4 whitespace-pre-line text-[16px] leading-relaxed text-neutral-700">
                             {c.description}
                           </p>
                         ) : null}
                         {goal && (
-                          <div className="mt-4">
-                            <div className="mb-1 flex justify-between text-[12px] font-medium text-neutral-600">
+                          <div className="mt-5">
+                            <div className="mb-2 flex justify-between text-[13px] font-semibold text-neutral-600">
                               <span>
                                 Raised {c.currency || "INR"} {(c.raisedAmount ?? 0).toLocaleString()}
                               </span>
                               <span>Goal {c.goalAmount.toLocaleString()}</span>
                             </div>
-                            <div className="h-2 overflow-hidden rounded-full bg-[#f5f5f7] ring-1 ring-black/[0.06]">
+                            <div className="h-2.5 overflow-hidden rounded-full bg-[#e8e8ed] ring-1 ring-black/[0.05]">
                               <div
-                                className="h-full rounded-full bg-[#0071e3] transition-all"
+                                className="h-full rounded-full bg-gradient-to-r from-[#0071e3] to-[#2997ff] transition-all duration-500"
                                 style={{ width: `${pct}%` }}
                               />
                             </div>
@@ -519,9 +546,9 @@ const InitiativesPage = () => {
             )}
           </ul>
         ) : (
-          <ul className="space-y-4">
+          <ul className="space-y-5">
             {events.length === 0 ? (
-              <li className="apple-glass-card p-8 text-center text-neutral-500">
+              <li className="apple-glass-card rounded-[24px] p-10 text-center text-[16px] leading-relaxed text-neutral-500">
                 No events scheduled.
                 {canOrganize(user) && " Use the guided publisher to add a Google Meet event."}
               </li>
@@ -531,11 +558,27 @@ const InitiativesPage = () => {
                 const start = ev.startsAt ? new Date(ev.startsAt) : null;
                 const end = ev.endsAt ? new Date(ev.endsAt) : null;
                 return (
-                  <li key={ev._id} className="apple-glass-card overflow-hidden p-5 sm:p-6">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div className="min-w-0 flex-1">
+                  <li
+                    key={ev._id}
+                    className="apple-glass-card group overflow-hidden rounded-[24px] p-5 transition-shadow duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] sm:p-7"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div className="flex min-w-0 flex-1 gap-4">
+                        {start && !Number.isNaN(start.getTime()) ? (
+                          <div className="hidden shrink-0 flex-col items-center justify-center rounded-2xl bg-[#0071e3]/10 px-3 py-2 text-center ring-1 ring-[#0071e3]/20 sm:flex sm:min-w-[4.5rem]">
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-[#0071e3]">
+                              {start.toLocaleString("en", { month: "short" })}
+                            </span>
+                            <span className="text-[22px] font-semibold leading-none text-[#1d1d1f]">
+                              {start.getDate()}
+                            </span>
+                          </div>
+                        ) : null}
+                        <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <h2 className="text-[18px] font-semibold text-[#1d1d1f]">{ev.title}</h2>
+                          <h2 className="text-[20px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[22px]">
+                            {ev.title}
+                          </h2>
                           {ev.status === "cancelled" && (
                             <span className="rounded-full bg-red-100 px-2 py-0.5 text-[11px] font-medium text-red-700">
                               Cancelled
@@ -557,37 +600,38 @@ const InitiativesPage = () => {
                           </p>
                         )}
                         {ev.description ? (
-                          <p className="mt-3 whitespace-pre-line text-[15px] leading-relaxed text-neutral-700">
+                          <p className="mt-3 whitespace-pre-line text-[16px] leading-relaxed text-neutral-700">
                             {ev.description}
                           </p>
                         ) : null}
+                        </div>
                       </div>
-                      <div className="flex shrink-0 flex-col gap-2 sm:items-end">
+                      <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:items-end">
                         {ev.status === "scheduled" && ev.googleMeetLink ? (
                           <a
                             href={ev.googleMeetLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center rounded-full bg-[#0071e3] px-5 py-2.5 text-[14px] font-medium text-white transition hover:bg-[#0077ed]"
+                            className="inline-flex items-center justify-center rounded-full bg-[#0071e3] px-6 py-3 text-[15px] font-semibold text-white shadow-[0_6px_20px_rgba(0,113,227,0.3)] transition hover:bg-[#0077ed]"
                           >
                             Join Google Meet
                           </a>
                         ) : ev.googleMeetLink ? (
-                          <span className="text-[12px] text-neutral-400">Meet link on file</span>
+                          <span className="text-[13px] text-neutral-400">Meet link on file</span>
                         ) : null}
                         {manage && (
                           <div className="flex flex-wrap gap-2">
                             <button
                               type="button"
                               onClick={() => openEditEvent(ev)}
-                              className="rounded-full border border-black/[0.12] px-4 py-2 text-[13px] font-medium text-[#0071e3]"
+                              className="rounded-full border border-black/[0.12] bg-white px-4 py-2 text-[14px] font-medium text-[#0071e3] transition hover:bg-[#f5f5f7]"
                             >
                               Edit
                             </button>
                             <button
                               type="button"
                               onClick={() => removeEvent(ev._id)}
-                              className="rounded-full border border-red-200 px-4 py-2 text-[13px] font-medium text-red-600"
+                              className="rounded-full border border-red-200 bg-white px-4 py-2 text-[14px] font-medium text-red-600 transition hover:bg-red-50"
                             >
                               Delete
                             </button>

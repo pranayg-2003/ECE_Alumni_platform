@@ -2,6 +2,7 @@
 // Main entry point for the Express backend server
 // This file ties everything together
 
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -9,8 +10,9 @@ const http = require("http");
 const { Server } = require("socket.io");
 const connectDB = require("./config/db");
 
-// Load environment variables from .env file FIRST
-dotenv.config();
+// Load .env from this file's directory so admin secret and DB URI load even if
+// the process was started from another working directory (e.g. repo root).
+dotenv.config({ path: path.join(__dirname, ".env") });
 
 // Connect to MongoDB
 connectDB();
@@ -65,6 +67,7 @@ app.use("/api/upload", require("./routes/uploadRoutes"));
 app.use("/api/site", require("./routes/siteRoutes"));
 app.use("/api/community", require("./routes/communityRoutes"));
 app.use("/api/referrals", require("./routes/referralRoutes"));
+app.use("/api/admin", require("./routes/adminRoutes"));
 
 // Health check route — useful to verify server is running
 app.get("/", (req, res) => {
@@ -79,6 +82,7 @@ app.get("/", (req, res) => {
       upload: "/api/upload",
       community: "/api/community",
       referrals: "/api/referrals",
+      admin: "/api/admin",
     },
   });
 });

@@ -30,7 +30,7 @@ const Login = () => {
       const redirectMap = {
         student: "/feed",
         alumni: "/feed",
-        admin: "/dashboard/admin",
+        admin: "/admin",
       };
       navigate(redirectMap[user.role]);
     } catch (err) {

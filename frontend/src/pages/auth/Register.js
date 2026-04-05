@@ -61,6 +61,7 @@ const Register = () => {
     year: "",
     interests: [],
     skills: [],
+    adminSecret: "",
   });
 
   const [error, setError] = useState("");
@@ -100,6 +101,10 @@ const Register = () => {
       submitLock.current = false;
       return setError("Please enter your current company.");
     }
+    if (formData.role === "admin" && !formData.adminSecret?.trim()) {
+      submitLock.current = false;
+      return setError("Admin signup requires the registration secret from your server administrator.");
+    }
 
     setLoading(true);
 
@@ -120,13 +125,16 @@ const Register = () => {
         payload.branch = formData.branch;
         payload.year = parseInt(formData.year, 10);
       }
+      if (formData.role === "admin") {
+        payload.adminSecret = formData.adminSecret.trim();
+      }
 
       const user = await register(payload);
 
       const redirectMap = {
         student: "/feed",
         alumni: "/feed",
-        admin: "/dashboard/admin",
+        admin: "/admin",
       };
       navigate(redirectMap[user.role]);
     } catch (err) {
@@ -177,13 +185,21 @@ const Register = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <p className="mb-3 text-[13px] font-semibold text-[#1d1d1f]">I am a</p>
-                <div className="flex rounded-2xl bg-[#f5f5f7] p-1">
-                  {["student", "alumni"].map((r) => (
+                <div className="grid grid-cols-3 gap-1 rounded-2xl bg-[#f5f5f7] p-1">
+                  {["student", "alumni", "admin"].map((r) => (
                     <button
                       key={r}
                       type="button"
-                      onClick={() => setFormData({ ...formData, role: r })}
-                      className={`flex-1 rounded-[14px] py-2.5 text-[14px] font-medium capitalize transition duration-300 ${
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          role: r,
+                          adminSecret: r === "admin" ? formData.adminSecret : "",
+                          interests: r === "admin" ? [] : formData.interests,
+                          skills: r === "admin" ? [] : formData.skills,
+                        })
+                      }
+                      className={`rounded-[14px] py-2.5 text-[13px] font-medium capitalize transition duration-300 sm:text-[14px] ${
                         formData.role === r
                           ? "bg-white text-[#1d1d1f] shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
                           : "text-neutral-500 hover:text-[#1d1d1f]"
@@ -193,6 +209,13 @@ const Register = () => {
                     </button>
                   ))}
                 </div>
+                {formData.role === "admin" && (
+                  <p className="mt-2 text-[12px] leading-snug text-neutral-500">
+                    Set <code className="rounded bg-black/[0.04] px-1">ADMIN_REGISTER_SECRET</code> in{" "}
+                    <code className="rounded bg-black/[0.04] px-1">backend/.env</code>, restart the API server, then enter
+                    the exact same value below (8+ characters in production).
+                  </p>
+                )}
               </div>
 
               <div className="space-y-4">
@@ -279,6 +302,22 @@ const Register = () => {
                 </div>
               )}
 
+              {formData.role === "admin" && (
+                <div className="animate-auth-fade-in rounded-2xl border border-amber-200/80 bg-amber-50/60 p-4">
+                  <label className="mb-2 block text-[13px] font-semibold text-[#1d1d1f]">Admin registration secret</label>
+                  <input
+                    type="password"
+                    name="adminSecret"
+                    value={formData.adminSecret}
+                    onChange={handleChange}
+                    placeholder="Same as ADMIN_REGISTER_SECRET in backend/.env"
+                    autoComplete="off"
+                    required
+                    className={inputClass}
+                  />
+                </div>
+              )}
+
               {formData.role === "student" && (
                 <div className="animate-auth-fade-in space-y-4 rounded-2xl border border-black/[0.06] bg-[#f5f5f7]/60 p-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -319,49 +358,53 @@ const Register = () => {
                 </div>
               )}
 
-              <div className="rounded-2xl border border-black/[0.06] bg-[#fafafc] p-4">
-                <label className="mb-3 block text-[13px] font-semibold text-[#1d1d1f]">
-                  Interests <span className="font-normal text-neutral-500">(up to 5)</span>
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {INTERESTS.map((item) => (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => toggleArrayItem("interests", item)}
-                      className={`${chipBase} border-black/[0.08] ${
-                        formData.interests.includes(item)
-                          ? "border-transparent bg-[#1d1d1f] text-white shadow-sm"
-                          : "bg-white text-neutral-600 hover:border-black/[0.12]"
-                      }`}
-                    >
-                      {item}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              {formData.role !== "admin" && (
+                <>
+                  <div className="rounded-2xl border border-black/[0.06] bg-[#fafafc] p-4">
+                    <label className="mb-3 block text-[13px] font-semibold text-[#1d1d1f]">
+                      Interests <span className="font-normal text-neutral-500">(up to 5)</span>
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {INTERESTS.map((item) => (
+                        <button
+                          key={item}
+                          type="button"
+                          onClick={() => toggleArrayItem("interests", item)}
+                          className={`${chipBase} border-black/[0.08] ${
+                            formData.interests.includes(item)
+                              ? "border-transparent bg-[#1d1d1f] text-white shadow-sm"
+                              : "bg-white text-neutral-600 hover:border-black/[0.12]"
+                          }`}
+                        >
+                          {item}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-              <div className="rounded-2xl border border-black/[0.06] bg-[#fafafc] p-4">
-                <label className="mb-3 block text-[13px] font-semibold text-[#1d1d1f]">
-                  Skills <span className="font-normal text-neutral-500">(up to 5)</span>
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {SKILLS.map((item) => (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => toggleArrayItem("skills", item)}
-                      className={`${chipBase} border-black/[0.08] ${
-                        formData.skills.includes(item)
-                          ? "border-transparent bg-[#1d1d1f] text-white shadow-sm"
-                          : "bg-white text-neutral-600 hover:border-black/[0.12]"
-                      }`}
-                    >
-                      {item}
-                    </button>
-                  ))}
-                </div>
-              </div>
+                  <div className="rounded-2xl border border-black/[0.06] bg-[#fafafc] p-4">
+                    <label className="mb-3 block text-[13px] font-semibold text-[#1d1d1f]">
+                      Skills <span className="font-normal text-neutral-500">(up to 5)</span>
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {SKILLS.map((item) => (
+                        <button
+                          key={item}
+                          type="button"
+                          onClick={() => toggleArrayItem("skills", item)}
+                          className={`${chipBase} border-black/[0.08] ${
+                            formData.skills.includes(item)
+                              ? "border-transparent bg-[#1d1d1f] text-white shadow-sm"
+                              : "bg-white text-neutral-600 hover:border-black/[0.12]"
+                          }`}
+                        >
+                          {item}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
 
               <button
                 type="submit"

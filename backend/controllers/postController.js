@@ -184,10 +184,37 @@ const updatePost = async (req, res) => {
   }
 };
 
+const deletePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ success: false, message: "Post not found." });
+    }
+
+    const isOwner = post.author.toString() === req.user.id;
+    const isAdmin = req.user.role === "admin";
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ success: false, message: "Not authorized to delete this post." });
+    }
+
+    await post.deleteOne();
+
+    return res.status(200).json({
+      success: true,
+      message: "Post deleted.",
+    });
+  } catch (error) {
+    console.error("Delete post error:", error);
+    return res.status(500).json({ success: false, message: "Failed to delete post." });
+  }
+};
+
 module.exports = {
   getPosts,
   createPost,
   toggleLikePost,
   addCommentToPost,
   updatePost,
+  deletePost,
 };

@@ -3,9 +3,16 @@ import { Link } from "react-router-dom";
 
 const AuthHeroPanel = ({ landing }) => {
   const l = landing || {};
+  const bgImage = l.heroImageUrl?.trim();
   return (
     <div className="auth-hero-apple relative flex min-h-[300px] flex-col justify-between overflow-hidden rounded-[28px] p-6 text-white shadow-[0_24px_80px_rgba(0,0,0,0.35)] sm:p-9 lg:min-h-[520px]">
       <div className="pointer-events-none absolute inset-0">
+        {bgImage ? (
+          <>
+            <img src={bgImage} alt="" className="absolute inset-0 h-full w-full object-cover object-center" />
+            <div className="absolute inset-0 bg-gradient-to-br from-black/75 via-black/55 to-black/80" />
+          </>
+        ) : null}
         <div className="absolute -left-24 top-16 h-72 w-72 rounded-full bg-[#2997ff]/20 blur-3xl animate-auth-drift" />
         <div className="absolute -right-16 bottom-20 h-56 w-56 rounded-full bg-[#5e5ce6]/15 blur-3xl animate-auth-float" />
         <div className="absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/[0.04] blur-3xl animate-auth-float-delayed" />
