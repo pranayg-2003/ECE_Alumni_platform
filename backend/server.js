@@ -39,7 +39,7 @@ const io = new Server(server, {
 // Enable CORS so our React frontend (on port 3000) can talk to this server
 app.use(
   cors({
-    origin: "*", // React dev server
+    origin: "https://ece-alumni-platform-1j6i5lxw1-pranay-gupta-s-projects.vercel.app/", // React dev server
     credentials: true,
   }),
 );
