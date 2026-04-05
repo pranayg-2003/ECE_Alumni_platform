@@ -16,7 +16,7 @@ const AlumniEvent = require("../models/AlumniEvent");
 const jwt = require("jsonwebtoken");
 const {
   sendPasswordResetOtpEmail,
-  isSmtpConfigured,
+  isMailConfigured,
   sendWelcomeEmail,
 } = require("../utils/email");
 
@@ -500,9 +500,9 @@ const forgotPassword = async (req, res) => {
       await sendPasswordResetOtpEmail(emailNorm, otp, user.name);
     } catch (mailErr) {
       const msg = mailErr && mailErr.message;
-      if (msg === "SMTP_NOT_CONFIGURED" || !isSmtpConfigured()) {
+      if (msg === "SMTP_NOT_CONFIGURED" || !isMailConfigured()) {
         console.info(
-          `[forgot-password] SMTP not set; OTP for ${emailNorm} (dev only): ${otp}`
+          `[forgot-password] Mail not configured; OTP for ${emailNorm} (dev only): ${otp}`
         );
         return genericOk();
       }
@@ -511,7 +511,25 @@ const forgotPassword = async (req, res) => {
         return res.status(503).json({
           success: false,
           message:
-            "Email delivery timed out. Check that SMTP_USER and SMTP_PASS (Gmail App Password) are set on the server, then try again.",
+            "Email delivery timed out. On Render, use RESEND_API_KEY (Resend.com) instead of Gmail SMTP, or check your network.",
+        });
+      }
+      if (
+        mailErr.code === "ETIMEDOUT" ||
+        mailErr.code === "ESOCKET" ||
+        mailErr.code === "ECONNREFUSED"
+      ) {
+        return res.status(503).json({
+          success: false,
+          message:
+            "Cannot connect to the mail server from this host. Add RESEND_API_KEY from resend.com (free tier) — it uses HTTPS and works on Render.",
+        });
+      }
+      if (mailErr.code === "RESEND_API_ERROR") {
+        return res.status(502).json({
+          success: false,
+          message:
+            "Email provider rejected the request. Check RESEND_FROM matches a verified domain in Resend, or fix RESEND_API_KEY.",
         });
       }
       const isAuthFail =
@@ -522,7 +540,7 @@ const forgotPassword = async (req, res) => {
         success: false,
         message: isAuthFail
           ? "Could not sign in to the mail server. Use a Gmail App Password (16 characters), not your normal password, and set SMTP_USER to that Gmail address."
-          : "Could not send email. Check SMTP settings or try again later.",
+          : "Could not send email. For production on Render, prefer RESEND_API_KEY over Gmail SMTP.",
       });
     }
 

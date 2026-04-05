@@ -6,6 +6,13 @@ const smtpPass = () => String(process.env.SMTP_PASS || "").replace(/\s+/g, "");
 
 const isSmtpConfigured = () => !!(smtpUser() && smtpPass());
 
+/** https://resend.com — uses HTTPS (port 443); works on Render where SMTP to Gmail often ETIMEDOUT */
+const resendKey = () => String(process.env.RESEND_API_KEY || "").trim();
+const isResendConfigured = () => !!resendKey();
+
+/** True if either Resend or Gmail SMTP is configured */
+const isMailConfigured = () => isResendConfigured() || isSmtpConfigured();
+
 /** Avoid hanging past Render/proxy limits (502 + no CORS if the process never responds). */
 const SEND_MAIL_TIMEOUT_MS = Number(process.env.SMTP_SEND_TIMEOUT_MS) || 25_000;
 
@@ -22,6 +29,61 @@ const withTimeout = (promise, ms, code) => {
   });
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 };
+
+/**
+ * Send via Resend REST API (no SMTP). Set RESEND_API_KEY on Render.
+ * RESEND_FROM: e.g. "Acme <noreply@yourdomain.com>" after verifying domain;
+ * if unset, uses Resend’s test sender (only works for limited testing — verify a domain for production).
+ */
+async function sendViaResend({ to, subject, text, html }) {
+  const key = resendKey();
+  if (!key) {
+    const err = new Error("RESEND_NOT_CONFIGURED");
+    err.code = "RESEND_NOT_CONFIGURED";
+    throw err;
+  }
+
+  const appName = process.env.APP_NAME || "MentorBridge";
+  const from =
+    String(process.env.RESEND_FROM || "").trim() ||
+    `${appName} <onboarding@resend.dev>`;
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), SEND_MAIL_TIMEOUT_MS);
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from,
+        to: [to],
+        subject,
+        text,
+        ...(html ? { html } : {}),
+      }),
+      signal: controller.signal,
+    });
+    const raw = await res.text();
+    if (!res.ok) {
+      const err = new Error(raw.slice(0, 300) || `Resend HTTP ${res.status}`);
+      err.code = "RESEND_API_ERROR";
+      err.status = res.status;
+      throw err;
+    }
+  } catch (err) {
+    if (err.name === "AbortError") {
+      const t = new Error("EMAIL_SEND_TIMEOUT");
+      t.code = "EMAIL_SEND_TIMEOUT";
+      throw t;
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 const getTransporter = () => {
   if (!isSmtpConfigured()) return null;
@@ -44,10 +106,9 @@ const getTransporter = () => {
 };
 
 /**
- * Send 6-digit password reset OTP via Gmail (SMTP_USER + SMTP_APP_PASSWORD).
+ * Send 6-digit password reset OTP. Prefers Resend (HTTPS) when RESEND_API_KEY is set — required on many hosts that block SMTP.
  */
 async function sendPasswordResetOtpEmail(toEmail, otp, displayName) {
-  const from = process.env.SMTP_FROM || process.env.SMTP_USER;
   const appName = process.env.APP_NAME || "MentorBridge";
   const subject = `${appName} — password reset code`;
   const text = `Hi ${displayName || "there"},
@@ -58,10 +119,21 @@ It expires in 10 minutes. If you didn't request this, you can ignore this email.
 
 — ${appName}`;
 
+  if (isResendConfigured()) {
+    try {
+      await sendViaResend({ to: toEmail, subject, text });
+      return;
+    } catch (err) {
+      console.error("[email] Resend failed:", err.code || err.message);
+      throw err;
+    }
+  }
+
+  const from = process.env.SMTP_FROM || process.env.SMTP_USER;
   const transport = getTransporter();
   if (!transport) {
     console.warn(
-      "[email] SMTP not configured (SMTP_USER / SMTP_PASS). OTP not emailed."
+      "[email] No RESEND_API_KEY and no SMTP_USER/SMTP_PASS — OTP not emailed.",
     );
     throw new Error("SMTP_NOT_CONFIGURED");
   }
@@ -82,7 +154,7 @@ It expires in 10 minutes. If you didn't request this, you can ignore this email.
     console.error(
       "[email] sendMail failed:",
       code || err.message,
-      err.response || ""
+      err.response || "",
     );
     throw err;
   }
@@ -92,7 +164,6 @@ It expires in 10 minutes. If you didn't request this, you can ignore this email.
  * Welcome email after successful registration (HTML + plain text).
  */
 async function sendWelcomeEmail(toEmail, displayName, role) {
-  const from = process.env.SMTP_FROM || process.env.SMTP_USER;
   const appName = process.env.APP_NAME || "MentorBridge";
   const roleLabel =
     role === "student" ? "Student" : role === "alumni" ? "Alumni mentor" : "Administrator";
@@ -134,9 +205,20 @@ Sign in anytime to connect, learn, and grow with the community.
 </body>
 </html>`;
 
+  if (isResendConfigured()) {
+    try {
+      await sendViaResend({ to: toEmail, subject, text, html });
+    } catch (err) {
+      console.error("[email] Resend welcome failed:", err.code || err.message);
+      throw err;
+    }
+    return;
+  }
+
+  const from = process.env.SMTP_FROM || process.env.SMTP_USER;
   const transport = getTransporter();
   if (!transport) {
-    console.warn("[email] SMTP not configured — welcome email not sent.");
+    console.warn("[email] No mail provider — welcome email not sent.");
     return;
   }
 
@@ -161,5 +243,7 @@ Sign in anytime to connect, learn, and grow with the community.
 module.exports = {
   sendPasswordResetOtpEmail,
   isSmtpConfigured,
+  isResendConfigured,
+  isMailConfigured,
   sendWelcomeEmail,
 };

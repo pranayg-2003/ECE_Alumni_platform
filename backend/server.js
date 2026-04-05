@@ -269,11 +269,13 @@ server.listen(PORT, () => {
   console.log(`📦 Environment: ${process.env.NODE_ENV || "development"}`);
   console.log(`🔌 WebSocket (Socket.io) enabled`);
   try {
-    const { isSmtpConfigured } = require("./utils/email");
-    if (!isSmtpConfigured()) {
+    const { isMailConfigured, isResendConfigured } = require("./utils/email");
+    if (!isMailConfigured()) {
       console.warn(
-        "⚠️  SMTP_USER / SMTP_PASS not set — forgot-password codes and registration welcome emails will not be sent. Add them in Render → Environment (Gmail App Password).",
+        "⚠️  No mail configured — set RESEND_API_KEY (recommended on Render) or SMTP_USER + SMTP_PASS in Environment.",
       );
+    } else if (isResendConfigured()) {
+      console.log("📧 Outbound email: Resend API (HTTPS)");
     }
   } catch {
     /* ignore */
