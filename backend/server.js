@@ -26,7 +26,7 @@ const server = http.createServer(app);
 // Initialize Socket.io with CORS settings
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "https://ece-alumni-platform-1j6i5lxw1-pranay-gupta-s-projects.vercel.app/-platform-1j6i5lxw1-pranay-gupta-s-projects.vercel.app",
     methods: ["GET", "POST"],
     credentials: true,
   },

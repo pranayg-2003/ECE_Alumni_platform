@@ -5,8 +5,9 @@ import { useChat } from "../../context/ChatContext";
 import { useAuth } from "../../context/AuthContext";
 import api, { uploadPostMedia } from "../../utils/api";
 import { toastApiError } from "../../utils/toast";
+import ImageLightbox from "../common/ImageLightbox";
 
-const MessageBody = ({ msg, isOwnMessage }) => {
+const MessageBody = ({ msg, isOwnMessage, onImagePreview }) => {
   const atts = Array.isArray(msg.attachments) ? msg.attachments : [];
   const link = (msg.linkUrl || "").trim();
   const text = (msg.message || "").trim();
@@ -37,12 +38,18 @@ const MessageBody = ({ msg, isOwnMessage }) => {
                 href={a.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block overflow-hidden rounded-none border border-black/10 bg-black/[0.03]"
+                className="block overflow-hidden rounded-none border border-black/10 bg-black/[0.06]"
+                onClick={(e) => {
+                  if (onImagePreview && !e.ctrlKey && !e.metaKey && e.button === 0) {
+                    e.preventDefault();
+                    onImagePreview(a.url, a.name || "Image");
+                  }
+                }}
               >
                 <img
                   src={a.url}
                   alt={a.name || "Image"}
-                  className="max-h-56 w-full object-cover"
+                  className="mx-auto max-h-[min(70vh,20rem)] w-full object-contain"
                   loading="lazy"
                 />
               </a>
@@ -86,6 +93,7 @@ const ChatWindow = ({ otherUser, onClose, variant = "page" }) => {
   const [showLink, setShowLink] = useState(false);
   const [pendingFiles, setPendingFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [lightbox, setLightbox] = useState({ open: false, src: "", name: "" });
   const [isTyping, setIsTyping] = useState(false);
   const typingTimeoutRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -280,7 +288,11 @@ const ChatWindow = ({ otherUser, onClose, variant = "page" }) => {
                       : "border-black/[0.12] bg-white text-[#1d1d1f]"
                   }`}
                 >
-                  <MessageBody msg={msg} isOwnMessage={isOwnMessage} />
+                  <MessageBody
+                    msg={msg}
+                    isOwnMessage={isOwnMessage}
+                    onImagePreview={(src, name) => setLightbox({ open: true, src, name })}
+                  />
                   <p
                     className={`mt-1.5 text-[11px] font-medium tabular-nums ${
                       isOwnMessage ? "text-white/70" : "text-neutral-400"
@@ -344,21 +356,32 @@ const ChatWindow = ({ otherUser, onClose, variant = "page" }) => {
         />
 
         {pendingFiles.length > 0 && (
-          <div className="mb-3 flex flex-wrap gap-2">
+          <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
             {pendingFiles.map((p, i) => (
               <div
                 key={`${p.file.name}-${i}`}
-                className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-none border border-black/[0.1] bg-[#f5f5f7] text-[11px] text-neutral-600"
+                className="relative shrink-0"
               >
                 {p.preview ? (
-                  <img src={p.preview} alt="" className="h-full w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setLightbox({ open: true, src: p.preview, name: p.file.name })
+                    }
+                    className="flex h-24 w-[6.5rem] items-center justify-center overflow-hidden rounded-lg border border-black/[0.1] bg-[#ebebed]"
+                    aria-label={`Preview ${p.file.name}`}
+                  >
+                    <img src={p.preview} alt="" className="max-h-full max-w-full object-contain" />
+                  </button>
                 ) : (
-                  <span className="px-1 text-center leading-tight">📄 {p.file.name.slice(0, 8)}…</span>
+                  <div className="flex h-24 w-[6.5rem] items-center justify-center overflow-hidden rounded-lg border border-black/[0.1] bg-[#f5f5f7] text-[11px] text-neutral-600">
+                    <span className="px-1 text-center leading-tight">📄 {p.file.name.slice(0, 8)}…</span>
+                  </div>
                 )}
                 <button
                   type="button"
                   onClick={() => removePendingAt(i)}
-                  className="absolute right-0 top-0 flex h-5 w-5 items-center justify-center bg-[#1d1d1f]/80 text-[12px] text-white"
+                  className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#1d1d1f] text-[12px] text-white ring-1 ring-white"
                   aria-label="Remove attachment"
                 >
                   ×
@@ -430,6 +453,13 @@ const ChatWindow = ({ otherUser, onClose, variant = "page" }) => {
           </button>
         </div>
       </form>
+
+      <ImageLightbox
+        open={lightbox.open}
+        src={lightbox.src}
+        alt={lightbox.name || "Image"}
+        onClose={() => setLightbox({ open: false, src: "", name: "" })}
+      />
     </div>
   );
 };

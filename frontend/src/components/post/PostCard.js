@@ -50,7 +50,7 @@ const PostMedia = ({ post }) => {
         <div
           className={
             images.length === 1
-              ? "overflow-hidden rounded-2xl border border-slate-100 shadow-sm"
+              ? "overflow-hidden rounded-2xl border border-slate-100 bg-slate-100 shadow-sm"
               : "grid grid-cols-2 gap-2 sm:grid-cols-2"
           }
         >
@@ -59,14 +59,18 @@ const PostMedia = ({ post }) => {
               key={`${img.url}-${i}`}
               className={
                 images.length === 1
-                  ? "relative aspect-[4/3] max-h-[420px] w-full bg-slate-100"
-                  : "relative aspect-square overflow-hidden rounded-xl border border-slate-100 bg-slate-100"
+                  ? "flex w-full items-center justify-center"
+                  : "flex min-h-[140px] items-center justify-center overflow-hidden rounded-xl border border-slate-100 bg-slate-100 sm:min-h-[180px]"
               }
             >
               <img
                 src={img.url}
                 alt={img.originalName || "Post image"}
-                className="h-full w-full object-cover"
+                className={
+                  images.length === 1
+                    ? "mx-auto block max-h-[min(75vh,560px)] w-full object-contain"
+                    : "max-h-[min(42vh,320px)] w-full object-contain"
+                }
                 loading="lazy"
               />
             </div>
@@ -75,11 +79,11 @@ const PostMedia = ({ post }) => {
       )}
 
       {legacyThumb && (
-        <div className="overflow-hidden rounded-2xl border border-slate-100 shadow-sm">
+        <div className="overflow-hidden rounded-2xl border border-slate-100 bg-slate-100 shadow-sm">
           <img
             src={post.thumbnailUrl}
             alt="Post attachment"
-            className="max-h-[420px] w-full object-cover"
+            className="mx-auto block max-h-[min(75vh,560px)] w-full object-contain"
             loading="lazy"
           />
         </div>

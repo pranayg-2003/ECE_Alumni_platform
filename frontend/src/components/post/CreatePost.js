@@ -3,6 +3,7 @@ import { usePost } from "../../context/PostContext";
 import { useAuth } from "../../context/AuthContext";
 import { uploadPostMedia } from "../../utils/api";
 import { toast, toastApiError } from "../../utils/toast";
+import ImageLightbox from "../common/ImageLightbox";
 
 const ACCEPT =
   "image/jpeg,image/png,image/gif,image/webp,application/pdf,.pdf,.doc,.docx,.txt";
@@ -18,6 +19,7 @@ const CreatePost = () => {
   const [content, setContent] = useState("");
   const [staged, setStaged] = useState([]);
   const [uploadingMedia, setUploadingMedia] = useState(false);
+  const [lightbox, setLightbox] = useState({ open: false, src: "", name: "" });
   const { addPost, submitting } = usePost();
   const { user } = useAuth();
 
@@ -139,29 +141,38 @@ const CreatePost = () => {
           }}
         />
 
-        <div className="flex flex-wrap items-center gap-2 border-t border-black/[0.06] pt-4">
-          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+        <div className="flex flex-col gap-2 border-t border-black/[0.06] pt-4">
+          <div className="flex min-w-0 items-stretch gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {staged.map((item) => (
               <div
                 key={item.id}
-                className="group relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-black/[0.08] bg-white shadow-sm"
+                className="group relative shrink-0"
                 title={item.file.name}
               >
                 {item.preview ? (
-                  <img
-                    src={item.preview}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setLightbox({ open: true, src: item.preview, name: item.file.name })
+                    }
+                    className="relative flex h-28 w-[7.5rem] items-center justify-center overflow-hidden rounded-xl border border-black/[0.08] bg-slate-100 shadow-sm transition hover:ring-2 hover:ring-[#0071e3]/30 sm:h-32 sm:w-[9.5rem]"
+                    aria-label={`Preview ${item.file.name}`}
+                  >
+                    <img
+                      src={item.preview}
+                      alt=""
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </button>
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-slate-100 text-sm">
+                  <div className="flex h-28 w-[7.5rem] items-center justify-center rounded-xl border border-black/[0.08] bg-slate-100 text-sm shadow-sm sm:h-32 sm:w-[9.5rem]">
                     📄
                   </div>
                 )}
                 <button
                   type="button"
                   onClick={() => removeStaged(item.id)}
-                  className="absolute inset-0 flex items-center justify-center bg-slate-900/60 text-lg font-bold text-white opacity-0 transition group-hover:opacity-100"
+                  className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#1d1d1f] text-sm font-bold text-white shadow-md ring-2 ring-white transition hover:bg-red-600"
                   aria-label={`Remove ${item.file.name}`}
                 >
                   ×
@@ -173,31 +184,38 @@ const CreatePost = () => {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-black/[0.12] bg-[#f5f5f7] text-neutral-500 transition hover:border-[#0071e3]/40 hover:bg-white hover:text-[#0071e3]"
+                className="flex h-28 w-14 shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-black/[0.12] bg-[#f5f5f7] text-neutral-500 transition hover:border-[#0071e3]/40 hover:bg-white hover:text-[#0071e3] sm:h-32"
                 title="Add photos or documents"
                 aria-label="Add attachment"
               >
-                <span className="text-xl leading-none">+</span>
+                <span className="text-2xl leading-none">+</span>
               </button>
             )}
           </div>
 
-          <span className="text-xs text-slate-400 tabular-nums">
-            {content.length}/2000
-          </span>
+          {staged.some((s) => s.preview) && (
+            <p className="text-[11px] text-slate-400">
+              Tap an image for a full preview. Photos are shown without cropping when published.
+            </p>
+          )}
 
-          <button
-            type="button"
-            onClick={handlePost}
-            disabled={busy || !content.trim()}
-            className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#0071e3] px-5 py-2.5 text-[14px] font-medium text-white shadow-sm transition hover:bg-[#0077ed] disabled:cursor-not-allowed disabled:opacity-55"
-          >
-            {uploadingMedia
-              ? "Uploading…"
-              : submitting
-                ? "Publishing…"
-                : "Publish"}
-          </button>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="text-xs text-slate-400 tabular-nums">
+              {content.length}/2000
+            </span>
+            <button
+              type="button"
+              onClick={handlePost}
+              disabled={busy || !content.trim()}
+              className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#0071e3] px-5 py-2.5 text-[14px] font-medium text-white shadow-sm transition hover:bg-[#0077ed] disabled:cursor-not-allowed disabled:opacity-55"
+            >
+              {uploadingMedia
+                ? "Uploading…"
+                : submitting
+                  ? "Publishing…"
+                  : "Publish"}
+            </button>
+          </div>
         </div>
 
         {staged.length > 0 && (
@@ -206,6 +224,13 @@ const CreatePost = () => {
           </p>
         )}
       </div>
+
+      <ImageLightbox
+        open={lightbox.open}
+        src={lightbox.src}
+        alt={lightbox.name || "Attachment preview"}
+        onClose={() => setLightbox({ open: false, src: "", name: "" })}
+      />
     </div>
   );
 };
