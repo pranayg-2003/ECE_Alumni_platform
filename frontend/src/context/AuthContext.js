@@ -72,13 +72,13 @@ export const AuthProvider = ({ children }) => {
   // ============================================
   const register = async (userData) => {
     const response = await api.post("/auth/register", userData);
-    const { token, user } = response.data;
+    const { token, user, welcomeEmailSent } = response.data;
 
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
 
     setUser(user);
-    return user;
+    return { user, welcomeEmailSent: !!welcomeEmailSent };
   };
 
   // ============================================

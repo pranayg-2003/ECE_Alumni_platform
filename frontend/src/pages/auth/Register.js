@@ -4,6 +4,7 @@
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import toast from "react-hot-toast";
 import { toastApiError } from "../../utils/toast";
 import AuthHeroPanel from "../../components/landing/AuthHeroPanel";
 import { useLandingContent } from "../../hooks/useLandingContent";
@@ -129,7 +130,16 @@ const Register = () => {
         payload.adminSecret = formData.adminSecret.trim();
       }
 
-      const user = await register(payload);
+      const { user, welcomeEmailSent } = await register(payload);
+
+      if (welcomeEmailSent) {
+        toast.success(
+          `Welcome! We sent a registration email to ${user.email}. Check your inbox and spam folder.`,
+          { duration: 6500 },
+        );
+      } else {
+        toast.success("Account created — you’re signed in.", { duration: 4000 });
+      }
 
       const redirectMap = {
         student: "/feed",

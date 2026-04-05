@@ -208,9 +208,11 @@ const register = async (req, res) => {
     // Create user in database
     const user = await User.create(userData);
 
+    let welcomeEmailSent = false;
     if (isMailConfigured()) {
       try {
         await sendWelcomeEmail(user.email, user.name, user.role);
+        welcomeEmailSent = true;
         console.info(`[auth] registration welcome email sent to ${user.email}`);
       } catch (welcomeErr) {
         console.error(
@@ -227,12 +229,13 @@ const register = async (req, res) => {
     // Generate JWT token for the new user
     const token = generateToken(user._id);
 
-    // Send response (exclude password)
+    // Send response (exclude password). welcomeEmailSent lets the client show “check your inbox”.
     res.status(201).json({
       success: true,
       message: "Account created successfully!",
       token,
       user: toPublicUser(user),
+      welcomeEmailSent,
     });
   } catch (error) {
     console.error("Register Error:", error);
