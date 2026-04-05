@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import api, {
   adminBlockUser,
   adminUnblockUser,
+  adminDeleteUser,
   fetchAdminActivity,
   fetchAdminPosts,
 } from "../../utils/api";
@@ -64,6 +65,9 @@ const AdminDashboard = () => {
   const [blockTarget, setBlockTarget] = useState(null);
   const [blockReason, setBlockReason] = useState("");
   const [blockBusy, setBlockBusy] = useState(false);
+  const [deleteUserTarget, setDeleteUserTarget] = useState(null);
+  const [deleteUserConfirmInput, setDeleteUserConfirmInput] = useState("");
+  const [deleteUserBusy, setDeleteUserBusy] = useState(false);
 
   const [modPosts, setModPosts] = useState([]);
   const [modLoading, setModLoading] = useState(false);
@@ -187,6 +191,26 @@ const AdminDashboard = () => {
       toastApiError(e, "Could not block user.");
     } finally {
       setBlockBusy(false);
+    }
+  };
+
+  const submitDeleteUser = async () => {
+    if (!deleteUserTarget) return;
+    if (deleteUserConfirmInput.trim().toUpperCase() !== "DELETE") {
+      toast.error("Type DELETE to confirm permanent removal.");
+      return;
+    }
+    setDeleteUserBusy(true);
+    try {
+      await adminDeleteUser(uid(deleteUserTarget));
+      toast.success("User permanently deleted.");
+      setDeleteUserTarget(null);
+      setDeleteUserConfirmInput("");
+      loadUsers();
+    } catch (e) {
+      toastApiError(e, "Could not delete user.");
+    } finally {
+      setDeleteUserBusy(false);
     }
   };
 
@@ -610,7 +634,10 @@ const AdminDashboard = () => {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-white">Users & access</h2>
-                <p className="text-[14px] text-zinc-500">Block to revoke portal access (login + API). Unblock to restore.</p>
+                <p className="text-[14px] text-zinc-500">
+                  Block revokes login and API access. Delete permanently removes the user, posts, chats, and mentorship data
+                  (not available for admin accounts).
+                </p>
               </div>
               <input
                 type="search"
@@ -676,22 +703,36 @@ const AdminDashboard = () => {
                             <td className="px-4 py-3 text-right">
                               {isAdmin ? (
                                 <span className="text-[12px] text-zinc-600">Protected</span>
-                              ) : active ? (
-                                <button
-                                  type="button"
-                                  onClick={() => setBlockTarget(u)}
-                                  className="rounded-full border border-red-500/40 bg-red-500/10 px-3 py-1.5 text-[12px] font-semibold text-red-300 hover:bg-red-500/20"
-                                >
-                                  Block
-                                </button>
                               ) : (
-                                <button
-                                  type="button"
-                                  onClick={() => doUnblock(u)}
-                                  className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-[12px] font-semibold text-emerald-300 hover:bg-emerald-500/20"
-                                >
-                                  Unblock
-                                </button>
+                                <div className="flex flex-wrap items-center justify-end gap-2">
+                                  {active ? (
+                                    <button
+                                      type="button"
+                                      onClick={() => setBlockTarget(u)}
+                                      className="rounded-full border border-red-500/40 bg-red-500/10 px-3 py-1.5 text-[12px] font-semibold text-red-300 hover:bg-red-500/20"
+                                    >
+                                      Block
+                                    </button>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={() => doUnblock(u)}
+                                      className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-[12px] font-semibold text-emerald-300 hover:bg-emerald-500/20"
+                                    >
+                                      Unblock
+                                    </button>
+                                  )}
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setDeleteUserTarget(u);
+                                      setDeleteUserConfirmInput("");
+                                    }}
+                                    className="rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[12px] font-semibold text-zinc-400 hover:border-rose-500/40 hover:bg-rose-500/10 hover:text-rose-200"
+                                  >
+                                    Delete account
+                                  </button>
+                                </div>
                               )}
                             </td>
                           </tr>
@@ -923,6 +964,58 @@ const AdminDashboard = () => {
                 className="rounded-full bg-red-600 px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-red-500 disabled:opacity-50"
               >
                 {blockBusy ? "Blocking…" : "Block user"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteUserTarget && (
+        <div
+          className="fixed inset-0 z-[100] flex items-end justify-center bg-black/70 p-4 backdrop-blur-sm sm:items-center"
+          role="dialog"
+          aria-modal
+          aria-labelledby="delete-user-title"
+        >
+          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-zinc-900 p-6 shadow-2xl">
+            <h3 id="delete-user-title" className="text-lg font-semibold text-white">
+              Permanently delete {deleteUserTarget.name}?
+            </h3>
+            <p className="mt-2 text-[14px] leading-relaxed text-zinc-400">
+              This removes their account, posts, messages, mentorship requests, and related data. This cannot be undone.
+            </p>
+            <p className="mt-3 text-[13px] text-zinc-500">
+              <span className="font-medium text-zinc-300">{deleteUserTarget.email}</span>
+            </p>
+            <label className="mt-4 block text-[13px] font-medium text-zinc-400">
+              Type <span className="font-mono text-rose-300">DELETE</span> to confirm
+            </label>
+            <input
+              type="text"
+              value={deleteUserConfirmInput}
+              onChange={(e) => setDeleteUserConfirmInput(e.target.value)}
+              autoComplete="off"
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-[14px] text-white outline-none focus:ring-2 focus:ring-rose-500/40"
+              placeholder="DELETE"
+            />
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setDeleteUserTarget(null);
+                  setDeleteUserConfirmInput("");
+                }}
+                className="rounded-full px-4 py-2.5 text-[14px] font-medium text-zinc-400 hover:bg-white/[0.06]"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={submitDeleteUser}
+                disabled={deleteUserBusy}
+                className="rounded-full bg-rose-600 px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-rose-500 disabled:opacity-50"
+              >
+                {deleteUserBusy ? "Deleting…" : "Delete forever"}
               </button>
             </div>
           </div>

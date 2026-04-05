@@ -3,6 +3,7 @@ const Post = require("../models/Post");
 const ChatMessage = require("../models/ChatMessage");
 const MentorshipRequest = require("../models/MentorshipRequest");
 const ReferralSeek = require("../models/ReferralSeek");
+const { deleteUserAndRelatedData } = require("../utils/deleteUserCascade");
 
 const safeCount = async (label, fn) => {
   try {
@@ -146,6 +147,38 @@ exports.unblockUser = async (req, res) => {
   } catch (e) {
     console.error("unblockUser:", e);
     res.status(500).json({ success: false, message: "Could not unblock user." });
+  }
+};
+
+// @route DELETE /api/admin/users/:userId
+// @access admin — permanent delete (posts, chat, mentorship, etc.)
+exports.deleteUserAccount = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const adminSelf = req.user._id ?? req.user.id;
+    if (String(userId) === String(adminSelf)) {
+      return res.status(400).json({ success: false, message: "You cannot delete your own account." });
+    }
+
+    const target = await User.findById(userId).select("role email name");
+    if (!target) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+    if (target.role === "admin") {
+      return res.status(403).json({ success: false, message: "Admin accounts cannot be deleted from the dashboard." });
+    }
+
+    console.info(`[admin] delete user ${userId} (${target.email}) by admin ${adminSelf}`);
+
+    await deleteUserAndRelatedData(target._id, target.email);
+
+    res.status(200).json({
+      success: true,
+      message: "User account and related data have been permanently deleted.",
+    });
+  } catch (e) {
+    console.error("deleteUserAccount:", e);
+    res.status(500).json({ success: false, message: "Could not delete user." });
   }
 };
 

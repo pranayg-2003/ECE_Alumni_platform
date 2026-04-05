@@ -167,11 +167,11 @@ async function sendWelcomeEmail(toEmail, displayName, role) {
   const appName = process.env.APP_NAME || "MentorBridge";
   const roleLabel =
     role === "student" ? "Student" : role === "alumni" ? "Alumni mentor" : "Administrator";
-  const subject = `Welcome to ${appName} — you’re in`;
+  const subject = `${appName} — registration confirmed`;
   const safeName = (displayName || "there").replace(/[<>]/g, "");
   const text = `Hi ${safeName},
 
-Your ${appName} account is ready. You signed up as a ${roleLabel}.
+Thank you for registering. Your ${appName} account is ready — you signed up as a ${roleLabel}.
 
 Sign in anytime to connect, learn, and grow with the community.
 
@@ -189,7 +189,7 @@ Sign in anytime to connect, learn, and grow with the community.
           <p style="margin:0 0 8px;font-size:13px;font-weight:600;letter-spacing:0.08em;color:#0071e3;text-transform:uppercase;">${appName}</p>
           <h1 style="margin:0 0 12px;font-size:26px;font-weight:600;color:#1d1d1f;line-height:1.2;">Welcome, ${safeName}!</h1>
           <p style="margin:0 0 20px;font-size:16px;line-height:1.55;color:#424245;">
-            Your account was created successfully. You’re registered as <strong>${roleLabel}</strong>.
+            Thank you for registering. Your account is active as <strong>${roleLabel}</strong>.
           </p>
           <p style="margin:0 0 24px;font-size:15px;line-height:1.55;color:#6e6e73;">
             Explore the feed, build your profile, and start meaningful conversations on the platform.

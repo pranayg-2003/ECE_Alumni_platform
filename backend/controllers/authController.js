@@ -5,15 +5,8 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const PasswordResetOTP = require("../models/PasswordResetOTP");
-const Post = require("../models/Post");
-const ChatMessage = require("../models/ChatMessage");
-const MentorshipRequest = require("../models/MentorshipRequest");
-const ReferralSeek = require("../models/ReferralSeek");
-const StudentBlock = require("../models/StudentBlock");
-const FundingCampaign = require("../models/FundingCampaign");
-const FundingPayment = require("../models/FundingPayment");
-const AlumniEvent = require("../models/AlumniEvent");
 const jwt = require("jsonwebtoken");
+const { deleteUserAndRelatedData } = require("../utils/deleteUserCascade");
 const {
   sendPasswordResetOtpEmail,
   isMailConfigured,
@@ -215,9 +208,21 @@ const register = async (req, res) => {
     // Create user in database
     const user = await User.create(userData);
 
-    sendWelcomeEmail(user.email, user.name, user.role).catch((err) => {
-      console.warn("[auth] welcome email skipped:", err.message || err);
-    });
+    if (isMailConfigured()) {
+      try {
+        await sendWelcomeEmail(user.email, user.name, user.role);
+        console.info(`[auth] registration welcome email sent to ${user.email}`);
+      } catch (welcomeErr) {
+        console.error(
+          "[auth] registration welcome email failed (account was still created):",
+          welcomeErr.code || welcomeErr.message || welcomeErr,
+        );
+      }
+    } else {
+      console.warn(
+        "[auth] registration welcome email skipped — set RESEND_API_KEY or SMTP_USER + SMTP_PASS on the server",
+      );
+    }
 
     // Generate JWT token for the new user
     const token = generateToken(user._id);
@@ -671,35 +676,7 @@ const deleteAccount = async (req, res) => {
       `[auth] account deletion user=${userId} role=${role} reason=${reason ? `"${reason.slice(0, 200)}"` : "(none)"}`,
     );
 
-    const campaigns = await FundingCampaign.find({ createdBy: userId }).select("_id").lean();
-    const campaignIds = campaigns.map((c) => c._id);
-    if (campaignIds.length > 0) {
-      await FundingPayment.deleteMany({ campaign: { $in: campaignIds } });
-      await FundingCampaign.deleteMany({ _id: { $in: campaignIds } });
-    }
-    await FundingPayment.deleteMany({ donor: userId });
-    await AlumniEvent.deleteMany({ createdBy: userId });
-
-    await ReferralSeek.deleteMany({ studentId: userId });
-    await MentorshipRequest.deleteMany({
-      $or: [{ studentId: userId }, { alumniId: userId }],
-    });
-    await ChatMessage.deleteMany({
-      $or: [{ senderId: userId }, { receiverId: userId }],
-    });
-    await StudentBlock.deleteMany({
-      $or: [{ studentId: userId }, { alumniId: userId }],
-    });
-
-    await Post.deleteMany({ author: userId });
-    await Post.updateMany({ likes: userId }, { $pull: { likes: userId } });
-    await Post.updateMany(
-      { "comments.user": userId },
-      { $pull: { comments: { user: userId } } },
-    );
-
-    await PasswordResetOTP.deleteMany({ email: normalizeEmail(email) });
-    await User.deleteOne({ _id: userId });
+    await deleteUserAndRelatedData(userId, email);
 
     res.status(200).json({
       success: true,

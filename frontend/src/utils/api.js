@@ -317,4 +317,9 @@ export const adminUnblockUser = async (userId) => {
   return response.data;
 };
 
+export const adminDeleteUser = async (userId) => {
+  const response = await api.delete(`/admin/users/${userId}`);
+  return response.data;
+};
+
 export default api;
