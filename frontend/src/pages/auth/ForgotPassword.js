@@ -22,7 +22,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await api.post("/auth/forgot-password", { email });
+      const { data } = await api.post("/auth/forgot-password", { email: email.trim() });
       if (data.success) {
         toast.success(data.message || "Check your email for the code.");
         setStep(2);
@@ -47,8 +47,8 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       const { data } = await api.post("/auth/reset-password", {
-        email,
-        otp,
+        email: email.trim(),
+        otp: otp.trim(),
         newPassword,
       });
       if (data.success) {
@@ -109,6 +109,10 @@ const ForgotPassword = () => {
                 >
                   {loading ? "Sending…" : "Send code"}
                 </button>
+                <p className="text-[13px] leading-snug text-neutral-500">
+                  Use the same email you registered with. If you don’t see the code, check spam and wait at least one
+                  minute before requesting again.
+                </p>
               </form>
             )}
 

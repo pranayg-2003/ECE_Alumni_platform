@@ -455,9 +455,15 @@ const forgotPassword = async (req, res) => {
         return genericOk();
       }
       console.error("forgot-password mail error:", mailErr);
+      const isAuthFail =
+        mailErr.code === "EAUTH" ||
+        mailErr.responseCode === 535 ||
+        (mailErr.message && String(mailErr.message).toLowerCase().includes("invalid login"));
       return res.status(500).json({
         success: false,
-        message: "Could not send email. Check SMTP settings or try again later.",
+        message: isAuthFail
+          ? "Could not sign in to the mail server. Use a Gmail App Password (16 characters), not your normal password, and set SMTP_USER to that Gmail address."
+          : "Could not send email. Check SMTP settings or try again later.",
       });
     }
 
@@ -479,13 +485,21 @@ const forgotPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
   try {
     const emailNorm = normalizeEmail(req.body.email);
-    const otp = req.body.otp != null ? String(req.body.otp).trim() : "";
+    const otpRaw = req.body.otp != null ? String(req.body.otp).trim() : "";
+    const otpDigits = otpRaw.replace(/\D/g, "");
     const newPassword = req.body.newPassword;
 
-    if (!emailNorm || !otp || !newPassword) {
+    if (!emailNorm || !otpDigits || newPassword == null || newPassword === "") {
       return res.status(400).json({
         success: false,
         message: "Email, verification code, and new password are required.",
+      });
+    }
+
+    if (otpDigits.length !== 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter the 6-digit code from your email.",
       });
     }
 
@@ -504,7 +518,8 @@ const resetPassword = async (req, res) => {
       });
     }
 
-    if (doc.attempts >= 8) {
+    const attemptsSoFar = doc.attempts ?? 0;
+    if (attemptsSoFar >= 8) {
       await PasswordResetOTP.deleteOne({ _id: doc._id });
       return res.status(400).json({
         success: false,
@@ -512,9 +527,9 @@ const resetPassword = async (req, res) => {
       });
     }
 
-    const match = await bcrypt.compare(otp, doc.otpHash);
+    const match = await bcrypt.compare(otpDigits, doc.otpHash);
     if (!match) {
-      doc.attempts += 1;
+      doc.attempts = attemptsSoFar + 1;
       await doc.save();
       return res.status(400).json({
         success: false,
@@ -532,7 +547,8 @@ const resetPassword = async (req, res) => {
     }
 
     user.password = newPassword;
-    await user.save();
+    // Full-document validation can fail on older/partial profiles; password rules are already checked above.
+    await user.save({ validateBeforeSave: false });
     await PasswordResetOTP.deleteOne({ _id: doc._id });
 
     res.status(200).json({
@@ -541,6 +557,13 @@ const resetPassword = async (req, res) => {
     });
   } catch (error) {
     console.error("resetPassword Error:", error);
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((e) => e.message);
+      return res.status(400).json({
+        success: false,
+        message: messages.join(", ") || "Could not update password.",
+      });
+    }
     res.status(500).json({
       success: false,
       message: "Server error. Please try again.",

@@ -255,6 +255,47 @@ const RightPanel = () => (
 
 /* ================= ALUMNI CARD ================= */
 const AlumniCard = ({ alumni, requestStatus, onSendRequest, loading }) => {
+  const statusAction = () => {
+    if (requestStatus === "accepted") {
+      return (
+        <button
+          type="button"
+          className="mt-4 rounded-full bg-[#34c759] px-5 py-2 text-[13px] font-medium text-white"
+        >
+          Accepted
+        </button>
+      );
+    }
+    if (requestStatus === "pending") {
+      return (
+        <button
+          type="button"
+          disabled
+          className="mt-4 rounded-full bg-[#fff8e6] px-5 py-2 text-[13px] font-medium text-[#b45309] ring-1 ring-[#fcd34d]/80"
+        >
+          Sent
+        </button>
+      );
+    }
+    if (requestStatus === "rejected" || requestStatus === "cancelled") {
+      return (
+        <button type="button" disabled className="mt-4 rounded-full bg-[#f5f5f7] px-5 py-2 text-[13px] font-medium text-neutral-400">
+          {requestStatus === "rejected" ? "Declined" : "Cancelled"}
+        </button>
+      );
+    }
+    return (
+      <button
+        type="button"
+        onClick={() => onSendRequest(alumni)}
+        disabled={loading}
+        className="mt-4 rounded-full border border-[#0071e3] px-5 py-2 text-[13px] font-medium text-[#0071e3] transition hover:bg-[#0071e3]/8 disabled:opacity-50"
+      >
+        {loading ? "Sending…" : "Connect"}
+      </button>
+    );
+  };
+
   return (
     <div className="apple-glass-card p-5 transition hover:shadow-lg">
       <div className="flex items-center gap-3">
@@ -280,31 +321,7 @@ const AlumniCard = ({ alumni, requestStatus, onSendRequest, loading }) => {
       {alumni.bio && (
         <p className="mt-3 line-clamp-2 text-[14px] text-neutral-600">{alumni.bio}</p>
       )}
-      {requestStatus === "accepted" ? (
-        <button
-          type="button"
-          className="mt-4 rounded-full bg-[#34c759] px-5 py-2 text-[13px] font-medium text-white"
-        >
-          Connected
-        </button>
-      ) : requestStatus === "pending" ? (
-        <button
-          type="button"
-          disabled
-          className="mt-4 rounded-full bg-[#f5f5f7] px-5 py-2 text-[13px] font-medium text-neutral-400"
-        >
-          Pending
-        </button>
-      ) : (
-        <button
-          type="button"
-          onClick={() => onSendRequest(alumni)}
-          disabled={loading}
-          className="mt-4 rounded-full border border-[#0071e3] px-5 py-2 text-[13px] font-medium text-[#0071e3] transition hover:bg-[#0071e3]/8 disabled:opacity-50"
-        >
-          {loading ? "Sending…" : "Connect"}
-        </button>
-      )}
+      {statusAction()}
     </div>
   );
 };
@@ -345,7 +362,11 @@ const StudentDashboard = () => {
   };
 
   const getRequestStatus = (alumniId) => {
-    const req = requests.find((r) => r.alumniId === alumniId);
+    const idStr = String(alumniId);
+    const req = requests.find((r) => {
+      const aid = r.alumniId?._id ?? r.alumniId;
+      return String(aid) === idStr;
+    });
     return req ? req.status : null;
   };
 

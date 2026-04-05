@@ -148,6 +148,60 @@ const searchAlumni = async (req, res) => {
 };
 
 // ============================================
+// @route   GET /api/users/search-network?q=name
+// @desc    Alumni search active students and other alumni (excludes self)
+// @access  Private - Alumni only
+// ============================================
+const searchNetwork = async (req, res) => {
+  try {
+    const searchQuery = req.query.q;
+    if (!searchQuery || searchQuery.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a search term",
+      });
+    }
+
+    const safe = searchQuery.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const searchRegex = new RegExp(safe, "i");
+    const me = req.user.id;
+
+    const users = await User.find({
+      _id: { $ne: me },
+      isActive: true,
+      role: { $in: ["alumni", "student"] },
+      $or: [
+        { name: searchRegex },
+        { bio: searchRegex },
+        { skills: searchRegex },
+        { interests: searchRegex },
+        { company: searchRegex },
+        { jobTitle: searchRegex },
+        { branch: searchRegex },
+        { headline: searchRegex },
+        { location: searchRegex },
+      ],
+    })
+      .select("-password")
+      .sort({ createdAt: -1 })
+      .limit(30);
+
+    res.status(200).json({
+      success: true,
+      count: users.length,
+      data: users,
+    });
+  } catch (error) {
+    console.error("searchNetwork error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to search. Please try again.",
+      error: error.message,
+    });
+  }
+};
+
+// ============================================
 // @route   POST /api/users/send-request
 // @desc    Student sends mentorship request to alumni
 // @access  Private - Students only
@@ -211,25 +265,40 @@ const sendMentorshipRequest = async (req, res) => {
 
 // ============================================
 // @route   GET /api/users/:id
-// @desc    Get single alumni profile (for detail view)
+// @desc    Get public profile for an alumni or student (for search / directory)
 // @access  Private
 // ============================================
 const getAlumniProfile = async (req, res) => {
   try {
     const { id } = req.params;
+    const viewerRole = req.user?.role;
 
-    const alumni = await User.findById(id).select("-password");
+    const profile = await User.findById(id).select("-password");
 
-    if (!alumni || alumni.role !== "alumni") {
+    if (!profile || !profile.isActive) {
       return res.status(404).json({
         success: false,
-        message: "Alumni not found",
+        message: "User not found",
+      });
+    }
+
+    if (profile.role === "admin" && viewerRole !== "admin") {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (!["alumni", "student"].includes(profile.role)) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
       });
     }
 
     res.status(200).json({
       success: true,
-      data: alumni,
+      data: profile,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server error." });
@@ -348,6 +417,7 @@ module.exports = {
   getAllUsers,
   getPlatformStats,
   searchAlumni,
+  searchNetwork,
   sendMentorshipRequest,
   getAlumniProfile,
   getMyRequests,

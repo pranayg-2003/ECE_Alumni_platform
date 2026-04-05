@@ -1,19 +1,23 @@
 const nodemailer = require("nodemailer");
 
-const isSmtpConfigured = () =>
-  !!(process.env.SMTP_USER && process.env.SMTP_PASS);
+/** Gmail app passwords are 16 chars; Google shows them with spaces — strip so .env works either way. */
+const smtpUser = () => String(process.env.SMTP_USER || "").trim();
+const smtpPass = () => String(process.env.SMTP_PASS || "").replace(/\s+/g, "");
+
+const isSmtpConfigured = () => !!(smtpUser() && smtpPass());
 
 let transporter;
 
 const getTransporter = () => {
   if (!isSmtpConfigured()) return null;
   if (!transporter) {
+    const user = smtpUser();
+    const pass = smtpPass();
     transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: { user, pass },
     });
   }
   return transporter;
@@ -42,12 +46,22 @@ It expires in 10 minutes. If you didn't request this, you can ignore this email.
     throw new Error("SMTP_NOT_CONFIGURED");
   }
 
-  await transport.sendMail({
-    from: `"${appName}" <${from}>`,
-    to: toEmail,
-    subject,
-    text,
-  });
+  try {
+    await transport.sendMail({
+      from: `"${appName}" <${from}>`,
+      to: toEmail,
+      subject,
+      text,
+    });
+  } catch (err) {
+    const code = err.responseCode || err.code;
+    console.error(
+      "[email] sendMail failed:",
+      code || err.message,
+      err.response || ""
+    );
+    throw err;
+  }
 }
 
 module.exports = {

@@ -116,14 +116,17 @@ const Navbar = () => {
             <span className="text-[17px] font-semibold tracking-tight text-[#1d1d1f]">MentorBridge</span>
           </div>
 
-          {user && (
+          {user && (user.role === "student" || user.role === "alumni") && (
             <div className="hidden w-1/3 max-w-md items-center gap-2 rounded-full border border-black/[0.08] bg-[#f5f5f7]/90 px-4 py-2 md:flex">
               <IconSearch />
               <input
                 type="text"
-                placeholder="Search alumni…"
-                onFocus={() => user.role === "student" && setIsSearchOpen(true)}
-                className="w-full bg-transparent text-[15px] text-[#1d1d1f] outline-none placeholder:text-neutral-400"
+                placeholder={
+                  user.role === "alumni" ? "Search students & alumni…" : "Search alumni…"
+                }
+                onFocus={() => setIsSearchOpen(true)}
+                readOnly
+                className="w-full cursor-pointer bg-transparent text-[15px] text-[#1d1d1f] outline-none placeholder:text-neutral-400"
               />
             </div>
           )}
@@ -289,7 +292,11 @@ const Navbar = () => {
         </div>
       </nav>
 
-      <SearchAlumni isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      <SearchAlumni
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        variant={user?.role === "alumni" ? "alumni" : "student"}
+      />
     </>
   );
 };

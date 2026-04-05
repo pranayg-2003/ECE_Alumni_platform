@@ -57,7 +57,11 @@ api.interceptors.response.use(
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       const path = window.location.pathname;
-      if (path !== "/login" && path !== "/register" && path !== "/forgot-password") {
+      const stayOnPage =
+        path === "/login" ||
+        path === "/register" ||
+        path === "/forgot-password";
+      if (!stayOnPage) {
         if (hadSession) {
           toast.error("Session expired. Please sign in again.");
         }
@@ -84,13 +88,20 @@ export const searchAlumni = async (searchQuery) => {
   return response.data;
 };
 
+/** Alumni: search students and other alumni */
+export const searchNetwork = async (searchQuery) => {
+  const response = await api.get("/users/search-network", {
+    params: { q: searchQuery },
+  });
+  return response.data;
+};
+
 /**
- * Get single alumni profile
- * @param {string} alumniId - Alumni user ID
- * @returns {Promise} - Alumni profile data
+ * Get public profile for a student or alumni user
+ * @param {string} userId - User ID
  */
-export const getAlumniProfile = async (alumniId) => {
-  const response = await api.get(`/users/${alumniId}`);
+export const getAlumniProfile = async (userId) => {
+  const response = await api.get(`/users/${userId}`);
   return response.data;
 };
 

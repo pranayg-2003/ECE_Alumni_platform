@@ -11,6 +11,7 @@ const {
   getAllUsers,
   getPlatformStats,
   searchAlumni,
+  searchNetwork,
   sendMentorshipRequest,
   getAlumniProfile,
   getMyRequests,
@@ -35,6 +36,9 @@ router.get("/students", protect, authorize("alumni", "admin"), getAllStudents);
 // Accessible by: students
 // Query params: ?q=searchterm (e.g., ?q=harshit)
 router.get("/search-alumni", protect, authorize("student"), searchAlumni);
+
+// GET /api/users/search-network — Alumni search students + alumni
+router.get("/search-network", protect, authorize("alumni"), searchNetwork);
 
 // GET /api/users/my-requests — Get student's sent mentorship requests
 // Accessible by: students only

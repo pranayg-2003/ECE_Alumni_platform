@@ -133,6 +133,7 @@ import AdminDashboard from "./pages/dashboards/AdminDashboard";
 import ChatDashboard from "./pages/dashboards/ChatDashboard";
 import Feed from "./pages/Feed"; // ✅ NEW
 import Profile from "./pages/Profile";
+import UserProfileView from "./pages/UserProfileView";
 import LandingPage from "./pages/LandingPage";
 import InitiativesPage from "./pages/InitiativesPage";
 import ReferralsPage from "./pages/ReferralsPage";
@@ -217,6 +218,14 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={["student", "alumni", "admin"]}>
                     <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/user/:id"
+                element={
+                  <ProtectedRoute allowedRoles={["student", "alumni"]}>
+                    <UserProfileView />
                   </ProtectedRoute>
                 }
               />
