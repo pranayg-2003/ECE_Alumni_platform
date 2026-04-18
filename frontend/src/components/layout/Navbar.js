@@ -60,15 +60,16 @@ const IconChat = () => (
   </svg>
 );
 
+/* Desktop-only nav button: hidden on mobile, visible md+ */
 const NavBtn = ({ children, label, onClick, title }) => (
   <button
     type="button"
     onClick={onClick}
     title={title || label}
-    className="flex flex-col items-center gap-0.5 rounded-xl px-1 py-1 text-[#1d1d1f] transition-colors hover:text-[#0071e3] bg-transparent border-0 cursor-pointer font-inherit"
+    className="hidden md:flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[#1d1d1f] transition-colors hover:text-[#0071e3] bg-transparent border-0 cursor-pointer font-inherit"
   >
     {children}
-    <span className="hidden text-[11px] font-medium sm:block">{label}</span>
+    <span className="text-[11px] font-medium">{label}</span>
   </button>
 );
 
@@ -103,8 +104,10 @@ const Navbar = () => {
     <>
       <nav className="sticky top-0 z-50 min-h-14 border-b border-black/[0.08] bg-white/80 backdrop-blur-2xl backdrop-saturate-150">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 font-apple">
+
+          {/* ── Logo ── */}
           <div
-            className="flex cursor-pointer items-center gap-3"
+            className="flex cursor-pointer items-center gap-3 flex-shrink-0"
             onClick={() => navigate(homeRoute)}
             role="button"
             tabIndex={0}
@@ -123,6 +126,7 @@ const Navbar = () => {
             </div>
           </div>
 
+          {/* ── Desktop search bar (md+) ── */}
           {user && (user.role === "student" || user.role === "alumni") && (
             <div className="hidden w-1/3 max-w-md items-center gap-2 rounded-full border border-black/[0.08] bg-[#f5f5f7]/90 px-4 py-2 md:flex">
               <IconSearch />
@@ -138,8 +142,11 @@ const Navbar = () => {
             </div>
           )}
 
+          {/* ── Right-side controls ── */}
           {user && (
-            <div className="flex items-center gap-1 text-[#1d1d1f] sm:gap-2">
+            <div className="flex items-center gap-1 text-[#1d1d1f]">
+
+              {/* Desktop nav buttons (hidden on mobile) */}
               <NavBtn
                 label="Home"
                 onClick={() => navigate(user.role === "admin" ? "/admin" : "/feed")}
@@ -181,8 +188,14 @@ const Navbar = () => {
                 </NavBtn>
               )}
 
+              {/* Messages — visible on ALL screen sizes */}
               {user.role !== "admin" && (
-                <NavBtn label="Messages" onClick={() => toggleMessagesPanel()}>
+                <button
+                  type="button"
+                  onClick={() => toggleMessagesPanel()}
+                  title="Messages"
+                  className="flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[#1d1d1f] transition-colors hover:text-[#0071e3] bg-transparent border-0 cursor-pointer font-inherit"
+                >
                   <span className="relative inline-flex">
                     <IconChat />
                     {unreadCount > 0 && (
@@ -191,9 +204,25 @@ const Navbar = () => {
                       </span>
                     )}
                   </span>
-                </NavBtn>
+                  <span className="hidden md:block text-[11px] font-medium">Messages</span>
+                </button>
               )}
 
+              {/* Mobile search icon (visible only on small screens, for student/alumni) */}
+              {(user.role === "student" || user.role === "alumni") && (
+                <button
+                  type="button"
+                  onClick={() => setIsSearchOpen(true)}
+                  title="Search"
+                  className="flex md:hidden flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[#1d1d1f] transition-colors hover:text-[#0071e3] bg-transparent border-0 cursor-pointer font-inherit"
+                >
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                  </svg>
+                </button>
+              )}
+
+              {/* Me avatar + dropdown — visible on ALL screen sizes */}
               <div className="relative pl-1" ref={meMenuRef}>
                 <button
                   type="button"
@@ -207,7 +236,7 @@ const Navbar = () => {
                   >
                     {user.name?.charAt(0)?.toUpperCase() || "U"}
                   </div>
-                  <span className="hidden text-[11px] font-medium sm:block">Me</span>
+                  <span className="hidden md:block text-[11px] font-medium">Me</span>
                 </button>
 
                 {meMenuOpen && (
@@ -217,20 +246,21 @@ const Navbar = () => {
                     </p>
                     <button
                       type="button"
-                      onClick={() => {
-                        setMeMenuOpen(false);
-                        navigate("/profile");
-                      }}
+                      onClick={() => { setMeMenuOpen(false); navigate("/profile"); }}
                       className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
                     >
                       View profile
                     </button>
                     <button
                       type="button"
-                      onClick={() => {
-                        setMeMenuOpen(false);
-                        navigate("/initiatives");
-                      }}
+                      onClick={() => { setMeMenuOpen(false); navigate("/feed"); }}
+                      className="block md:hidden w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
+                    >
+                      Home
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setMeMenuOpen(false); navigate("/initiatives"); }}
                       className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
                     >
                       Initiatives
@@ -238,10 +268,7 @@ const Navbar = () => {
                     {(user.role === "student" || user.role === "alumni" || user.role === "admin") && (
                       <button
                         type="button"
-                        onClick={() => {
-                          setMeMenuOpen(false);
-                          navigate("/referrals");
-                        }}
+                        onClick={() => { setMeMenuOpen(false); navigate("/referrals"); }}
                         className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
                       >
                         Referral board
@@ -250,10 +277,7 @@ const Navbar = () => {
                     {user.role === "student" && (
                       <button
                         type="button"
-                        onClick={() => {
-                          setMeMenuOpen(false);
-                          navigate("/dashboard/student");
-                        }}
+                        onClick={() => { setMeMenuOpen(false); navigate("/dashboard/student"); }}
                         className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
                       >
                         Student dashboard
@@ -262,10 +286,7 @@ const Navbar = () => {
                     {user.role === "alumni" && (
                       <button
                         type="button"
-                        onClick={() => {
-                          setMeMenuOpen(false);
-                          navigate("/menteeProgram");
-                        }}
+                        onClick={() => { setMeMenuOpen(false); navigate("/menteeProgram"); }}
                         className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
                       >
                         Mentee program
@@ -274,10 +295,7 @@ const Navbar = () => {
                     {user.role === "admin" && (
                       <button
                         type="button"
-                        onClick={() => {
-                          setMeMenuOpen(false);
-                          navigate("/admin");
-                        }}
+                        onClick={() => { setMeMenuOpen(false); navigate("/admin"); }}
                         className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
                       >
                         Admin dashboard

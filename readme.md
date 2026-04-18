@@ -29,8 +29,8 @@ A web platform connecting ECE alumni with students for mentorship, networking, a
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/pranayg-2003/ECE_Alumni_platform.git
-   cd ECE_Alumni_platform
+   git clone "url"
+   cd "repo name"
    ```
 
 2. Setup Backend
@@ -59,6 +59,6 @@ See `backend/.env.example` and `frontend/.env.example` for required variables.
 
 ## Team
 
-- Jatin Gupta
+- Jatin Gupta 
 - Nitish Bhagat
 - Pranay Gupta
