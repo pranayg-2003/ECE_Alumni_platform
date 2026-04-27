@@ -28,12 +28,14 @@ A web platform connecting ECE alumni with students for mentorship, networking, a
 ### Installation
 
 1. Clone the repository
+
    ```bash
    git clone "url"
    cd "repo name"
    ```
 
 2. Setup Backend
+
    ```bash
    cd backend
    cp .env.example .env   # Fill in your environment variables
@@ -59,7 +61,7 @@ See `backend/.env.example` and `frontend/.env.example` for required variables.
 
 ## Team
 
-- Jatin Gupta 
+- Jatin Gupta
 - Nitish Bhagat
 - Pranay Gupta
 
@@ -195,10 +197,10 @@ MongoDB stores data as documents. A user, post, event, chat message, or funding 
 Mongoose is an Object Data Modeling library for MongoDB. It lets the project define schemas such as `UserSchema`, then use methods like:
 
 ```js
-User.find()
-User.findById(id)
-User.create(data)
-User.countDocuments()
+User.find();
+User.findById(id);
+User.create(data);
+User.countDocuments();
 ```
 
 ### JWT Authentication
@@ -708,7 +710,7 @@ Students and alumni lists exclude inactive users. Admin list can return all user
 Function:
 
 ```js
-searchAlumni
+searchAlumni;
 ```
 
 Expected route:
@@ -732,7 +734,7 @@ If the viewer is a student, alumni who blocked that student are hidden.
 Function:
 
 ```js
-searchNetwork
+searchNetwork;
 ```
 
 Expected route:
@@ -748,7 +750,7 @@ This is for alumni. It searches active students and alumni, excluding the curren
 Function:
 
 ```js
-sendMentorshipRequest
+sendMentorshipRequest;
 ```
 
 Expected route:
@@ -770,7 +772,7 @@ Workflow:
 Function:
 
 ```js
-respondToRequest
+respondToRequest;
 ```
 
 Expected route:
@@ -1668,7 +1670,7 @@ This protects against:
 Blocking a user usually sets:
 
 ```js
-isActive: false
+isActive: false;
 ```
 
 Deleting removes records permanently and should cascade related data.
@@ -1745,4 +1747,4 @@ Posts + Referrals + Funding + Events
 
 That is the full conceptual map of the project present in the uploaded zip.
 
-
+                                                    Thank You
