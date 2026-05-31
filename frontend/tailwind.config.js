@@ -3,7 +3,19 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      colors: {
+        nitj: {
+          navy: "#001a33",
+          "navy-light": "#002952",
+          link: "#1a6bb5",
+          "link-hover": "#0d4f8c",
+          panel: "#f4f6f8",
+          border: "#d8dee6",
+          news: "#e8f2fa",
+        },
+      },
       fontFamily: {
+        nitj: ['"Merriweather"', "Georgia", "Cambria", "serif"],
         apple: [
           "-apple-system",
           "BlinkMacSystemFont",

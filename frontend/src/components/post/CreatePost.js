@@ -106,11 +106,11 @@ const CreatePost = () => {
     >
       <div className="relative border-b border-black/[0.06] bg-white/70 px-5 py-4 backdrop-blur-sm">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#1d1d1f] text-sm font-semibold text-white shadow-md">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-nitj-navy text-sm font-semibold text-white shadow-md">
             {user?.name?.charAt(0)?.toUpperCase() || "U"}
           </div>
           <div>
-            <p className="text-[15px] font-semibold text-[#1d1d1f]">{user?.name}</p>
+            <p className="text-[15px] font-semibold text-nitj-navy">{user?.name}</p>
             <p className="text-[12px] text-neutral-500">
               Drag files onto this card or tap + to attach
             </p>
@@ -125,7 +125,7 @@ const CreatePost = () => {
           onChange={(e) => setContent(e.target.value)}
           rows={4}
           maxLength={2000}
-          className="w-full resize-none rounded-2xl border border-black/[0.08] bg-[#f5f5f7] px-4 py-3 text-[15px] text-[#1d1d1f] outline-none transition placeholder:text-neutral-400 focus:border-[#0071e3]/35 focus:bg-white focus:ring-2 focus:ring-[#0071e3]/15"
+          className="w-full resize-none rounded-2xl border border-black/[0.08] bg-[#f5f5f7] px-4 py-3 text-[15px] text-nitj-navy outline-none transition placeholder:text-neutral-400 focus:border-nitj-link/35 focus:bg-white focus:ring-2 focus:ring-nitj-link/15"
         />
 
         <input
@@ -155,7 +155,7 @@ const CreatePost = () => {
                     onClick={() =>
                       setLightbox({ open: true, src: item.preview, name: item.file.name })
                     }
-                    className="relative flex h-28 w-[7.5rem] items-center justify-center overflow-hidden rounded-xl border border-black/[0.08] bg-slate-100 shadow-sm transition hover:ring-2 hover:ring-[#0071e3]/30 sm:h-32 sm:w-[9.5rem]"
+                    className="relative flex h-28 w-[7.5rem] items-center justify-center overflow-hidden rounded-xl border border-black/[0.08] bg-slate-100 shadow-sm transition hover:ring-2 hover:ring-nitj-link/30 sm:h-32 sm:w-[9.5rem]"
                     aria-label={`Preview ${item.file.name}`}
                   >
                     <img
@@ -172,7 +172,7 @@ const CreatePost = () => {
                 <button
                   type="button"
                   onClick={() => removeStaged(item.id)}
-                  className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-[#1d1d1f] text-sm font-bold text-white shadow-md ring-2 ring-white transition hover:bg-red-600"
+                  className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-nitj-navy text-sm font-bold text-white shadow-md ring-2 ring-white transition hover:bg-red-600"
                   aria-label={`Remove ${item.file.name}`}
                 >
                   ×
@@ -184,7 +184,7 @@ const CreatePost = () => {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="flex h-28 w-14 shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-black/[0.12] bg-[#f5f5f7] text-neutral-500 transition hover:border-[#0071e3]/40 hover:bg-white hover:text-[#0071e3] sm:h-32"
+                className="flex h-28 w-14 shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-black/[0.12] bg-[#f5f5f7] text-neutral-500 transition hover:border-nitj-link/40 hover:bg-white hover:text-nitj-link sm:h-32"
                 title="Add photos or documents"
                 aria-label="Add attachment"
               >
@@ -207,7 +207,7 @@ const CreatePost = () => {
               type="button"
               onClick={handlePost}
               disabled={busy || !content.trim()}
-              className="inline-flex shrink-0 items-center justify-center rounded-full bg-[#0071e3] px-5 py-2.5 text-[14px] font-medium text-white shadow-sm transition hover:bg-[#0077ed] disabled:cursor-not-allowed disabled:opacity-55"
+              className="inline-flex shrink-0 items-center justify-center rounded-full bg-nitj-navy px-5 py-2.5 text-[14px] font-medium text-white shadow-sm transition hover:bg-nitj-navy-light disabled:cursor-not-allowed disabled:opacity-55"
             >
               {uploadingMedia
                 ? "Uploading…"

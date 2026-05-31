@@ -17,7 +17,7 @@ const IconUser = () => (
 );
 
 const IconSearch = () => (
-  <svg className="h-5 w-5 text-neutral-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
+  <svg className="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
   </svg>
 );
@@ -36,21 +36,13 @@ const IconGrad = () => (
 
 const IconReferrals = () => (
   <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
-    />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
   </svg>
 );
 
 const IconInitiatives = () => (
   <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.847a4.5 4.5 0 003.09 3.09L15.75 12l-2.847.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"
-    />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.847a4.5 4.5 0 003.09 3.09L15.75 12l-2.847.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
   </svg>
 );
 
@@ -65,10 +57,10 @@ const NavBtn = ({ children, label, onClick, title }) => (
     type="button"
     onClick={onClick}
     title={title || label}
-    className="flex flex-col items-center gap-0.5 rounded-xl px-1 py-1 text-[#1d1d1f] transition-colors hover:text-[#0071e3] bg-transparent border-0 cursor-pointer font-inherit"
+    className="flex flex-col items-center gap-0.5 rounded-lg px-1 py-1 text-white/90 transition-colors hover:text-white bg-transparent border-0 cursor-pointer font-inherit"
   >
     {children}
-    <span className="hidden text-[11px] font-medium sm:block">{label}</span>
+    <span className="hidden text-[10px] font-semibold uppercase tracking-wide sm:block">{label}</span>
   </button>
 );
 
@@ -101,8 +93,8 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 min-h-14 border-b border-black/[0.08] bg-white/80 backdrop-blur-2xl backdrop-saturate-150">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 font-apple">
+      <nav className="sticky top-0 z-50 border-b border-white/10 bg-nitj-navy shadow-md">
+        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 font-sans">
           <div
             className="flex cursor-pointer items-center gap-3"
             onClick={() => navigate(homeRoute)}
@@ -110,40 +102,35 @@ const Navbar = () => {
             tabIndex={0}
             onKeyDown={(e) => e.key === "Enter" && navigate(homeRoute)}
           >
-            <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-[#1d1d1f] via-[#2d2d2f] to-[#0071e3] shadow-md ring-1 ring-black/[0.08]">
-              <span className="text-[11px] font-bold leading-none tracking-tight text-white">
-                M<span className="text-white/90">B</span>
-              </span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-white p-1 shadow-sm">
+              <div className="flex h-full w-full items-center justify-center rounded-full border-2 border-nitj-navy text-[10px] font-bold text-nitj-navy">
+                ECE
+              </div>
             </div>
             <div className="flex flex-col leading-none">
-              <span className="text-[17px] font-semibold tracking-tight text-[#1d1d1f]">MentorBridge</span>
-              <span className="mt-0.5 hidden text-[10px] font-medium uppercase tracking-[0.14em] text-[#0071e3] sm:block">
-                Connect · Grow
+              <span className="text-[16px] font-semibold tracking-tight text-white">MentorBridge</span>
+              <span className="mt-0.5 hidden text-[10px] font-medium uppercase tracking-[0.14em] text-white/70 sm:block">
+                ECE · NIT Jalandhar
               </span>
             </div>
           </div>
 
           {user && (user.role === "student" || user.role === "alumni") && (
-            <div className="hidden w-1/3 max-w-md items-center gap-2 rounded-full border border-black/[0.08] bg-[#f5f5f7]/90 px-4 py-2 md:flex">
+            <div className="hidden w-1/3 max-w-md items-center gap-2 rounded-full border border-white/15 bg-white/95 px-4 py-2 md:flex">
               <IconSearch />
               <input
                 type="text"
-                placeholder={
-                  user.role === "alumni" ? "Search students & alumni…" : "Search alumni…"
-                }
+                placeholder={user.role === "alumni" ? "Search students & alumni…" : "Search alumni…"}
                 onFocus={() => setIsSearchOpen(true)}
                 readOnly
-                className="w-full cursor-pointer bg-transparent text-[15px] text-[#1d1d1f] outline-none placeholder:text-neutral-400"
+                className="w-full cursor-pointer bg-transparent text-[15px] text-gray-800 outline-none placeholder:text-gray-400"
               />
             </div>
           )}
 
           {user && (
-            <div className="flex items-center gap-1 text-[#1d1d1f] sm:gap-2">
-              <NavBtn
-                label="Home"
-                onClick={() => navigate(user.role === "admin" ? "/admin" : "/feed")}
-              >
+            <div className="flex items-center gap-1 sm:gap-2">
+              <NavBtn label="Home" onClick={() => navigate(user.role === "admin" ? "/admin" : "/feed")}>
                 <IconHome />
               </NavBtn>
 
@@ -166,11 +153,7 @@ const Navbar = () => {
               </NavBtn>
 
               {user.role === "student" && (
-                <NavBtn
-                  label="Network"
-                  title="Browse alumni & send requests"
-                  onClick={() => navigate("/dashboard/student")}
-                >
+                <NavBtn label="Network" title="Browse alumni & send requests" onClick={() => navigate("/dashboard/student")}>
                   <IconNetwork />
                 </NavBtn>
               )}
@@ -186,7 +169,7 @@ const Navbar = () => {
                   <span className="relative inline-flex">
                     <IconChat />
                     {unreadCount > 0 && (
-                      <span className="absolute -right-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#0071e3] px-0.5 text-[10px] font-semibold text-white">
+                      <span className="absolute -right-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-white px-0.5 text-[10px] font-semibold text-nitj-navy">
                         {unreadCount > 9 ? "9+" : unreadCount}
                       </span>
                     )}
@@ -198,21 +181,23 @@ const Navbar = () => {
                 <button
                   type="button"
                   onClick={() => setMeMenuOpen((o) => !o)}
-                  className="flex flex-col items-center gap-0.5 rounded-xl border-0 bg-transparent p-1 font-inherit cursor-pointer"
+                  className="flex flex-col items-center gap-0.5 rounded-lg border-0 bg-transparent p-1 font-inherit cursor-pointer"
                   aria-expanded={meMenuOpen}
                   aria-haspopup="true"
                 >
                   <div
-                    className={`flex h-8 w-8 items-center justify-center rounded-full bg-[#f5f5f7] text-[12px] font-semibold text-[#1d1d1f] ring-1 ring-black/[0.08] ${meMenuOpen ? "ring-2 ring-[#0071e3]/40" : ""}`}
+                    className={`flex h-8 w-8 items-center justify-center rounded-full bg-white text-[12px] font-semibold text-nitj-navy shadow-sm ${meMenuOpen ? "ring-2 ring-white/50" : ""}`}
                   >
                     {user.name?.charAt(0)?.toUpperCase() || "U"}
                   </div>
-                  <span className="hidden text-[11px] font-medium sm:block">Me</span>
+                  <span className="hidden text-[10px] font-semibold uppercase tracking-wide text-white/90 sm:block">
+                    Me
+                  </span>
                 </button>
 
                 {meMenuOpen && (
-                  <div className="absolute right-0 top-full z-[100] mt-2 w-56 overflow-hidden rounded-2xl border border-black/[0.08] bg-white/95 py-1 shadow-[0_12px_40px_rgba(0,0,0,0.12)] backdrop-blur-xl">
-                    <p className="truncate border-b border-black/[0.06] px-4 py-2.5 text-[12px] font-medium text-neutral-500">
+                  <div className="absolute right-0 top-full z-[100] mt-2 w-56 overflow-hidden rounded-lg border border-nitj-border bg-white py-1 shadow-lg">
+                    <p className="truncate border-b border-nitj-border px-4 py-2.5 text-[12px] font-medium text-gray-500">
                       {user.name}
                     </p>
                     <button
@@ -221,7 +206,7 @@ const Navbar = () => {
                         setMeMenuOpen(false);
                         navigate("/profile");
                       }}
-                      className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
+                      className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
                     >
                       View profile
                     </button>
@@ -231,7 +216,7 @@ const Navbar = () => {
                         setMeMenuOpen(false);
                         navigate("/initiatives");
                       }}
-                      className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
+                      className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
                     >
                       Initiatives
                     </button>
@@ -242,7 +227,7 @@ const Navbar = () => {
                           setMeMenuOpen(false);
                           navigate("/referrals");
                         }}
-                        className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
+                        className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
                       >
                         Referral board
                       </button>
@@ -254,7 +239,7 @@ const Navbar = () => {
                           setMeMenuOpen(false);
                           navigate("/dashboard/student");
                         }}
-                        className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
+                        className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
                       >
                         Student dashboard
                       </button>
@@ -266,7 +251,7 @@ const Navbar = () => {
                           setMeMenuOpen(false);
                           navigate("/menteeProgram");
                         }}
-                        className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
+                        className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
                       >
                         Mentee program
                       </button>
@@ -278,12 +263,12 @@ const Navbar = () => {
                           setMeMenuOpen(false);
                           navigate("/admin");
                         }}
-                        className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
+                        className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
                       >
                         Admin dashboard
                       </button>
                     )}
-                    <div className="my-1 border-t border-black/[0.06]" />
+                    <div className="my-1 border-t border-nitj-border" />
                     <button
                       type="button"
                       onClick={handleLogout}

@@ -14,7 +14,7 @@ const ChatDashboard = () => {
   }, [openMessagesPanel, navigate]);
 
   return (
-    <div className="dashboard-apple-bg font-apple flex min-h-screen items-center justify-center text-sm text-neutral-500">
+    <div className="dashboard-apple-bg flex min-h-screen items-center justify-center font-sans text-sm text-gray-500">
       Opening messages…
     </div>
   );

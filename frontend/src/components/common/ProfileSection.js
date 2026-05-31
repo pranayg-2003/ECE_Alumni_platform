@@ -41,8 +41,8 @@ const Detail = ({ label, value, large }) => (
     <p
       className={
         large
-          ? "mt-1.5 text-[18px] font-medium leading-snug text-[#1d1d1f]"
-          : "mt-0.5 text-[15px] font-medium text-[#1d1d1f]"
+          ? "mt-1.5 text-[18px] font-medium leading-snug text-nitj-navy"
+          : "mt-0.5 text-[15px] font-medium text-nitj-navy"
       }
     >
       {value || "—"}
@@ -255,10 +255,10 @@ const ProfileSection = ({ variant = "feed", children }) => {
   const achOut = user.achievements?.filter((a) => a.title) || [];
 
   const inputClass =
-    "w-full rounded-2xl border border-black/[0.06] bg-[#f5f5f7] px-3.5 py-2.5 text-[15px] text-[#1d1d1f] outline-none transition focus:border-[#0071e3]/35 focus:bg-white focus:ring-2 focus:ring-[#0071e3]/15";
+    "w-full rounded-2xl border border-black/[0.06] bg-[#f5f5f7] px-3.5 py-2.5 text-[15px] text-nitj-navy outline-none transition focus:border-nitj-link/35 focus:bg-white focus:ring-2 focus:ring-nitj-link/15";
 
   const fieldClass = isPage
-    ? "w-full rounded-2xl border border-black/[0.06] bg-[#f5f5f7] px-4 py-3 text-[17px] text-[#1d1d1f] outline-none transition focus:border-[#0071e3]/35 focus:bg-white focus:ring-2 focus:ring-[#0071e3]/15"
+    ? "w-full rounded-2xl border border-black/[0.06] bg-[#f5f5f7] px-4 py-3 text-[17px] text-nitj-navy outline-none transition focus:border-nitj-link/35 focus:bg-white focus:ring-2 focus:ring-nitj-link/15"
     : inputClass;
 
   const studentBranchYear = [user.branch, user.year ? `Year ${user.year}` : null]
@@ -287,8 +287,8 @@ const ProfileSection = ({ variant = "feed", children }) => {
           <div
           className={
             fullBleed
-              ? "absolute inset-0 h-full w-full bg-gradient-to-br from-[#1d1d1f] via-[#2d2d2f] to-[#424245]"
-              : "h-full w-full bg-gradient-to-br from-[#1d1d1f] via-[#2d2d2f] to-[#424245]"
+              ? "absolute inset-0 h-full w-full bg-gradient-to-br from-nitj-navy via-nitj-navy-light to-nitj-navy-light"
+              : "h-full w-full bg-gradient-to-br from-nitj-navy via-nitj-navy-light to-nitj-navy-light"
           }
             aria-hidden
           />
@@ -338,7 +338,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
           <img src={avatar} alt="" className="h-full w-full object-cover" />
         ) : (
           <div
-            className={`flex h-full w-full items-center justify-center bg-[#1d1d1f] font-semibold text-white ${
+            className={`flex h-full w-full items-center justify-center bg-nitj-navy font-semibold text-white ${
               pageFb ? "text-3xl sm:text-5xl" : isPage ? "text-4xl sm:text-5xl" : isFeed ? "text-2xl sm:text-3xl" : "text-3xl"
             }`}
           >
@@ -350,12 +350,12 @@ const ProfileSection = ({ variant = "feed", children }) => {
               type="button"
               onClick={() => avatarInputRef.current?.click()}
               disabled={!!uploadKind}
-        className="absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center rounded-full border border-black/[0.08] bg-white text-[#1d1d1f] shadow-md transition hover:bg-[#f5f5f7] disabled:opacity-50"
+        className="absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center rounded-full border border-black/[0.08] bg-white text-nitj-navy shadow-md transition hover:bg-[#f5f5f7] disabled:opacity-50"
               title="Change profile photo"
               aria-label="Change profile photo"
             >
               {uploadKind === "avatar" ? (
-          <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#0071e3] border-t-transparent" />
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-nitj-link border-t-transparent" />
               ) : (
                 <PencilIcon className="h-4 w-4" />
               )}
@@ -381,13 +381,13 @@ const ProfileSection = ({ variant = "feed", children }) => {
           {coverBlock(true)}
         </div>
 
-        <div className="border-b border-black/[0.08] bg-[#f0f2f5] shadow-sm">
+        <div className="border-b border-nitj-border bg-nitj-panel shadow-sm">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col gap-4 pb-5 pt-0 sm:flex-row sm:items-end sm:justify-between sm:pb-6">
               <div className="flex w-full min-w-0 flex-col items-center gap-3 sm:flex-row sm:items-end sm:gap-5">
                 <div className="relative z-[1] -mt-12 shrink-0 sm:-mt-[4.25rem]">{avatarBlock(true)}</div>
                 <div className="min-w-0 flex-1 pb-0.5 text-center sm:pb-3 sm:text-left">
-                  <h1 className="text-balance text-[26px] font-bold leading-tight tracking-tight text-[#1d1d1f] sm:text-[32px]">
+                  <h1 className="text-balance text-[26px] font-bold leading-tight tracking-tight text-nitj-navy sm:text-[32px]">
                     {user.name}
                   </h1>
                   {pageSubtitle(user) ? (
@@ -410,7 +410,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                     </span>
                     <a
                       href={`mailto:${user.email}`}
-                      className="font-medium text-[#1877f2] underline-offset-2 hover:underline"
+                      className="font-medium text-nitj-link underline-offset-2 hover:underline"
                     >
                       Contact
                     </a>
@@ -420,7 +420,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
           <button
             type="button"
             onClick={() => setShowEdit((v) => !v)}
-                className="hidden shrink-0 rounded-lg bg-[#e4e6eb] px-5 py-2 text-[15px] font-semibold text-[#1d1d1f] transition hover:bg-[#d8dadf] sm:inline-flex"
+                className="hidden shrink-0 rounded-lg bg-[#e4e6eb] px-5 py-2 text-[15px] font-semibold text-nitj-navy transition hover:bg-[#d8dadf] sm:inline-flex"
           >
             {showEdit ? "Close" : "Edit profile"}
           </button>
@@ -433,18 +433,18 @@ const ProfileSection = ({ variant = "feed", children }) => {
             <div className="space-y-4 lg:col-span-5">
               <div className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-black/[0.06] sm:p-5">
                 {user.role === "student" && (
-                  <div className="relative mb-4 w-full min-w-0 overflow-hidden rounded-xl bg-gradient-to-br from-[#eef4ff] via-[#f5f5f7] to-[#e8f0fc] p-4 ring-1 ring-[#1877f2]/15">
+                  <div className="relative mb-4 w-full min-w-0 overflow-hidden rounded-xl bg-gradient-to-br from-[#eef4ff] via-[#f5f5f7] to-[#e8f0fc] p-4 ring-1 ring-nitj-link/15">
                     <div
-                      className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[#1877f2]/15 blur-2xl"
+                      className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-nitj-link/15 blur-2xl"
                       aria-hidden
                     />
                     <div className="relative flex items-start gap-3">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#1d1d1f] text-[16px] font-bold text-white shadow-md">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-nitj-navy text-[16px] font-bold text-white shadow-md">
                         {institutionInitial(user)}
                       </div>
           <div className="min-w-0 flex-1">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#1877f2]">Program</p>
-                        <p className="mt-1 text-[15px] font-semibold leading-snug text-[#1d1d1f]">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-nitj-link">Program</p>
+                        <p className="mt-1 text-[15px] font-semibold leading-snug text-nitj-navy">
                           {studentBranchYear || "Add branch & year"}
                         </p>
                       </div>
@@ -454,16 +454,16 @@ const ProfileSection = ({ variant = "feed", children }) => {
                 {user.role === "alumni" && (
                   <div className="relative mb-4 w-full min-w-0 overflow-hidden rounded-xl bg-gradient-to-br from-[#f5f5f7] to-[#e8eef5] p-4 ring-1 ring-black/[0.08]">
                     <div
-                      className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[#1877f2]/10 blur-2xl"
+                      className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-nitj-link/10 blur-2xl"
                       aria-hidden
                     />
                     <div className="relative flex items-start gap-3">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#1d1d1f] text-[16px] font-bold text-white shadow-md">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-nitj-navy text-[16px] font-bold text-white shadow-md">
                         {institutionInitial(user)}
                       </div>
                       <div className="min-w-0 flex-1 pt-0.5">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#1877f2]">Organization</p>
-                        <p className="mt-1 text-[15px] font-semibold leading-snug text-[#1d1d1f]">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-nitj-link">Organization</p>
+                        <p className="mt-1 text-[15px] font-semibold leading-snug text-nitj-navy">
                           {user.company || "Add your company on profile"}
                         </p>
                         {user.jobTitle ? (
@@ -478,14 +478,14 @@ const ProfileSection = ({ variant = "feed", children }) => {
                   <button
                     type="button"
                     onClick={() => setShowEdit((v) => !v)}
-                    className="rounded-lg bg-[#1877f2] px-4 py-2.5 text-[15px] font-semibold text-white shadow-sm transition hover:bg-[#166fe5] sm:hidden"
+                    className="rounded-lg bg-nitj-navy px-4 py-2.5 text-[15px] font-semibold text-white shadow-sm transition hover:bg-nitj-navy-light sm:hidden"
                   >
                     {showEdit ? "Close" : "Edit profile"}
                   </button>
                   {user.role === "student" && (
                     <Link
                       to="/dashboard/student"
-                      className="rounded-lg bg-[#e4e6eb] px-4 py-2.5 text-center text-[15px] font-semibold text-[#1d1d1f] transition hover:bg-[#d8dadf]"
+                      className="rounded-lg bg-[#e4e6eb] px-4 py-2.5 text-center text-[15px] font-semibold text-nitj-navy transition hover:bg-[#d8dadf]"
                     >
                       Find mentors
                     </Link>
@@ -493,7 +493,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                   {user.role === "alumni" && (
                     <Link
                       to="/menteeProgram"
-                      className="rounded-lg bg-[#e4e6eb] px-4 py-2.5 text-center text-[15px] font-semibold text-[#1d1d1f] transition hover:bg-[#d8dadf]"
+                      className="rounded-lg bg-[#e4e6eb] px-4 py-2.5 text-center text-[15px] font-semibold text-nitj-navy transition hover:bg-[#d8dadf]"
                     >
                       Mentee program
                     </Link>
@@ -501,7 +501,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                   {user.role === "admin" && (
                     <Link
                       to="/admin"
-                      className="rounded-lg bg-[#e4e6eb] px-4 py-2.5 text-center text-[15px] font-semibold text-[#1d1d1f] transition hover:bg-[#d8dadf]"
+                      className="rounded-lg bg-[#e4e6eb] px-4 py-2.5 text-center text-[15px] font-semibold text-nitj-navy transition hover:bg-[#d8dadf]"
                     >
                       Admin
                     </Link>
@@ -629,7 +629,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                         ))}
                         <button
                           type="button"
-                          className="text-[14px] font-medium text-[#1877f2] hover:underline"
+                          className="text-[14px] font-medium text-nitj-link hover:underline"
                           onClick={() =>
                             setForm((f) => ({ ...f, socialLinks: [...f.socialLinks, emptyLink()] }))
                           }
@@ -711,7 +711,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                         ))}
                         <button
                           type="button"
-                          className="text-[14px] font-medium text-[#1877f2] hover:underline"
+                          className="text-[14px] font-medium text-nitj-link hover:underline"
                           onClick={() =>
                             setForm((f) => ({
                               ...f,
@@ -736,7 +736,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                         type="button"
                         onClick={saveDetails}
                         disabled={saving}
-                        className="rounded-lg bg-[#1877f2] px-6 py-2.5 text-[14px] font-medium text-white hover:bg-[#166fe5] disabled:opacity-50"
+                        className="rounded-lg bg-nitj-navy px-6 py-2.5 text-[14px] font-medium text-white hover:bg-nitj-navy-light disabled:opacity-50"
                       >
                         {saving ? "Saving…" : "Save"}
                       </button>
@@ -754,10 +754,10 @@ const ProfileSection = ({ variant = "feed", children }) => {
                             href={l.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group flex items-center gap-2 text-[16px] font-medium text-[#1877f2] hover:underline"
+                            className="group flex items-center gap-2 text-[16px] font-medium text-nitj-link hover:underline"
                           >
                             <span>{l.title}</span>
-                            <ExternalIcon className="h-4 w-4 shrink-0 text-neutral-400 group-hover:text-[#1877f2]" />
+                            <ExternalIcon className="h-4 w-4 shrink-0 text-neutral-400 group-hover:text-nitj-link" />
                           </a>
                         </li>
                       ))}
@@ -774,7 +774,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                           key={`${a.title}-${idx}`}
                           className="rounded-xl border border-black/[0.06] bg-[#f0f2f5]/60 px-4 py-3"
                         >
-                          <p className="text-[17px] font-semibold text-[#1d1d1f]">{a.title}</p>
+                          <p className="text-[17px] font-semibold text-nitj-navy">{a.title}</p>
                           {(a.issuer || a.year) && (
                             <p className="mt-1 text-[14px] text-neutral-500">
                               {[a.issuer, a.year].filter(Boolean).join(" · ")}
@@ -817,7 +817,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                           {user.interests.slice(0, 12).map((i) => (
                             <span
                               key={i}
-                              className="rounded-full bg-[#f0f2f5] px-3 py-1.5 text-[14px] font-medium text-[#1d1d1f] ring-1 ring-black/[0.06]"
+                              className="rounded-full bg-[#f0f2f5] px-3 py-1.5 text-[14px] font-medium text-nitj-navy ring-1 ring-black/[0.06]"
                             >
                               {i}
                             </span>
@@ -832,7 +832,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                           {user.skills.slice(0, 14).map((s) => (
                             <span
                               key={s}
-                              className="rounded-full bg-[#1d1d1f] px-3 py-1.5 text-[14px] font-medium text-white"
+                              className="rounded-full bg-nitj-navy px-3 py-1.5 text-[14px] font-medium text-white"
                             >
                               {s}
                             </span>
@@ -871,7 +871,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                           ? "Why are you leaving? (required, min. 10 characters)"
                           : "Optional feedback…"
                       }
-                      className="w-full resize-y rounded-xl border border-red-200/80 bg-white px-4 py-3 text-[15px] text-[#1d1d1f] outline-none focus:ring-2 focus:ring-red-200"
+                      className="w-full resize-y rounded-xl border border-red-200/80 bg-white px-4 py-3 text-[15px] text-nitj-navy outline-none focus:ring-2 focus:ring-red-200"
                     />
                     <div className="flex flex-wrap gap-2">
                       <button
@@ -906,7 +906,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
   }
 
   return (
-    <aside className="apple-glass-card min-w-0 overflow-hidden rounded-[24px] shadow-[0_12px_40px_rgba(0,0,0,0.06)] ring-1 ring-black/[0.05] transition-shadow duration-500">
+    <aside className="apple-glass-card min-w-0 overflow-hidden transition-shadow duration-500">
       {coverBlock(false)}
 
       <div className="relative px-4 pb-6 pt-0 sm:px-5">
@@ -922,7 +922,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
           <button
             type="button"
             onClick={() => (isFeed ? navigate("/profile") : setShowEdit((v) => !v))}
-            className={`hidden shrink-0 rounded-full border border-[#0071e3] font-medium text-[#0071e3] transition hover:bg-[#0071e3]/8 sm:inline-flex ${
+            className={`hidden shrink-0 rounded-full border border-nitj-link font-medium text-nitj-link transition hover:bg-nitj-link/8 sm:inline-flex ${
               isPage
                 ? "px-6 py-2.5 text-[16px] sm:mt-3"
                 : "self-center px-5 py-2 text-[14px] sm:self-center"
@@ -935,7 +935,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
         {isFeed ? (
           <div className="mt-4 flex w-full min-w-0 flex-col gap-4 border-b border-black/[0.06] pb-5">
             <div className="w-full min-w-0 text-center sm:text-left">
-              <h3 className="text-balance text-[19px] font-semibold leading-tight tracking-tight text-[#1d1d1f] sm:text-[21px]">
+              <h3 className="text-balance text-[19px] font-semibold leading-tight tracking-tight text-nitj-navy sm:text-[21px]">
               {user.name}
             </h3>
               {feedSubtitle(user) ? (
@@ -947,7 +947,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                   <button
                     type="button"
                     onClick={() => navigate("/profile")}
-                    className="font-medium text-[#0071e3] underline-offset-4 hover:underline"
+                    className="font-medium text-nitj-link underline-offset-4 hover:underline"
                   >
                     profile page
                   </button>
@@ -965,25 +965,25 @@ const ProfileSection = ({ variant = "feed", children }) => {
                 </span>
               <a
                 href={`mailto:${user.email}`}
-                  className="font-medium text-[#0071e3] underline-offset-4 hover:underline"
+                  className="font-medium text-nitj-link underline-offset-4 hover:underline"
               >
                   Contact
               </a>
             </p>
             </div>
             {user.role === "student" && (
-              <div className="relative w-full min-w-0 overflow-hidden rounded-2xl bg-gradient-to-br from-[#eef4ff] via-[#f5f5f7] to-[#e8f0fc] p-4 ring-1 ring-[#0071e3]/15">
+              <div className="relative w-full min-w-0 overflow-hidden rounded-2xl bg-gradient-to-br from-[#eef4ff] via-[#f5f5f7] to-[#e8f0fc] p-4 ring-1 ring-nitj-link/15">
                 <div
-                  className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[#0071e3]/15 blur-2xl"
+                  className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-nitj-link/15 blur-2xl"
                   aria-hidden
                 />
                 <div className="relative flex items-start gap-3">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#1d1d1f] text-[16px] font-bold text-white shadow-md">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-nitj-navy text-[16px] font-bold text-white shadow-md">
                     {institutionInitial(user)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#0071e3]">Program</p>
-                    <p className="mt-1 text-[15px] font-semibold leading-snug text-[#1d1d1f]">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-nitj-link">Program</p>
+                    <p className="mt-1 text-[15px] font-semibold leading-snug text-nitj-navy">
                       {studentBranchYear || "Add branch & year"}
             </p>
           </div>
@@ -993,16 +993,16 @@ const ProfileSection = ({ variant = "feed", children }) => {
             {user.role === "alumni" && (
               <div className="relative w-full min-w-0 overflow-hidden rounded-2xl bg-gradient-to-br from-[#f5f5f7] to-[#e8eef5] p-4 ring-1 ring-black/[0.08]">
                 <div
-                  className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[#0071e3]/10 blur-2xl"
+                  className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-nitj-link/10 blur-2xl"
                   aria-hidden
                 />
                 <div className="relative flex items-start gap-3">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#1d1d1f] text-[16px] font-bold text-white shadow-md">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-nitj-navy text-[16px] font-bold text-white shadow-md">
               {institutionInitial(user)}
             </div>
                   <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#0071e3]">Organization</p>
-                    <p className="mt-1 text-[15px] font-semibold leading-snug text-[#1d1d1f]">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-nitj-link">Organization</p>
+                    <p className="mt-1 text-[15px] font-semibold leading-snug text-nitj-navy">
                       {user.company || "Add your company on profile"}
                     </p>
                     {user.jobTitle ? (
@@ -1016,7 +1016,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
         ) : (
           <div className="mt-6 flex w-full min-w-0 flex-col gap-5 border-b border-black/[0.06] pb-6 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
             <div className="min-w-0 w-full flex-1 lg:min-w-0">
-              <h3 className="text-balance text-[28px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[32px]">
+              <h3 className="text-balance text-[28px] font-semibold tracking-tight text-nitj-navy sm:text-[32px]">
                 {user.name}
               </h3>
               {pageSubtitle(user) ? (
@@ -1039,21 +1039,21 @@ const ProfileSection = ({ variant = "feed", children }) => {
             </span>
                 <a
                   href={`mailto:${user.email}`}
-                  className="font-medium text-[#0071e3] underline-offset-4 hover:underline"
+                  className="font-medium text-nitj-link underline-offset-4 hover:underline"
                 >
                   Contact
                 </a>
               </p>
           </div>
             <div className="flex w-full min-w-0 shrink-0 items-center gap-4 rounded-2xl border border-black/[0.06] bg-gradient-to-br from-white to-[#f5f5f7] p-4 shadow-sm ring-1 ring-black/[0.04] lg:max-w-[min(100%,280px)]">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#1d1d1f] text-[18px] font-bold text-white shadow-md">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-nitj-navy text-[18px] font-bold text-white shadow-md">
                 {institutionInitial(user)}
         </div>
               <div className="min-w-0 flex-1 overflow-hidden">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-neutral-500">
                   {user.role === "student" ? "Program" : user.role === "alumni" ? "Organization" : "Access"}
                 </p>
-                <p className="mt-1 text-[16px] font-semibold leading-snug text-[#1d1d1f]">
+                <p className="mt-1 text-[16px] font-semibold leading-snug text-nitj-navy">
                   {user.role === "student"
                     ? studentBranchYear || institutionLabel(user)
                     : institutionLabel(user)}
@@ -1067,7 +1067,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
           <button
             type="button"
             onClick={() => (isFeed ? navigate("/profile") : setShowEdit((v) => !v))}
-            className={`rounded-full bg-[#0071e3] font-medium text-white shadow-sm transition hover:bg-[#0077ed] sm:hidden ${
+            className={`rounded-full bg-nitj-navy font-medium text-white shadow-sm transition hover:bg-nitj-navy-light sm:hidden ${
               isPage ? "px-6 py-3 text-[16px]" : "px-5 py-2.5 text-[14px]"
             }`}
           >
@@ -1076,7 +1076,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
           {user.role === "student" && (
             <Link
               to="/dashboard/student"
-              className={`rounded-full border border-black/[0.12] bg-white text-center font-medium text-[#1d1d1f] transition hover:bg-[#f5f5f7] ${
+              className={`rounded-full border border-black/[0.12] bg-white text-center font-medium text-nitj-navy transition hover:bg-[#f5f5f7] ${
                 isPage ? "px-6 py-3 text-[16px]" : "px-5 py-2 text-[14px]"
               }`}
             >
@@ -1086,7 +1086,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
           {user.role === "alumni" && (
             <Link
               to="/menteeProgram"
-              className={`rounded-full border border-black/[0.12] bg-white text-center font-medium text-[#1d1d1f] transition hover:bg-[#f5f5f7] ${
+              className={`rounded-full border border-black/[0.12] bg-white text-center font-medium text-nitj-navy transition hover:bg-[#f5f5f7] ${
                 isPage ? "px-6 py-3 text-[16px]" : "px-5 py-2 text-[14px]"
               }`}
             >
@@ -1096,7 +1096,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
           {user.role === "admin" && (
             <Link
               to="/admin"
-              className={`rounded-full border border-black/[0.12] bg-white text-center font-medium text-[#1d1d1f] transition hover:bg-[#f5f5f7] ${
+              className={`rounded-full border border-black/[0.12] bg-white text-center font-medium text-nitj-navy transition hover:bg-[#f5f5f7] ${
                 isPage ? "px-6 py-3 text-[16px]" : "px-5 py-2 text-[14px]"
               }`}
             >
@@ -1240,7 +1240,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                 ))}
                 <button
                   type="button"
-                  className="text-[14px] font-medium text-[#0071e3] hover:underline"
+                  className="text-[14px] font-medium text-nitj-link hover:underline"
                   onClick={() =>
                     setForm((f) => ({ ...f, socialLinks: [...f.socialLinks, emptyLink()] }))
                   }
@@ -1322,7 +1322,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                 ))}
                 <button
                   type="button"
-                  className="text-[14px] font-medium text-[#0071e3] hover:underline"
+                  className="text-[14px] font-medium text-nitj-link hover:underline"
                   onClick={() =>
                     setForm((f) => ({
                       ...f,
@@ -1347,7 +1347,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                 type="button"
                 onClick={saveDetails}
                 disabled={saving}
-                className="rounded-full bg-[#0071e3] px-6 py-2.5 text-[14px] font-medium text-white hover:bg-[#0077ed] disabled:opacity-50"
+                className="rounded-full bg-nitj-navy px-6 py-2.5 text-[14px] font-medium text-white hover:bg-nitj-navy-light disabled:opacity-50"
               >
                 {saving ? "Saving…" : "Save"}
               </button>
@@ -1371,12 +1371,12 @@ const ProfileSection = ({ variant = "feed", children }) => {
                     href={l.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`group flex items-center gap-2 font-medium text-[#0071e3] hover:underline ${
+                    className={`group flex items-center gap-2 font-medium text-nitj-link hover:underline ${
                       isPage ? "text-[17px]" : "text-[15px]"
                     }`}
                   >
                     <span>{l.title}</span>
-                    <ExternalIcon className="h-4 w-4 shrink-0 text-neutral-400 group-hover:text-[#0071e3]" />
+                    <ExternalIcon className="h-4 w-4 shrink-0 text-neutral-400 group-hover:text-nitj-link" />
                   </a>
                 </li>
               ))}
@@ -1401,7 +1401,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                     isPage ? "px-5 py-4" : "px-4 py-3"
                   }`}
                 >
-                  <p className={`font-semibold text-[#1d1d1f] ${isPage ? "text-[18px]" : ""}`}>{a.title}</p>
+                  <p className={`font-semibold text-nitj-navy ${isPage ? "text-[18px]" : ""}`}>{a.title}</p>
                   {(a.issuer || a.year) && (
                     <p className={`mt-1 text-neutral-500 ${isPage ? "text-[15px]" : "text-[13px]"}`}>
                       {[a.issuer, a.year].filter(Boolean).join(" · ")}
@@ -1465,7 +1465,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                 {user.interests.slice(0, 12).map((i) => (
                   <span
                     key={i}
-                    className={`rounded-full bg-[#f5f5f7] font-medium text-[#1d1d1f] ring-1 ring-black/[0.06] ${
+                    className={`rounded-full bg-[#f5f5f7] font-medium text-nitj-navy ring-1 ring-black/[0.06] ${
                       isPage ? "px-4 py-2 text-[14px]" : "px-3 py-1.5 text-[12px]"
                     }`}
                   >
@@ -1488,7 +1488,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                 {user.skills.slice(0, 14).map((s) => (
                   <span
                     key={s}
-                    className={`rounded-full bg-[#1d1d1f] font-medium text-white ${
+                    className={`rounded-full bg-nitj-navy font-medium text-white ${
                       isPage ? "px-4 py-2 text-[14px]" : "px-3 py-1.5 text-[12px]"
                     }`}
                   >
@@ -1528,7 +1528,7 @@ const ProfileSection = ({ variant = "feed", children }) => {
                       ? "Why are you leaving? (required, min. 10 characters)"
                       : "Optional feedback…"
                   }
-                  className="w-full resize-y rounded-2xl border border-red-200/80 bg-white px-4 py-3 text-[15px] text-[#1d1d1f] outline-none focus:ring-2 focus:ring-red-200"
+                  className="w-full resize-y rounded-2xl border border-red-200/80 bg-white px-4 py-3 text-[15px] text-nitj-navy outline-none focus:ring-2 focus:ring-red-200"
                 />
                 <div className="flex flex-wrap gap-2">
                   <button

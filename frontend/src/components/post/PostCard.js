@@ -3,10 +3,10 @@ import { usePost } from "../../context/PostContext";
 import { useAuth } from "../../context/AuthContext";
 
 const accent = {
-  bar: "bg-[#0071e3]",
-  avatar: "bg-[#1d1d1f]",
-  text: "text-[#0071e3]",
-  btn: "bg-[#0071e3] hover:bg-[#0077ed]",
+  bar: "bg-nitj-navy",
+  avatar: "bg-nitj-navy",
+  text: "text-nitj-link",
+  btn: "bg-nitj-navy hover:bg-nitj-navy-light",
 };
 
 const IconHeart = ({ filled, className }) => (
@@ -97,7 +97,7 @@ const PostMedia = ({ post }) => {
                 href={f.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 rounded-2xl border border-black/[0.08] bg-[#f5f5f7] px-4 py-3 text-sm transition hover:border-[#0071e3]/25 hover:bg-white"
+                className="flex items-center gap-3 rounded-2xl border border-black/[0.08] bg-[#f5f5f7] px-4 py-3 text-sm transition hover:border-nitj-link/25 hover:bg-white"
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-lg shadow-sm">
                   📎
@@ -106,7 +106,7 @@ const PostMedia = ({ post }) => {
                   <span className="block truncate font-medium text-slate-800">
                     {f.originalName || "Download file"}
                   </span>
-                  <span className="text-xs text-[#0071e3]">Open or download</span>
+                  <span className="text-xs text-nitj-link">Open or download</span>
                 </span>
               </a>
             </li>
@@ -222,7 +222,7 @@ const PostCard = ({ post }) => {
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
               rows={4}
-              className="w-full resize-none rounded-2xl border border-black/[0.08] bg-[#f5f5f7] p-4 text-[15px] outline-none focus:border-[#0071e3]/35 focus:bg-white focus:ring-2 focus:ring-[#0071e3]/15"
+              className="w-full resize-none rounded-2xl border border-black/[0.08] bg-[#f5f5f7] p-4 text-[15px] outline-none focus:border-nitj-link/35 focus:bg-white focus:ring-2 focus:ring-nitj-link/15"
             />
             <p className="text-[13px] text-slate-400">
               Attachments can’t be changed when editing. Update text only.
@@ -275,12 +275,12 @@ const PostCard = ({ post }) => {
               disabled={isEditing}
               className={`inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[15px] font-semibold ring-1 ring-black/[0.06] transition disabled:opacity-40 ${
                 commentsOpen
-                  ? "bg-[#0071e3]/10 text-[#0071e3] ring-[#0071e3]/25"
+                  ? "bg-nitj-link/10 text-nitj-link ring-nitj-link/25"
                   : "bg-[#f5f5f7] text-slate-600 hover:bg-slate-100"
               }`}
               aria-expanded={commentsOpen}
             >
-              <IconChatBubble className="h-6 w-6 shrink-0 text-[#0071e3]" />
+              <IconChatBubble className="h-6 w-6 shrink-0 text-nitj-link" />
               <span>{post.comments?.length || 0} comments</span>
             </button>
           </div>
@@ -292,7 +292,7 @@ const PostCard = ({ post }) => {
               <input
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                className="min-w-0 flex-1 rounded-full border border-black/[0.08] bg-[#f5f5f7] px-4 py-3 text-[15px] outline-none focus:border-[#0071e3]/35 focus:bg-white focus:ring-2 focus:ring-[#0071e3]/15"
+                className="min-w-0 flex-1 rounded-full border border-black/[0.08] bg-[#f5f5f7] px-4 py-3 text-[15px] outline-none focus:border-nitj-link/35 focus:bg-white focus:ring-2 focus:ring-nitj-link/15"
                 placeholder="Write a comment…"
               />
               <button

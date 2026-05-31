@@ -23,7 +23,7 @@ const Profile = () => {
   }, [posts, user?.id]);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#f0f2f5] font-apple">
+    <div className="dashboard-apple-bg min-h-screen overflow-x-hidden font-sans">
       <Navbar />
       <ProfileSection variant="page">
         <section className="min-w-0" aria-labelledby="profile-posts-heading">
@@ -31,7 +31,7 @@ const Profile = () => {
             <div>
               <h2
                 id="profile-posts-heading"
-                className="text-[22px] font-bold tracking-tight text-[#1d1d1f] sm:text-[24px]"
+                className="app-nitj-section-title text-[22px] sm:text-[24px]"
               >
                 Posts
               </h2>
@@ -45,7 +45,7 @@ const Profile = () => {
             </div>
             <Link
               to="/feed"
-              className="inline-flex w-fit items-center justify-center rounded-lg bg-[#1877f2] px-5 py-2.5 text-[15px] font-semibold text-white shadow-sm transition hover:bg-[#166fe5]"
+              className="app-nitj-btn-primary w-fit px-5 py-2.5 text-[15px]"
             >
               Go to feed
             </Link>
@@ -62,13 +62,13 @@ const Profile = () => {
             </div>
           ) : myPosts.length === 0 ? (
             <div className="rounded-xl border border-dashed border-black/[0.12] bg-white px-6 py-14 text-center shadow-sm ring-1 ring-black/[0.06]">
-              <p className="text-[17px] font-semibold text-[#1d1d1f]">No posts yet</p>
+              <p className="font-nitj text-[17px] font-bold text-nitj-navy">No posts yet</p>
               <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed text-neutral-600">
                 When you publish on the community feed, your stories show up here automatically.
               </p>
               <Link
                 to="/feed"
-                className="mt-5 inline-flex rounded-lg border border-black/[0.1] bg-[#f0f2f5] px-6 py-3 text-[15px] font-semibold text-[#1d1d1f] transition hover:bg-[#e4e6eb]"
+                className="app-nitj-btn-secondary mt-5 px-6 py-3 text-[15px]"
               >
                 Open feed
               </Link>

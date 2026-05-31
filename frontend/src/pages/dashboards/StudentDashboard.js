@@ -224,9 +224,9 @@ import api from "../../utils/api";
 import { toastApiError } from "../../utils/toast";
 
 const StatPill = ({ label, value }) => (
-  <div className="apple-glass-card px-5 py-4">
-    <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-neutral-500">{label}</p>
-    <p className="mt-1 text-3xl font-semibold tabular-nums tracking-tight text-[#1d1d1f]">{value}</p>
+  <div className="apple-glass-card border-l-[3px] border-l-nitj-navy px-5 py-4">
+    <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-500">{label}</p>
+    <p className="app-nitj-stat-value mt-1">{value}</p>
   </div>
 );
 
@@ -266,7 +266,7 @@ const AlumniCard = ({ alumni, requestStatus, onSendRequest, loading }) => {
         type="button"
         onClick={() => onSendRequest(alumni)}
         disabled={loading}
-        className="mt-4 rounded-full border border-[#0071e3] px-5 py-2 text-[13px] font-medium text-[#0071e3] transition hover:bg-[#0071e3]/8 disabled:opacity-50"
+        className="mt-4 rounded-full border border-nitj-navy px-5 py-2 text-[13px] font-medium text-nitj-navy transition hover:bg-nitj-news disabled:opacity-50"
       >
         {loading ? "Sending…" : "Connect"}
       </button>
@@ -277,14 +277,14 @@ const AlumniCard = ({ alumni, requestStatus, onSendRequest, loading }) => {
 
   return (
     <article className="apple-glass-card group overflow-hidden transition hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)]">
-      <div className="h-2 bg-gradient-to-r from-[#1d1d1f] via-[#2d2d2f] to-[#0071e3]" aria-hidden />
+      <div className="h-1 bg-nitj-navy" aria-hidden />
       <div className="px-5 pb-5 pt-5">
         <div className="flex gap-4">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-black/[0.06] bg-[#1d1d1f] text-lg font-semibold text-white shadow-md">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-nitj-border bg-nitj-navy text-lg font-semibold text-white shadow-sm">
             {alumni.name.charAt(0)}
           </div>
           <div className="min-w-0 flex-1 pt-0.5">
-            <h3 className="text-lg font-semibold leading-snug text-[#1d1d1f]">{alumni.name}</h3>
+            <h3 className="font-nitj text-lg font-bold leading-snug text-nitj-navy">{alumni.name}</h3>
             <p className="mt-1 line-clamp-2 text-[14px] leading-snug text-neutral-600">{subline}</p>
           </div>
         </div>
@@ -292,7 +292,7 @@ const AlumniCard = ({ alumni, requestStatus, onSendRequest, loading }) => {
           {alumni.skills?.slice(0, 5).map((skill) => (
             <span
               key={skill}
-              className="rounded-full bg-[#f5f5f7] px-3 py-1 text-[12px] font-medium text-[#1d1d1f] ring-1 ring-black/[0.06]"
+              className="rounded-full bg-[#f5f5f7] px-3 py-1 text-[12px] font-medium text-nitj-navy ring-1 ring-black/[0.06]"
             >
               {skill}
             </span>
@@ -374,16 +374,16 @@ const StudentDashboard = () => {
     "apple-glass-card min-h-[128px] rounded-[20px] p-6 text-left transition hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] active:scale-[0.99]";
 
   return (
-    <div className="dashboard-apple-bg font-apple min-h-screen">
+    <div className="dashboard-apple-bg min-h-screen font-sans">
       <Navbar />
 
       <div className="mx-auto max-w-7xl px-4 py-8">
-        <header className="auth-hero-apple relative overflow-hidden rounded-[28px] p-8 text-white shadow-[0_24px_80px_rgba(0,0,0,0.35)] md:p-10">
-          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#2997ff]/20 blur-3xl" />
+        <header className="app-nitj-hero relative overflow-hidden rounded-lg p-8 text-white shadow-lg md:p-10">
+          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-nitj-link/20 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-16 left-1/4 h-48 w-48 rounded-full bg-white/[0.06] blur-2xl" />
           <div className="relative">
             <p className="text-[13px] font-medium text-white/60">Mentor network</p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight md:text-[34px]">
+            <h1 className="mt-2 font-nitj text-3xl font-bold tracking-tight md:text-[34px]">
               Welcome, {user?.name?.split(" ")[0] || "Student"}
             </h1>
             <p className="mt-2 max-w-xl text-[16px] text-white/70">
@@ -404,8 +404,8 @@ const StudentDashboard = () => {
         <h2 className="mt-10 text-[13px] font-semibold uppercase tracking-[0.12em] text-neutral-500">Shortcuts</h2>
         <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <button type="button" onClick={() => navigate("/feed")} className={actionCard}>
-            <p className="text-[12px] font-semibold uppercase tracking-wide text-[#0071e3]">Feed</p>
-            <p className="mt-2 text-[18px] font-semibold text-[#1d1d1f]">Community</p>
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-nitj-link">Feed</p>
+            <p className="mt-2 font-nitj text-[18px] font-bold text-nitj-navy">Community</p>
             <p className="mt-1.5 text-[14px] leading-snug text-neutral-600">Posts, updates, and discussions</p>
           </button>
           <button
@@ -413,40 +413,40 @@ const StudentDashboard = () => {
             onClick={() => document.querySelector('input[placeholder="Search alumni…"]')?.focus()}
             className={actionCard}
           >
-            <p className="text-[12px] font-semibold uppercase tracking-wide text-[#0071e3]">Discover</p>
-            <p className="mt-2 text-[18px] font-semibold text-[#1d1d1f]">Search mentors</p>
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-nitj-link">Discover</p>
+            <p className="mt-2 text-[18px] font-semibold text-nitj-navy">Search mentors</p>
             <p className="mt-1.5 text-[14px] leading-snug text-neutral-600">Use the search bar in the header</p>
           </button>
           <button type="button" onClick={() => openMessagesPanel()} className={actionCard}>
-            <p className="text-[12px] font-semibold uppercase tracking-wide text-[#0071e3]">Inbox</p>
-            <p className="mt-2 text-[18px] font-semibold text-[#1d1d1f]">Messages</p>
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-nitj-link">Inbox</p>
+            <p className="mt-2 text-[18px] font-semibold text-nitj-navy">Messages</p>
             <p className="mt-1.5 text-[14px] leading-snug text-neutral-600">Chat after a mentor accepts</p>
           </button>
           <button type="button" onClick={() => navigate("/profile")} className={actionCard}>
-            <p className="text-[12px] font-semibold uppercase tracking-wide text-[#0071e3]">Profile</p>
-            <p className="mt-2 text-[18px] font-semibold text-[#1d1d1f]">Your story</p>
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-nitj-link">Profile</p>
+            <p className="mt-2 text-[18px] font-semibold text-nitj-navy">Your story</p>
             <p className="mt-1.5 text-[14px] leading-snug text-neutral-600">Headline, branch, skills, links</p>
           </button>
           <button type="button" onClick={() => navigate("/initiatives")} className={actionCard}>
-            <p className="text-[12px] font-semibold uppercase tracking-wide text-[#0071e3]">Initiatives</p>
-            <p className="mt-2 text-[18px] font-semibold text-[#1d1d1f]">Funding &amp; events</p>
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-nitj-link">Initiatives</p>
+            <p className="mt-2 text-[18px] font-semibold text-nitj-navy">Funding &amp; events</p>
             <p className="mt-1.5 text-[14px] leading-snug text-neutral-600">Support drives and Meet sessions</p>
           </button>
           <button type="button" onClick={() => navigate("/referrals")} className={actionCard}>
-            <p className="text-[12px] font-semibold uppercase tracking-wide text-[#0071e3]">Referrals</p>
-            <p className="mt-2 text-[18px] font-semibold text-[#1d1d1f]">Seek intros</p>
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-nitj-link">Referrals</p>
+            <p className="mt-2 text-[18px] font-semibold text-nitj-navy">Seek intros</p>
             <p className="mt-1.5 text-[14px] leading-snug text-neutral-600">Post what you need; alumni browse</p>
           </button>
         </div>
 
         <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <h2 className="text-[22px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[24px]">
+          <h2 className="text-[22px] font-semibold tracking-tight text-nitj-navy sm:text-[24px]">
             Explore alumni
             <span className="ml-2 text-[17px] font-medium text-neutral-500">({alumni.length})</span>
           </h2>
           <Link
             to="/feed"
-            className="text-[14px] font-semibold text-[#0071e3] underline-offset-4 hover:underline"
+            className="text-[14px] font-semibold text-nitj-link underline-offset-4 hover:underline"
           >
             Back to feed
           </Link>
@@ -469,8 +469,8 @@ const StudentDashboard = () => {
         )}
 
         <div className="apple-glass-card mt-10 rounded-[24px] p-6">
-          <div className="h-1 w-10 rounded-full bg-[#0071e3]" />
-          <h3 className="mt-4 text-[18px] font-semibold text-[#1d1d1f]">Tips</h3>
+          <div className="h-1 w-10 rounded-full bg-nitj-navy" />
+          <h3 className="mt-4 text-[18px] font-semibold text-nitj-navy">Tips</h3>
           <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-neutral-600">
             Connect with alumni who align with your goals. Personalize your request message when you reach out — it
             improves response rates.

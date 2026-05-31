@@ -751,18 +751,19 @@ const AdminDashboard = () => {
             <div className="rounded-3xl border border-white/[0.08] bg-gradient-to-br from-zinc-900/95 via-zinc-950 to-[#0a1628] p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.03)] sm:p-8">
               <div className="flex flex-col gap-4 border-b border-white/[0.07] pb-6 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-cyan-400/90">Content</p>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#9ec9ef]">Content</p>
                   <h2 className="mt-1 text-2xl font-semibold tracking-tight text-white">Landing page</h2>
                   <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-zinc-500">
-                    Section-based editor with uploads (images & video), YouTube hero, gallery tiles, and spotlight photos.
-                    Save, then open the public site to preview.
+                    Edit the public home page (NITJAA-style layout): hero banner, recent events, news sidebar,
+                    department story, alumni metrics, impact stories, and past-events CTA. Use the page map in the
+                    editor to see where each block appears.
                   </p>
                 </div>
                 <a
                   href="/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex shrink-0 items-center justify-center rounded-full border border-cyan-500/35 bg-cyan-500/10 px-5 py-2.5 text-[14px] font-semibold text-cyan-200 transition hover:bg-cyan-500/20"
+                  className="inline-flex shrink-0 items-center justify-center rounded-full border border-[#1a6bb5]/35 bg-[#1a6bb5]/10 px-5 py-2.5 text-[14px] font-semibold text-[#9ec9ef] transition hover:bg-[#1a6bb5]/20"
                 >
                   View live site ↗
                 </a>

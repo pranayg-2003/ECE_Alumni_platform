@@ -15,19 +15,106 @@ const emptySpotlight = () => ({
 const emptyTimeline = () => ({ year: "", title: "", description: "" });
 const emptyGalleryItem = () => ({ url: "", kind: "image", caption: "" });
 
+/** Matches public landing layout (NITJAA-style). Order = top-to-bottom on site. */
 const SECTIONS = [
-  { id: "hero", label: "Hero", desc: "Headline, media, YouTube" },
-  { id: "department", label: "Department", desc: "Copy + side image" },
-  { id: "gallery", label: "Gallery", desc: "Images & videos" },
-  { id: "stats", label: "Stats", desc: "Three metrics" },
-  { id: "spotlights", label: "Spotlights", desc: "Alumni cards + photos" },
-  { id: "timeline", label: "Timeline", desc: "Milestones" },
-  { id: "closing", label: "Closing", desc: "Final CTA" },
+  {
+    id: "hero",
+    label: "Hero banner",
+    desc: "Top campus carousel",
+    placement: "Full-width image/video under the navy header. Title and Join / Log in buttons overlay the media.",
+  },
+  {
+    id: "gallery",
+    label: "Recent events",
+    desc: "Carousel + gallery grid",
+    placement:
+      "Center column “Recent Events” carousel (first item shown; visitors can step through). Same items also appear in “Campus & community” below the department section.",
+  },
+  {
+    id: "timeline",
+    label: "News & timeline",
+    desc: "Sidebar news + full list",
+    placement:
+      "Right column “News” shows up to 6 entries (title + year). Full “Timeline” section lists every entry with descriptions.",
+  },
+  {
+    id: "department",
+    label: "Department",
+    desc: "Story + side image",
+    placement: "Light panel after the institute block. Eyebrow, title, body paragraphs, highlight, optional photo.",
+  },
+  {
+    id: "stats",
+    label: "Alumni network",
+    desc: "3 metrics (navy band)",
+    placement:
+      "Navy “Alumni Network” band and repeated in the footer. Use short values (e.g. 200+, 2,600+).",
+  },
+  {
+    id: "spotlights",
+    label: "Impact stories",
+    desc: "Alumni spotlight cards",
+    placement:
+      "“Impact” section with large cards. If gallery is empty, spotlights also feed the Recent Events carousel.",
+  },
+  {
+    id: "closing",
+    label: "Past events & CTA",
+    desc: "Closing card + buttons",
+    placement:
+      "“Past Events” centered card (title + subtitle) and Create account / Log in buttons at the bottom.",
+  },
 ];
 
 const inputClass =
-  "w-full rounded-xl border border-white/10 bg-black/35 px-3.5 py-2.5 text-[14px] text-zinc-100 placeholder:text-zinc-600 outline-none transition focus:border-cyan-500/40 focus:ring-2 focus:ring-cyan-500/25";
+  "w-full rounded-lg border border-white/10 bg-black/35 px-3.5 py-2.5 text-[14px] text-zinc-100 placeholder:text-zinc-600 outline-none transition focus:border-[#1a6bb5]/50 focus:ring-2 focus:ring-[#1a6bb5]/25";
 const labelClass = "text-[11px] font-bold uppercase tracking-[0.14em] text-zinc-500";
+
+function SectionPlacement({ title, children }) {
+  return (
+    <div className="rounded-lg border border-[#1a6bb5]/25 bg-[#001a33]/40 px-4 py-3">
+      <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#7eb8e8]">
+        Where this appears · {title}
+      </p>
+      <p className="mt-1.5 text-[13px] leading-relaxed text-zinc-400">{children}</p>
+    </div>
+  );
+}
+
+function PageLayoutMap() {
+  return (
+    <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4">
+      <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-zinc-500">
+        Public page map (NITJAA layout)
+      </p>
+      <div className="mt-3 space-y-2 text-[12px] text-zinc-400">
+        <div className="rounded bg-[#001a33] px-3 py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-white/90">
+          Navy header · Login
+        </div>
+        <div className="rounded bg-[#002952] px-3 py-6 text-center text-[11px] text-white/70">
+          Hero banner (your media + headline)
+        </div>
+        <div className="grid grid-cols-3 gap-1.5">
+          <div className="rounded border border-white/10 bg-white/5 px-2 py-3 text-center text-[10px] leading-tight">
+            Quick links
+            <span className="mt-1 block text-zinc-600">(fixed)</span>
+          </div>
+          <div className="rounded border border-[#1a6bb5]/40 bg-[#1a6bb5]/10 px-2 py-3 text-center text-[10px] leading-tight text-[#9ec9ef]">
+            Recent events
+            <span className="mt-1 block text-zinc-500">Gallery</span>
+          </div>
+          <div className="rounded border border-[#1a6bb5]/40 bg-[#1a6bb5]/10 px-2 py-3 text-center text-[10px] leading-tight text-[#9ec9ef]">
+            News
+            <span className="mt-1 block text-zinc-500">Timeline</span>
+          </div>
+        </div>
+        <div className="rounded border border-dashed border-white/15 px-3 py-2 text-center text-[10px]">
+          Institute (fixed) → Department → Gallery grid → Stats band → Impact → Timeline → Past events → Footer
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function MediaField({
   label,
@@ -84,7 +171,7 @@ function MediaField({
           type="button"
           disabled={busy}
           onClick={() => inputRef.current?.click()}
-          className="rounded-lg border border-cyan-500/35 bg-cyan-500/15 px-3 py-2 text-[13px] font-semibold text-cyan-200 transition hover:bg-cyan-500/25 disabled:opacity-50"
+          className="rounded-lg border border-[#1a6bb5]/40 bg-[#1a6bb5]/15 px-3 py-2 text-[13px] font-semibold text-[#9ec9ef] transition hover:bg-[#1a6bb5]/25 disabled:opacity-50"
         >
           {busy ? "Uploading…" : "Upload"}
         </button>
@@ -265,34 +352,45 @@ const LandingPageEditor = () => {
     );
   }
 
+  const activeSection = SECTIONS.find((s) => s.id === active);
+
   return (
     <form onSubmit={handleSave} className="flex flex-col gap-6 lg:flex-row lg:gap-0">
-      <nav className="flex gap-1 overflow-x-auto pb-1 lg:w-56 lg:shrink-0 lg:flex-col lg:overflow-visible lg:border-r lg:border-white/10 lg:pr-4 lg:pb-0">
-        {SECTIONS.map((s) => (
-          <button
-            key={s.id}
-            type="button"
-            onClick={() => setActive(s.id)}
-            className={`shrink-0 rounded-xl px-3 py-2.5 text-left transition lg:w-full ${
-              active === s.id
-                ? "bg-white text-zinc-900 shadow-md"
-                : "text-zinc-400 hover:bg-white/[0.06] hover:text-white"
-            }`}
-          >
-            <span className="block text-[14px] font-semibold">{s.label}</span>
-            <span className={`mt-0.5 block text-[11px] ${active === s.id ? "text-zinc-600" : "text-zinc-600"}`}>
-              {s.desc}
-            </span>
-          </button>
-        ))}
-      </nav>
+      <aside className="lg:w-60 lg:shrink-0">
+        <PageLayoutMap />
+        <nav className="mt-4 flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:border-t lg:border-white/10 lg:pt-4">
+          {SECTIONS.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => setActive(s.id)}
+              className={`shrink-0 rounded-xl px-3 py-2.5 text-left transition lg:w-full ${
+                active === s.id
+                  ? "bg-white text-[#001a33] shadow-md"
+                  : "text-zinc-400 hover:bg-white/[0.06] hover:text-white"
+              }`}
+            >
+              <span className="block text-[14px] font-semibold">{s.label}</span>
+              <span className={`mt-0.5 block text-[11px] ${active === s.id ? "text-zinc-600" : "text-zinc-600"}`}>
+                {s.desc}
+              </span>
+            </button>
+          ))}
+        </nav>
+      </aside>
 
       <div className="min-w-0 flex-1 space-y-6 lg:pl-6">
+        {activeSection?.placement ? (
+          <SectionPlacement title={activeSection.label}>{activeSection.placement}</SectionPlacement>
+        ) : null}
+
         {active === "hero" && (
           <div className="space-y-5">
             <div className="grid gap-4 lg:grid-cols-2">
-              <div className="space-y-3 rounded-2xl border border-white/[0.08] bg-gradient-to-br from-cyan-950/40 to-zinc-950/80 p-4 ring-1 ring-cyan-500/10">
-                <p className="text-[12px] font-semibold uppercase tracking-wide text-cyan-400/90">Live hero preview</p>
+              <div className="space-y-3 rounded-2xl border border-white/[0.08] bg-gradient-to-br from-[#001a33]/80 to-zinc-950/80 p-4 ring-1 ring-[#1a6bb5]/15">
+                <p className="text-[12px] font-semibold uppercase tracking-wide text-[#9ec9ef]">
+                  Live hero preview (public site)
+                </p>
                 <div className="relative aspect-video overflow-hidden rounded-xl bg-black ring-1 ring-white/10">
                   {heroPreviewYoutube ? (
                     <iframe
@@ -316,17 +414,22 @@ const LandingPageEditor = () => {
                       Add YouTube, video, or image
                     </div>
                   )}
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                  <div className="absolute bottom-3 left-3 right-3 text-left">
-                    <p className="truncate text-[10px] font-bold uppercase tracking-wider text-white/60">
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#001a33]/85 via-transparent to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3 text-center">
+                    <p className="truncate text-[10px] font-bold uppercase tracking-wider text-white/70">
                       {form.heroBadge || "Badge"}
                     </p>
-                    <p className="mt-1 line-clamp-2 text-[13px] font-semibold text-white">{form.heroTitle || "Headline"}</p>
+                    <p className="mt-1 line-clamp-2 font-serif text-[13px] font-bold text-white">
+                      {form.heroTitle || "Headline"}
+                    </p>
+                    <p className="mt-1 line-clamp-2 text-[11px] text-white/85">
+                      {form.heroSubtitle || "Subtitle"}
+                    </p>
                   </div>
                 </div>
               </div>
               <div className="space-y-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4">
-                <p className={labelClass}>YouTube (optional)</p>
+                <p className={labelClass}>YouTube (optional — overrides MP4)</p>
                 <input
                   type="url"
                   placeholder="https://www.youtube.com/watch?v=…"
@@ -339,24 +442,24 @@ const LandingPageEditor = () => {
             </div>
 
             <MediaField
-              label="Hero image (fallback / poster)"
+              label="Hero image (campus photo)"
               value={form.heroImageUrl}
               onChange={(v) => setForm({ ...form, heroImageUrl: v })}
               accept="image/jpeg,image/png,image/gif,image/webp"
-              hint="Shown when no video, under YouTube, or as texture on auth pages."
+              hint="Wide campus shot works best (21:9). Used when no YouTube/video. Also on login/register side panel."
             />
             <MediaField
               label="Hero background video (MP4 / WebM / MOV)"
               value={form.heroVideoUrl}
               onChange={(v) => setForm({ ...form, heroVideoUrl: v })}
               accept="video/mp4,video/webm,video/quicktime"
-              hint="Loops muted on the public home hero. Upload up to ~45MB per file."
+              hint="Loops muted behind the headline. Ignored if a valid YouTube URL is set."
             />
 
             <div className="space-y-3 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4">
-              <p className={labelClass}>Copy</p>
+              <p className={labelClass}>Hero text (overlaid on media)</p>
               <input
-                placeholder="Badge / eyebrow"
+                placeholder="Badge — e.g. Department of ECE"
                 value={form.heroBadge}
                 onChange={(e) => setForm({ ...form, heroBadge: e.target.value })}
                 className={inputClass}
@@ -380,6 +483,9 @@ const LandingPageEditor = () => {
 
         {active === "department" && (
           <div className="space-y-5">
+            <p className="text-[13px] text-zinc-500">
+              Main department story on a light gray panel. Use a blank line in the body for separate paragraphs.
+            </p>
             <MediaField
               label="Department section image"
               value={form.departmentImageUrl}
@@ -420,12 +526,20 @@ const LandingPageEditor = () => {
         {active === "gallery" && (
           <div className="space-y-4">
             <p className="text-[13px] leading-relaxed text-zinc-500">
-              Add up to 12 tiles. Use images for photos and video for hosted MP4/WebM (e.g. Cloudinary). Captions are optional.
+              Each item powers the <strong className="text-zinc-300">Recent Events</strong> carousel (caption = event
+              title). Order matters: item 1 shows first. Add up to 12 entries.
             </p>
             {form.gallery.map((g, i) => (
               <div key={i} className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-[12px] font-bold text-zinc-500">Item {i + 1}</span>
+                  <span className="text-[12px] font-bold text-zinc-500">
+                    Event {i + 1}
+                    {i === 0 ? (
+                      <span className="ml-2 rounded bg-[#1a6bb5]/20 px-1.5 py-0.5 text-[10px] font-semibold text-[#9ec9ef]">
+                        Carousel default
+                      </span>
+                    ) : null}
+                  </span>
                   <div className="flex items-center gap-2">
                     <select
                       value={g.kind}
@@ -461,7 +575,7 @@ const LandingPageEditor = () => {
                 />
                 <input
                   type="text"
-                  placeholder="Caption (optional)"
+                  placeholder="Event title (shown on card — e.g. Distinguished Alumni Talk)"
                   value={g.caption}
                   onChange={(e) => {
                     const gallery = [...form.gallery];
@@ -476,20 +590,25 @@ const LandingPageEditor = () => {
               type="button"
               onClick={() => setForm({ ...form, gallery: [...form.gallery, emptyGalleryItem()] })}
               disabled={form.gallery.length >= 12}
-              className="rounded-xl border border-dashed border-cyan-500/40 px-4 py-3 text-[14px] font-semibold text-cyan-300 transition hover:bg-cyan-500/10 disabled:opacity-40"
+              className="rounded-xl border border-dashed border-[#1a6bb5]/40 px-4 py-3 text-[14px] font-semibold text-[#9ec9ef] transition hover:bg-[#1a6bb5]/10 disabled:opacity-40"
             >
-              + Add gallery item
+              + Add event / gallery item
             </button>
           </div>
         )}
 
         {active === "stats" && (
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="space-y-4">
+            <p className="text-[13px] text-zinc-500">
+              Three metrics in the navy <strong className="text-zinc-300">Alumni Network</strong> band and footer (e.g.{" "}
+              <em>200+</em> Events, <em>2,600+</em> Members).
+            </p>
+            <div className="grid gap-4 md:grid-cols-3">
             {form.stats.map((s, i) => (
-              <div key={i} className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 space-y-2">
-                <span className="text-[11px] font-bold text-zinc-500">Stat {i + 1}</span>
+              <div key={i} className="rounded-2xl border border-[#001a33]/50 bg-[#001a33]/30 p-4 space-y-2">
+                <span className="text-[11px] font-bold text-[#9ec9ef]">Metric {i + 1}</span>
                 <input
-                  placeholder="Value"
+                  placeholder="Value — e.g. 200+ or Live"
                   value={s.value}
                   onChange={(e) => {
                     const stats = [...form.stats];
@@ -520,13 +639,18 @@ const LandingPageEditor = () => {
                 />
               </div>
             ))}
+            </div>
           </div>
         )}
 
         {active === "spotlights" && (
           <div className="space-y-4">
+            <p className="text-[13px] text-zinc-500">
+              Large cards in the <strong className="text-zinc-300">Impact stories</strong> section. Used as Recent Events
+              fallback only when no gallery items exist.
+            </p>
             <input
-              placeholder="Section title"
+              placeholder="Section title — e.g. People who carry the department forward"
               value={form.impactTitle}
               onChange={(e) => setForm({ ...form, impactTitle: e.target.value })}
               className={inputClass}
@@ -609,17 +733,21 @@ const LandingPageEditor = () => {
             <button
               type="button"
               onClick={() => setForm({ ...form, spotlights: [...form.spotlights, emptySpotlight()] })}
-              className="text-[14px] font-semibold text-cyan-400 hover:underline"
+              className="text-[14px] font-semibold text-[#9ec9ef] hover:underline"
             >
-              + Add spotlight
+              + Add impact story
             </button>
           </div>
         )}
 
         {active === "timeline" && (
           <div className="space-y-4">
+            <p className="text-[13px] text-zinc-500">
+              <strong className="text-zinc-300">News column:</strong> first 6 entries (title + year).{" "}
+              <strong className="text-zinc-300">Timeline section:</strong> all entries with full description.
+            </p>
             <input
-              placeholder="Section title"
+              placeholder="Timeline section title — e.g. A short arc of impact"
               value={form.timelineTitle}
               onChange={(e) => setForm({ ...form, timelineTitle: e.target.value })}
               className={inputClass}
@@ -634,7 +762,12 @@ const LandingPageEditor = () => {
             {form.timeline.map((t, i) => (
               <div key={i} className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-[11px] font-bold text-zinc-500">Entry {i + 1}</span>
+                  <span className="text-[11px] font-bold text-zinc-500">
+                    News / timeline {i + 1}
+                    {i < 6 ? (
+                      <span className="ml-2 text-[10px] font-normal text-[#9ec9ef]">· visible in News sidebar</span>
+                    ) : null}
+                  </span>
                   <button
                     type="button"
                     className="text-[12px] text-red-400 hover:underline"
@@ -654,7 +787,7 @@ const LandingPageEditor = () => {
                   className={inputClass}
                 />
                 <input
-                  placeholder="Title"
+                  placeholder="Headline — shown in News sidebar"
                   value={t.title}
                   onChange={(e) => {
                     const timeline = [...form.timeline];
@@ -679,28 +812,36 @@ const LandingPageEditor = () => {
             <button
               type="button"
               onClick={() => setForm({ ...form, timeline: [...form.timeline, emptyTimeline()] })}
-              className="text-[14px] font-semibold text-cyan-400 hover:underline"
+              className="text-[14px] font-semibold text-[#9ec9ef] hover:underline"
             >
-              + Add timeline entry
+              + Add news / timeline entry
             </button>
           </div>
         )}
 
         {active === "closing" && (
-          <div className="space-y-3">
+          <div className="space-y-4">
+            <div className="rounded-xl border border-nitj-border bg-[#f4f6f8] p-6 text-center text-[#001a33] shadow-inner ring-1 ring-white/10">
+              <p className="font-serif text-lg font-bold">{form.closingTitle || "Past Events title"}</p>
+              <p className="mt-2 text-sm text-gray-600">{form.closingSubtitle || "Subtitle preview"}</p>
+              <p className="mt-3 text-xs text-[#1a6bb5]">View All Events →</p>
+            </div>
             <input
-              placeholder="Title"
+              placeholder="Past Events card title"
               value={form.closingTitle}
               onChange={(e) => setForm({ ...form, closingTitle: e.target.value })}
               className={inputClass}
             />
             <textarea
-              placeholder="Subtitle"
+              placeholder="Past Events card subtitle"
               value={form.closingSubtitle}
               onChange={(e) => setForm({ ...form, closingSubtitle: e.target.value })}
               rows={3}
               className={inputClass}
             />
+            <p className="text-[12px] text-zinc-500">
+              Create account and Log in buttons below this card are fixed links — not editable here.
+            </p>
           </div>
         )}
 
@@ -708,17 +849,17 @@ const LandingPageEditor = () => {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 text-[15px] font-bold text-white shadow-lg shadow-cyan-500/20 disabled:opacity-50"
+            className="rounded-xl bg-[#001a33] px-6 py-3 text-[15px] font-bold text-white shadow-lg transition hover:bg-[#002952] disabled:opacity-50"
           >
-            {saving ? "Saving…" : "Save all changes"}
+            {saving ? "Saving…" : "Save landing page"}
           </button>
           <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-xl border border-white/15 px-5 py-3 text-[14px] font-semibold text-zinc-300 transition hover:bg-white/[0.06]"
+            className="rounded-xl border border-[#1a6bb5]/35 bg-[#1a6bb5]/10 px-5 py-3 text-[14px] font-semibold text-[#9ec9ef] transition hover:bg-[#1a6bb5]/20"
           >
-            Open home page ↗
+            Preview public site ↗
           </a>
         </div>
       </div>

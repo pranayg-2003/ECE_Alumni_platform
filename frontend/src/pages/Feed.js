@@ -9,7 +9,7 @@ const Feed = () => {
   const { posts, loading } = usePost();
 
   return (
-    <div className="dashboard-apple-bg font-apple min-h-screen">
+    <div className="dashboard-apple-bg min-h-screen font-sans">
       <Navbar />
 
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 p-4 lg:grid-cols-12 lg:gap-8 lg:p-6">
@@ -28,8 +28,8 @@ const Feed = () => {
 
         <div className="space-y-4 lg:col-span-3">
           <div className="apple-glass-card overflow-hidden p-5">
-            <div className="h-0.5 w-full rounded-full bg-[#0071e3]/80" />
-            <h3 className="mt-4 text-[17px] font-semibold tracking-tight text-[#1d1d1f]">Post tips</h3>
+            <div className="h-1 w-full rounded-full bg-nitj-navy" />
+            <h3 className="mt-4 font-nitj text-[17px] font-bold text-nitj-navy">Post tips</h3>
             <ul className="mt-3 space-y-2.5 text-[14px] leading-relaxed text-neutral-600">
               <li>Add a clear photo or PDF to support your update.</li>
               <li>Short, readable paragraphs work best.</li>

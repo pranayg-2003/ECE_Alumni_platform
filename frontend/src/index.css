@@ -4,9 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-
-/* Import Google Font */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&display=swap");
 
 /* Global base styles */
 @layer base {
@@ -58,21 +56,66 @@
     transform: translate3d(0, 0, 0);
   }
 
-  .landing-hero-mesh {
-    background:
-      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139, 92, 246, 0.35), transparent 55%),
-      radial-gradient(ellipse 60% 50% at 100% 20%, rgba(236, 72, 153, 0.2), transparent 50%),
-      radial-gradient(ellipse 50% 40% at 0% 80%, rgba(59, 130, 246, 0.15), transparent 45%),
-      #000;
+  /* NIT Jalandhar alumni site–style landing */
+  .landing-nitj-page {
+    @apply bg-nitj-panel text-gray-800 font-sans;
   }
 
-  /* Auth pages — Apple-like hero (neutral dark + soft blue glow) */
-  .auth-hero-apple {
+  .landing-nitj-header {
+    @apply border-b border-white/10 bg-nitj-navy shadow-md;
+  }
+
+  .landing-nitj-nav-link {
+    @apply text-[11px] font-semibold uppercase tracking-[0.12em] text-white/90 transition hover:text-white sm:text-xs;
+  }
+
+  .landing-nitj-login-btn {
+    @apply rounded-full bg-white px-5 py-2 text-sm font-semibold text-nitj-navy transition hover:bg-white/90;
+  }
+
+  .landing-nitj-section-title {
+    @apply font-nitj text-xl font-bold text-nitj-navy md:text-2xl;
+  }
+
+  .landing-nitj-quick-link {
+    @apply flex items-center justify-between rounded-md border border-nitj-border bg-white px-4 py-3 text-sm font-medium text-gray-800 transition hover:border-nitj-link hover:text-nitj-link;
+  }
+
+  .landing-nitj-quick-link--active {
+    @apply border-l-[3px] border-l-nitj-link border-nitj-border;
+  }
+
+  .landing-nitj-event-card {
+    @apply flex h-full flex-col overflow-hidden rounded-lg border border-nitj-border bg-white shadow-sm;
+  }
+
+  .landing-nitj-news-item {
+    @apply border-l-[3px] border-l-nitj-navy bg-nitj-news px-4 py-3 text-sm leading-snug text-gray-800;
+  }
+
+  .landing-nitj-btn-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-nitj-navy px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-nitj-navy-light;
+  }
+
+  .landing-nitj-btn-outline {
+    @apply inline-flex items-center justify-center rounded-full border border-nitj-navy bg-white px-6 py-2.5 text-sm font-semibold text-nitj-navy transition hover:bg-nitj-news;
+  }
+
+  .landing-nitj-link {
+    @apply text-sm font-medium text-nitj-link transition hover:text-nitj-link-hover hover:underline;
+  }
+
+  .landing-hero-mesh {
+    background: #001a33;
+  }
+
+  /* Dashboard / page hero banners (NITJAA navy) */
+  .auth-hero-apple,
+  .app-nitj-hero {
     background:
-      radial-gradient(ellipse 100% 70% at 50% -10%, rgba(41, 151, 255, 0.22), transparent 55%),
-      radial-gradient(ellipse 70% 55% at 100% 60%, rgba(10, 132, 255, 0.12), transparent 50%),
-      radial-gradient(ellipse 55% 45% at 0% 90%, rgba(94, 92, 230, 0.1), transparent 45%),
-      linear-gradient(165deg, #1d1d1f 0%, #000000 100%);
+      radial-gradient(ellipse 80% 60% at 100% 0%, rgba(26, 107, 181, 0.25), transparent 50%),
+      radial-gradient(ellipse 60% 50% at 0% 100%, rgba(255, 255, 255, 0.06), transparent 45%),
+      linear-gradient(165deg, #001a33 0%, #002952 100%);
   }
 
   /* Soft page wash behind auth forms */
@@ -86,19 +129,34 @@
       linear-gradient(180deg, #fbfbfd 0%, #f5f5f7 45%, #ececf1 100%);
   }
 
-  /* Logged-in app shell (feed, dashboards, profile) */
+  /* Logged-in app shell (feed, dashboards, profile) — matches landing */
   .dashboard-apple-bg {
-    background-color: #f5f5f7;
-    background-image: radial-gradient(
-        ellipse 100% 60% at 50% -15%,
-        rgba(0, 113, 227, 0.045),
-        transparent 50%
-      ),
-      linear-gradient(180deg, #fbfbfd 0%, #f5f5f7 50%, #ebebef 100%);
+    @apply bg-nitj-panel;
+    background-image: linear-gradient(180deg, #fafbfc 0%, #f4f6f8 48%, #eef1f4 100%);
   }
 
   .apple-glass-card {
-    @apply rounded-[24px] border border-black/[0.06] bg-white/85 shadow-[0_4px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl backdrop-saturate-150;
+    @apply rounded-lg border border-nitj-border bg-white shadow-sm;
+  }
+
+  .app-nitj-section-title {
+    @apply font-nitj text-xl font-bold text-nitj-navy md:text-2xl;
+  }
+
+  .app-nitj-btn-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-nitj-navy px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-nitj-navy-light disabled:opacity-50;
+  }
+
+  .app-nitj-btn-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-nitj-border bg-white px-5 py-2.5 text-sm font-semibold text-nitj-navy transition hover:bg-nitj-news;
+  }
+
+  .app-nitj-link {
+    @apply font-medium text-nitj-link underline-offset-4 hover:text-nitj-link-hover hover:underline;
+  }
+
+  .app-nitj-stat-value {
+    @apply font-nitj text-3xl font-bold tabular-nums text-nitj-navy;
   }
 
   .landing-stagger > *:nth-child(1) {

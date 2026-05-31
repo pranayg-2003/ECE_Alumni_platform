@@ -223,11 +223,11 @@ const ReferralsPage = () => {
         <div className="border-b border-black/[0.06] bg-[#f5f5f7]/50 px-5 py-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#1d1d1f] text-[15px] font-semibold text-white">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-nitj-navy text-[15px] font-semibold text-white">
                 {stu.name?.charAt(0)?.toUpperCase() || "?"}
               </div>
               <div className="min-w-0">
-                <p className="font-semibold text-[#1d1d1f]">{stu.name}</p>
+                <p className="font-semibold text-nitj-navy">{stu.name}</p>
                 <p className="text-[13px] text-neutral-500">
                   {stu.branch || "Student"}
                   {stu.year != null && ` · Year ${stu.year}`}
@@ -238,7 +238,7 @@ const ReferralsPage = () => {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-[#0071e3]/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#0071e3]">
+              <span className="rounded-full bg-nitj-link/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-nitj-link">
                 {SEEK_LABELS[row.seekType] || row.seekType}
               </span>
               <span
@@ -254,7 +254,7 @@ const ReferralsPage = () => {
           </div>
         </div>
         <div className="px-5 py-4">
-          <h3 className="text-[17px] font-semibold tracking-tight text-[#1d1d1f]">{row.title}</h3>
+          <h3 className="text-[17px] font-semibold tracking-tight text-nitj-navy">{row.title}</h3>
           <p className="mt-2 whitespace-pre-wrap text-[14px] leading-relaxed text-neutral-600">
             {row.summary}
           </p>
@@ -264,7 +264,7 @@ const ReferralsPage = () => {
                 (tag) => (
                   <span
                     key={tag}
-                    className="rounded-full bg-[#f5f5f7] px-2.5 py-1 text-[11px] font-medium text-[#1d1d1f] ring-1 ring-black/[0.06]"
+                    className="rounded-full bg-[#f5f5f7] px-2.5 py-1 text-[11px] font-medium text-nitj-navy ring-1 ring-black/[0.06]"
                   >
                     {tag}
                   </span>
@@ -277,7 +277,7 @@ const ReferralsPage = () => {
               href={row.linkUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 inline-block text-[14px] font-medium text-[#0071e3] hover:underline"
+              className="mt-3 inline-block text-[14px] font-medium text-nitj-link hover:underline"
             >
               Portfolio / resume link
             </a>
@@ -289,7 +289,7 @@ const ReferralsPage = () => {
             <button
               type="button"
               onClick={copyPitch}
-              className="rounded-full border border-black/[0.1] bg-white px-4 py-2.5 text-[14px] font-medium text-[#1d1d1f] shadow-sm transition hover:bg-[#f5f5f7]"
+              className="rounded-full border border-black/[0.1] bg-white px-4 py-2.5 text-[14px] font-medium text-nitj-navy shadow-sm transition hover:bg-[#f5f5f7]"
             >
               Copy pitch
             </button>
@@ -297,7 +297,7 @@ const ReferralsPage = () => {
               <button
                 type="button"
                 onClick={() => openMessagesWithUser(peer)}
-                className="rounded-full bg-[#0071e3] px-5 py-2.5 text-[14px] font-medium text-white shadow-sm transition hover:bg-[#0077ed]"
+                className="rounded-full bg-nitj-navy px-5 py-2.5 text-[14px] font-medium text-white shadow-sm transition hover:bg-nitj-navy-light"
               >
                 Message {stu.name?.split(" ")[0] || "student"}
               </button>
@@ -311,7 +311,7 @@ const ReferralsPage = () => {
   const openOnBoard = board.filter((r) => r.status === "open").length;
 
   return (
-    <div className="dashboard-apple-bg font-apple min-h-screen">
+    <div className="dashboard-apple-bg min-h-screen font-sans">
       <Navbar />
 
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:max-w-6xl">
@@ -334,15 +334,15 @@ const ReferralsPage = () => {
           <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="apple-glass-card px-5 py-4">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Open asks</p>
-              <p className="mt-1 text-3xl font-semibold tabular-nums text-[#1d1d1f]">{openOnBoard}</p>
+              <p className="mt-1 text-3xl font-semibold tabular-nums text-nitj-navy">{openOnBoard}</p>
             </div>
             <div className="apple-glass-card px-5 py-4">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Matching filter</p>
-              <p className="mt-1 text-3xl font-semibold tabular-nums text-[#1d1d1f]">{board.length}</p>
+              <p className="mt-1 text-3xl font-semibold tabular-nums text-nitj-navy">{board.length}</p>
             </div>
             <div className="apple-glass-card px-5 py-4">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Status filter</p>
-              <p className="mt-1 text-lg font-semibold capitalize text-[#1d1d1f]">
+              <p className="mt-1 text-lg font-semibold capitalize text-nitj-navy">
                 {statusFilter === "all" ? "All statuses" : STATUS_LABELS[statusFilter] || statusFilter}
               </p>
             </div>
@@ -351,16 +351,16 @@ const ReferralsPage = () => {
 
         {isStudent && (
           <div className="mb-8 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-[#0071e3]/15 bg-[#0071e3]/[0.06] p-4">
-              <p className="text-[12px] font-semibold text-[#0071e3]">Be specific</p>
+            <div className="rounded-2xl border border-nitj-link/15 bg-nitj-link/[0.06] p-4">
+              <p className="text-[12px] font-semibold text-nitj-link">Be specific</p>
               <p className="mt-1 text-[13px] text-neutral-700">Roles, skills, and timeline help alumni respond faster.</p>
             </div>
             <div className="rounded-2xl border border-black/[0.06] bg-[#f5f5f7]/80 p-4">
-              <p className="text-[12px] font-semibold text-[#1d1d1f]">Add a link</p>
+              <p className="text-[12px] font-semibold text-nitj-navy">Add a link</p>
               <p className="mt-1 text-[13px] text-neutral-700">Portfolio or resume links improve credibility.</p>
             </div>
             <div className="rounded-2xl border border-black/[0.06] bg-[#f5f5f7]/80 p-4">
-              <p className="text-[12px] font-semibold text-[#1d1d1f]">Update status</p>
+              <p className="text-[12px] font-semibold text-nitj-navy">Update status</p>
               <p className="mt-1 text-[13px] text-neutral-700">Mark filled or closed when you’re done so mentors aren’t guessing.</p>
             </div>
           </div>
@@ -369,14 +369,14 @@ const ReferralsPage = () => {
         {isStudent && (
           <section className="mb-10">
             <div className="mb-4 flex items-center justify-between gap-2">
-              <h2 className="text-[20px] font-semibold text-[#1d1d1f]">
+              <h2 className="text-[20px] font-semibold text-nitj-navy">
                 {editingId ? "Edit request" : "New referral request"}
               </h2>
               {editingId && (
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="text-[14px] font-medium text-[#0071e3] hover:underline"
+                  className="text-[14px] font-medium text-nitj-link hover:underline"
                 >
                   Cancel edit
                 </button>
@@ -389,7 +389,7 @@ const ReferralsPage = () => {
                   value={form.title}
                   onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
                   placeholder="e.g. Seeking summer internship referral in VLSI / RTL"
-                  className="mt-1.5 w-full rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] text-[#1d1d1f] outline-none ring-[#0071e3]/0 transition focus:ring-2 focus:ring-[#0071e3]/25"
+                  className="mt-1.5 w-full rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] text-nitj-navy outline-none ring-nitj-link/0 transition focus:ring-2 focus:ring-nitj-link/25"
                   maxLength={140}
                   required
                 />
@@ -401,7 +401,7 @@ const ReferralsPage = () => {
                   onChange={(e) => setForm((f) => ({ ...f, summary: e.target.value }))}
                   placeholder="Your background, target teams, timeline, and how alumni can help."
                   rows={5}
-                  className="mt-1.5 w-full resize-y rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] text-[#1d1d1f] outline-none ring-[#0071e3]/0 transition focus:ring-2 focus:ring-[#0071e3]/25"
+                  className="mt-1.5 w-full resize-y rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] text-nitj-navy outline-none ring-nitj-link/0 transition focus:ring-2 focus:ring-nitj-link/25"
                   required
                 />
               </div>
@@ -411,7 +411,7 @@ const ReferralsPage = () => {
                   <select
                     value={form.seekType}
                     onChange={(e) => setForm((f) => ({ ...f, seekType: e.target.value }))}
-                    className="mt-1.5 w-full rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] text-[#1d1d1f] outline-none"
+                    className="mt-1.5 w-full rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] text-nitj-navy outline-none"
                   >
                     {Object.entries(SEEK_LABELS).map(([k, v]) => (
                       <option key={k} value={k}>
@@ -428,7 +428,7 @@ const ReferralsPage = () => {
                     value={form.linkUrl}
                     onChange={(e) => setForm((f) => ({ ...f, linkUrl: e.target.value }))}
                     placeholder="https://…"
-                    className="mt-1.5 w-full rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] text-[#1d1d1f] outline-none focus:ring-2 focus:ring-[#0071e3]/25"
+                    className="mt-1.5 w-full rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] text-nitj-navy outline-none focus:ring-2 focus:ring-nitj-link/25"
                   />
                 </div>
               </div>
@@ -440,7 +440,7 @@ const ReferralsPage = () => {
                   value={form.targetRoles}
                   onChange={(e) => setForm((f) => ({ ...f, targetRoles: e.target.value }))}
                   placeholder="e.g. Design verification, Embedded systems"
-                  className="mt-1.5 w-full rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] outline-none focus:ring-2 focus:ring-[#0071e3]/25"
+                  className="mt-1.5 w-full rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] outline-none focus:ring-2 focus:ring-nitj-link/25"
                 />
               </div>
               <div>
@@ -451,7 +451,7 @@ const ReferralsPage = () => {
                   value={form.targetCompanies}
                   onChange={(e) => setForm((f) => ({ ...f, targetCompanies: e.target.value }))}
                   placeholder="e.g. AMD, Texas Instruments"
-                  className="mt-1.5 w-full rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] outline-none focus:ring-2 focus:ring-[#0071e3]/25"
+                  className="mt-1.5 w-full rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] outline-none focus:ring-2 focus:ring-nitj-link/25"
                 />
               </div>
               <div>
@@ -462,19 +462,19 @@ const ReferralsPage = () => {
                   value={form.skills}
                   onChange={(e) => setForm((f) => ({ ...f, skills: e.target.value }))}
                   placeholder="e.g. Verilog, Python, PCB design"
-                  className="mt-1.5 w-full rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] outline-none focus:ring-2 focus:ring-[#0071e3]/25"
+                  className="mt-1.5 w-full rounded-xl border border-black/[0.08] bg-white/90 px-4 py-3 text-[15px] outline-none focus:ring-2 focus:ring-nitj-link/25"
                 />
               </div>
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-full bg-[#0071e3] px-8 py-3 text-[15px] font-medium text-white shadow-sm transition hover:bg-[#0077ed] disabled:opacity-50"
+                className="rounded-full bg-nitj-navy px-8 py-3 text-[15px] font-medium text-white shadow-sm transition hover:bg-nitj-navy-light disabled:opacity-50"
               >
                 {saving ? "Saving…" : editingId ? "Save changes" : "Post to referral board"}
               </button>
             </form>
 
-            <h2 className="mb-4 mt-10 text-[20px] font-semibold text-[#1d1d1f]">Your requests</h2>
+            <h2 className="mb-4 mt-10 text-[20px] font-semibold text-nitj-navy">Your requests</h2>
             {mineLoading ? (
               <p className="text-neutral-500">Loading…</p>
             ) : mine.length === 0 ? (
@@ -486,7 +486,7 @@ const ReferralsPage = () => {
                 {mine.map((row) => (
                   <li key={row._id} className="apple-glass-card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0">
-                      <p className="font-semibold text-[#1d1d1f]">{row.title}</p>
+                      <p className="font-semibold text-nitj-navy">{row.title}</p>
                       <p className="text-[13px] text-neutral-500">
                         {SEEK_LABELS[row.seekType]} · {STATUS_LABELS[row.status] || row.status}
                       </p>
@@ -504,7 +504,7 @@ const ReferralsPage = () => {
                           <button
                             type="button"
                             onClick={() => setStatus(row._id, "closed")}
-                            className="rounded-full border border-black/[0.1] bg-white px-3 py-1.5 text-[13px] font-medium text-[#1d1d1f]"
+                            className="rounded-full border border-black/[0.1] bg-white px-3 py-1.5 text-[13px] font-medium text-nitj-navy"
                           >
                             Close
                           </button>
@@ -514,7 +514,7 @@ const ReferralsPage = () => {
                         <button
                           type="button"
                           onClick={() => setStatus(row._id, "open")}
-                          className="rounded-full border border-[#0071e3]/30 bg-[#0071e3]/5 px-3 py-1.5 text-[13px] font-medium text-[#0071e3]"
+                          className="rounded-full border border-nitj-link/30 bg-nitj-link/5 px-3 py-1.5 text-[13px] font-medium text-nitj-link"
                         >
                           Reopen
                         </button>
@@ -522,7 +522,7 @@ const ReferralsPage = () => {
                       <button
                         type="button"
                         onClick={() => startEdit(row)}
-                        className="rounded-full border border-black/[0.1] bg-white px-3 py-1.5 text-[13px] font-medium text-[#1d1d1f]"
+                        className="rounded-full border border-black/[0.1] bg-white px-3 py-1.5 text-[13px] font-medium text-nitj-navy"
                       >
                         Edit
                       </button>
@@ -543,20 +543,20 @@ const ReferralsPage = () => {
 
         {showBoard && (
           <section>
-            <h2 className="mb-4 text-[20px] font-semibold text-[#1d1d1f]">Open requests from students</h2>
+            <h2 className="mb-4 text-[20px] font-semibold text-nitj-navy">Open requests from students</h2>
             <div className="apple-glass-card mb-6 space-y-3 p-4 sm:p-5">
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <input
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   placeholder="Search words in posts…"
-                  className="rounded-xl border border-black/[0.08] bg-white/90 px-4 py-2.5 text-[14px] outline-none focus:ring-2 focus:ring-[#0071e3]/25 lg:col-span-2"
+                  className="rounded-xl border border-black/[0.08] bg-white/90 px-4 py-2.5 text-[14px] outline-none focus:ring-2 focus:ring-nitj-link/25 lg:col-span-2"
                 />
                 <input
                   value={branch}
                   onChange={(e) => setBranch(e.target.value)}
                   placeholder="Filter by branch (e.g. ECE)"
-                  className="rounded-xl border border-black/[0.08] bg-white/90 px-4 py-2.5 text-[14px] outline-none focus:ring-2 focus:ring-[#0071e3]/25"
+                  className="rounded-xl border border-black/[0.08] bg-white/90 px-4 py-2.5 text-[14px] outline-none focus:ring-2 focus:ring-nitj-link/25"
                 />
                 <select
                   value={seekType}
@@ -580,8 +580,8 @@ const ReferralsPage = () => {
                     onClick={() => setStatusFilter(s)}
                     className={`rounded-full px-3 py-1.5 text-[13px] font-medium transition ${
                       statusFilter === s
-                        ? "bg-[#1d1d1f] text-white"
-                        : "bg-[#f5f5f7] text-[#1d1d1f] ring-1 ring-black/[0.06]"
+                        ? "bg-nitj-navy text-white"
+                        : "bg-[#f5f5f7] text-nitj-navy ring-1 ring-black/[0.06]"
                     }`}
                   >
                     {s === "all" ? "All" : STATUS_LABELS[s]}
@@ -590,7 +590,7 @@ const ReferralsPage = () => {
                 <button
                   type="button"
                   onClick={() => loadBoard()}
-                  className="ml-auto rounded-full border border-black/[0.1] bg-white px-4 py-1.5 text-[13px] font-medium text-[#1d1d1f]"
+                  className="ml-auto rounded-full border border-black/[0.1] bg-white px-4 py-1.5 text-[13px] font-medium text-nitj-navy"
                 >
                   Refresh
                 </button>

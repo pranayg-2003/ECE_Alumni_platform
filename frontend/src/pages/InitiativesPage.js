@@ -275,7 +275,7 @@ const InitiativesPage = () => {
           name: user?.name || "",
           email: user?.email || "",
         },
-        theme: { color: "#0071e3" },
+        theme: { color: "#001a33" },
         modal: {
           ondismiss: () => {},
         },
@@ -290,40 +290,34 @@ const InitiativesPage = () => {
   };
 
   const inputClass =
-    "w-full rounded-2xl border border-black/[0.08] bg-[#f5f5f7] px-3.5 py-2.5 text-[15px] text-[#1d1d1f] outline-none focus:border-[#0071e3]/35 focus:bg-white focus:ring-2 focus:ring-[#0071e3]/15";
+    "w-full rounded-2xl border border-black/[0.08] bg-[#f5f5f7] px-3.5 py-2.5 text-[15px] text-nitj-navy outline-none focus:border-nitj-link/35 focus:bg-white focus:ring-2 focus:ring-nitj-link/15";
 
   const fundForQuick = funding.filter((c) => canUseRazorpay(c, razorpayEnabled));
 
   return (
-    <div className="dashboard-apple-bg font-apple min-h-screen">
+    <div className="dashboard-apple-bg min-h-screen font-sans">
       <Navbar />
 
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:py-10">
-        <header className="relative mb-10 overflow-hidden rounded-[28px] border border-black/[0.06] bg-white/70 px-6 py-8 shadow-[0_20px_60px_rgba(0,0,0,0.06)] backdrop-blur-xl sm:px-10 sm:py-10">
+        <header className="app-nitj-hero relative mb-10 overflow-hidden rounded-lg px-6 py-8 text-white shadow-lg sm:px-10 sm:py-10">
           <div
-            className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[#0071e3]/[0.12] blur-3xl"
-            aria-hidden
-          />
-          <div
-            className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-[#5e5ce6]/[0.1] blur-3xl"
+            className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-nitj-link/20 blur-3xl"
             aria-hidden
           />
           <div className="relative">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#0071e3]">Community</p>
-            <h1 className="mt-2 text-[32px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[40px]">
-              Initiatives
-            </h1>
-            <p className="mt-3 max-w-2xl text-[17px] leading-relaxed text-neutral-600 sm:text-[18px]">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/75">Community</p>
+            <h1 className="mt-2 font-nitj text-[32px] font-bold tracking-tight sm:text-[40px]">Initiatives</h1>
+            <p className="mt-3 max-w-2xl text-[17px] leading-relaxed text-white/85 sm:text-[18px]">
               Fund college programs with secure Razorpay checkout, and host live sessions on Google Meet — all in one
               place.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#f5f5f7] px-4 py-2 text-[13px] font-medium text-[#1d1d1f] ring-1 ring-black/[0.06]">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#f5f5f7] px-4 py-2 text-[13px] font-medium text-nitj-navy ring-1 ring-black/[0.06]">
                 <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
                 Secure payments
               </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#f5f5f7] px-4 py-2 text-[13px] font-medium text-[#1d1d1f] ring-1 ring-black/[0.06]">
-                <span className="h-2 w-2 rounded-full bg-[#0071e3]" aria-hidden />
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#f5f5f7] px-4 py-2 text-[13px] font-medium text-nitj-navy ring-1 ring-black/[0.06]">
+                <span className="h-2 w-2 rounded-full bg-nitj-navy" aria-hidden />
                 Meet links
               </span>
             </div>
@@ -336,8 +330,8 @@ const InitiativesPage = () => {
             onClick={() => setTab("funding")}
             className={`flex flex-1 items-center justify-center gap-2.5 rounded-[14px] px-5 py-3.5 text-[15px] font-semibold transition sm:flex-none ${
               tab === "funding"
-                ? "bg-white text-[#1d1d1f] shadow-[0_4px_24px_rgba(0,113,227,0.12)] ring-2 ring-[#0071e3]/25"
-                : "text-neutral-600 hover:bg-white/80 hover:text-[#1d1d1f]"
+                ? "bg-white text-nitj-navy shadow-[0_4px_24px_rgba(0,113,227,0.12)] ring-2 ring-nitj-link/25"
+                : "text-neutral-600 hover:bg-white/80 hover:text-nitj-navy"
             }`}
           >
             <IconSpark />
@@ -348,8 +342,8 @@ const InitiativesPage = () => {
             onClick={() => setTab("events")}
             className={`flex flex-1 items-center justify-center gap-2.5 rounded-[14px] px-5 py-3.5 text-[15px] font-semibold transition sm:flex-none ${
               tab === "events"
-                ? "bg-white text-[#1d1d1f] shadow-[0_4px_24px_rgba(0,113,227,0.12)] ring-2 ring-[#0071e3]/25"
-                : "text-neutral-600 hover:bg-white/80 hover:text-[#1d1d1f]"
+                ? "bg-white text-nitj-navy shadow-[0_4px_24px_rgba(0,113,227,0.12)] ring-2 ring-nitj-link/25"
+                : "text-neutral-600 hover:bg-white/80 hover:text-nitj-navy"
             }`}
           >
             <IconCalendar />
@@ -358,9 +352,9 @@ const InitiativesPage = () => {
         </div>
 
         {tab === "funding" && user?.role === "alumni" && fundForQuick.length > 0 && (
-          <div className="mb-6 overflow-hidden rounded-[20px] border border-[#0071e3]/20 bg-gradient-to-br from-[#0071e3]/[0.07] to-[#5e5ce6]/[0.06] p-4 sm:p-5">
-            <p className="text-[13px] font-semibold uppercase tracking-wide text-[#0071e3]">Alumni quick give</p>
-            <p className="mt-1 text-[15px] font-medium text-[#1d1d1f]">Tap an amount, pick a campaign, pay in seconds.</p>
+          <div className="mb-6 overflow-hidden rounded-[20px] border border-nitj-link/20 bg-gradient-to-br from-nitj-navy/[0.07] to-[#5e5ce6]/[0.06] p-4 sm:p-5">
+            <p className="text-[13px] font-semibold uppercase tracking-wide text-nitj-link">Alumni quick give</p>
+            <p className="mt-1 text-[15px] font-medium text-nitj-navy">Tap an amount, pick a campaign, pay in seconds.</p>
             <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
               {PRESET_AMOUNTS.map((amt) => (
                 <button
@@ -370,7 +364,7 @@ const InitiativesPage = () => {
                     setDonateAmount(String(amt));
                     if (fundForQuick.length === 1) openDonate(fundForQuick[0]);
                   }}
-                  className="shrink-0 rounded-full bg-white px-4 py-2 text-[14px] font-semibold text-[#1d1d1f] shadow-sm ring-1 ring-black/[0.06] transition hover:ring-[#0071e3]/40"
+                  className="shrink-0 rounded-full bg-white px-4 py-2 text-[14px] font-semibold text-nitj-navy shadow-sm ring-1 ring-black/[0.06] transition hover:ring-nitj-link/40"
                 >
                   ₹{amt.toLocaleString()}
                 </button>
@@ -385,7 +379,7 @@ const InitiativesPage = () => {
                     onClick={() => {
                       openDonate(c);
                     }}
-                    className="max-w-[200px] truncate rounded-full border border-black/[0.1] bg-white/90 px-3 py-1.5 text-left text-[12px] font-medium text-[#1d1d1f] hover:border-[#0071e3]/35"
+                    className="max-w-[200px] truncate rounded-full border border-black/[0.1] bg-white/90 px-3 py-1.5 text-left text-[12px] font-medium text-nitj-navy hover:border-nitj-link/35"
                     title={c.title}
                   >
                     {c.title}
@@ -397,7 +391,7 @@ const InitiativesPage = () => {
               <button
                 type="button"
                 onClick={() => openDonate(fundForQuick[0])}
-                className="mt-3 rounded-full bg-[#0071e3] px-6 py-2.5 text-[14px] font-medium text-white hover:bg-[#0077ed]"
+                className="mt-3 rounded-full bg-nitj-navy px-6 py-2.5 text-[14px] font-medium text-white hover:bg-nitj-navy-light"
               >
                 Contribute now
               </button>
@@ -409,7 +403,7 @@ const InitiativesPage = () => {
           <button
             type="button"
             onClick={openCreateFunding}
-            className="mb-8 w-full rounded-full bg-[#0071e3] py-3.5 text-[16px] font-semibold text-white shadow-[0_8px_30px_rgba(0,113,227,0.35)] transition hover:bg-[#0077ed] active:scale-[0.99] sm:w-auto sm:px-10"
+            className="mb-8 w-full rounded-full bg-nitj-navy py-3.5 text-[16px] font-semibold text-white shadow-[0_8px_30px_rgba(0,113,227,0.35)] transition hover:bg-nitj-navy-light active:scale-[0.99] sm:w-auto sm:px-10"
           >
             New funding campaign
           </button>
@@ -419,7 +413,7 @@ const InitiativesPage = () => {
           <button
             type="button"
             onClick={openCreateEvent}
-            className="mb-8 w-full rounded-full bg-[#0071e3] py-3.5 text-[16px] font-semibold text-white shadow-[0_8px_30px_rgba(0,113,227,0.35)] transition hover:bg-[#0077ed] active:scale-[0.99] sm:w-auto sm:px-10"
+            className="mb-8 w-full rounded-full bg-nitj-navy py-3.5 text-[16px] font-semibold text-white shadow-[0_8px_30px_rgba(0,113,227,0.35)] transition hover:bg-nitj-navy-light active:scale-[0.99] sm:w-auto sm:px-10"
           >
             Publish Meet event
           </button>
@@ -455,7 +449,7 @@ const InitiativesPage = () => {
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <h2 className="text-[20px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[22px]">
+                          <h2 className="text-[20px] font-semibold tracking-tight text-nitj-navy sm:text-[22px]">
                             {c.title}
                           </h2>
                           {!c.isActive && (
@@ -488,7 +482,7 @@ const InitiativesPage = () => {
                             </div>
                             <div className="h-2.5 overflow-hidden rounded-full bg-[#e8e8ed] ring-1 ring-black/[0.05]">
                               <div
-                                className="h-full rounded-full bg-gradient-to-r from-[#0071e3] to-[#2997ff] transition-all duration-500"
+                                className="h-full rounded-full bg-gradient-to-r from-nitj-navy to-[#2997ff] transition-all duration-500"
                                 style={{ width: `${pct}%` }}
                               />
                             </div>
@@ -505,7 +499,7 @@ const InitiativesPage = () => {
                           <button
                             type="button"
                             onClick={() => openDonate(c)}
-                            className="inline-flex items-center justify-center rounded-full bg-[#0071e3] px-5 py-2.5 text-[14px] font-medium text-white transition hover:bg-[#0077ed]"
+                            className="inline-flex items-center justify-center rounded-full bg-nitj-navy px-5 py-2.5 text-[14px] font-medium text-white transition hover:bg-nitj-navy-light"
                           >
                             Pay with Razorpay
                           </button>
@@ -515,7 +509,7 @@ const InitiativesPage = () => {
                             href={c.externalUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center rounded-full border border-black/[0.12] bg-white px-5 py-2.5 text-[14px] font-medium text-[#1d1d1f] transition hover:bg-[#f5f5f7]"
+                            className="inline-flex items-center justify-center rounded-full border border-black/[0.12] bg-white px-5 py-2.5 text-[14px] font-medium text-nitj-navy transition hover:bg-[#f5f5f7]"
                           >
                             Other link
                           </a>
@@ -525,7 +519,7 @@ const InitiativesPage = () => {
                             <button
                               type="button"
                               onClick={() => openEditFunding(c)}
-                              className="rounded-full border border-black/[0.12] px-4 py-2 text-[13px] font-medium text-[#0071e3]"
+                              className="rounded-full border border-black/[0.12] px-4 py-2 text-[13px] font-medium text-nitj-link"
                             >
                               Edit
                             </button>
@@ -565,18 +559,18 @@ const InitiativesPage = () => {
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div className="flex min-w-0 flex-1 gap-4">
                         {start && !Number.isNaN(start.getTime()) ? (
-                          <div className="hidden shrink-0 flex-col items-center justify-center rounded-2xl bg-[#0071e3]/10 px-3 py-2 text-center ring-1 ring-[#0071e3]/20 sm:flex sm:min-w-[4.5rem]">
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-[#0071e3]">
+                          <div className="hidden shrink-0 flex-col items-center justify-center rounded-2xl bg-nitj-navy/10 px-3 py-2 text-center ring-1 ring-nitj-link/20 sm:flex sm:min-w-[4.5rem]">
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-nitj-link">
                               {start.toLocaleString("en", { month: "short" })}
                             </span>
-                            <span className="text-[22px] font-semibold leading-none text-[#1d1d1f]">
+                            <span className="text-[22px] font-semibold leading-none text-nitj-navy">
                               {start.getDate()}
                             </span>
                           </div>
                         ) : null}
                         <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <h2 className="text-[20px] font-semibold tracking-tight text-[#1d1d1f] sm:text-[22px]">
+                          <h2 className="text-[20px] font-semibold tracking-tight text-nitj-navy sm:text-[22px]">
                             {ev.title}
                           </h2>
                           {ev.status === "cancelled" && (
@@ -594,7 +588,7 @@ const InitiativesPage = () => {
                           Host: {ev.createdBy?.name || "Alumni"}
                         </p>
                         {start && (
-                          <p className="mt-2 text-[14px] font-medium text-[#1d1d1f]">
+                          <p className="mt-2 text-[14px] font-medium text-nitj-navy">
                             {start.toLocaleString()}
                             {end && !Number.isNaN(end.getTime()) ? ` – ${end.toLocaleTimeString()}` : ""}
                           </p>
@@ -612,7 +606,7 @@ const InitiativesPage = () => {
                             href={ev.googleMeetLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center rounded-full bg-[#0071e3] px-6 py-3 text-[15px] font-semibold text-white shadow-[0_6px_20px_rgba(0,113,227,0.3)] transition hover:bg-[#0077ed]"
+                            className="inline-flex items-center justify-center rounded-full bg-nitj-navy px-6 py-3 text-[15px] font-semibold text-white shadow-[0_6px_20px_rgba(0,113,227,0.3)] transition hover:bg-nitj-navy-light"
                           >
                             Join Google Meet
                           </a>
@@ -624,7 +618,7 @@ const InitiativesPage = () => {
                             <button
                               type="button"
                               onClick={() => openEditEvent(ev)}
-                              className="rounded-full border border-black/[0.12] bg-white px-4 py-2 text-[14px] font-medium text-[#0071e3] transition hover:bg-[#f5f5f7]"
+                              className="rounded-full border border-black/[0.12] bg-white px-4 py-2 text-[14px] font-medium text-nitj-link transition hover:bg-[#f5f5f7]"
                             >
                               Edit
                             </button>
@@ -659,7 +653,7 @@ const InitiativesPage = () => {
       {donateCampaign && (
         <div className="fixed inset-0 z-[210] flex items-end justify-center bg-black/40 p-4 backdrop-blur-sm sm:items-center">
           <div className="w-full max-w-md rounded-[24px] border border-black/[0.08] bg-white p-6 shadow-2xl">
-            <h3 className="text-[18px] font-semibold text-[#1d1d1f]">Contribute</h3>
+            <h3 className="text-[18px] font-semibold text-nitj-navy">Contribute</h3>
             <p className="mt-1 text-[14px] text-neutral-600">{donateCampaign.title}</p>
             <p className="mt-4 text-[12px] font-medium text-neutral-500">Amount (INR)</p>
             <div className="mt-2 flex flex-wrap gap-2">
@@ -671,7 +665,7 @@ const InitiativesPage = () => {
                   className={`rounded-full px-3 py-1.5 text-[13px] font-semibold transition ${
                     donateAmount === String(a)
                       ? "bg-[#1d1d1f] text-white"
-                      : "bg-[#f5f5f7] text-[#1d1d1f] ring-1 ring-black/[0.06]"
+                      : "bg-[#f5f5f7] text-nitj-navy ring-1 ring-black/[0.06]"
                   }`}
                 >
                   ₹{a}
@@ -697,7 +691,7 @@ const InitiativesPage = () => {
                 type="button"
                 disabled={donateBusy}
                 onClick={runRazorpayCheckout}
-                className="rounded-full bg-[#0071e3] px-6 py-2.5 text-[14px] font-medium text-white hover:bg-[#0077ed] disabled:opacity-50"
+                className="rounded-full bg-nitj-navy px-6 py-2.5 text-[14px] font-medium text-white hover:bg-nitj-navy-light disabled:opacity-50"
               >
                 {donateBusy ? "Please wait…" : "Continue to Razorpay"}
               </button>
@@ -713,7 +707,7 @@ const InitiativesPage = () => {
             role="dialog"
             aria-labelledby="fund-modal-title"
           >
-            <h3 id="fund-modal-title" className="text-[20px] font-semibold text-[#1d1d1f]">
+            <h3 id="fund-modal-title" className="text-[20px] font-semibold text-nitj-navy">
               {fundModal === "create" ? "New funding campaign" : "Edit campaign"}
             </h3>
             <div className="mt-4 space-y-3">
@@ -789,7 +783,7 @@ const InitiativesPage = () => {
               <button
                 type="button"
                 onClick={saveFunding}
-                className="rounded-full bg-[#0071e3] px-6 py-2.5 text-[14px] font-medium text-white hover:bg-[#0077ed]"
+                className="rounded-full bg-nitj-navy px-6 py-2.5 text-[14px] font-medium text-white hover:bg-nitj-navy-light"
               >
                 Save
               </button>
