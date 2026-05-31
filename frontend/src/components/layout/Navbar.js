@@ -52,24 +52,29 @@ const IconChat = () => (
   </svg>
 );
 
-/* Desktop-only nav button: hidden on mobile, visible md+ */
-/* Desktop-only nav button: hidden on mobile, visible md+ */
+/** Desktop nav link (hidden on small screens) */
 const NavBtn = ({ children, label, onClick, title }) => (
   <button
     type="button"
     onClick={onClick}
     title={title || label}
-<<<<<<< HEAD
-    className="flex flex-col items-center gap-0.5 rounded-lg px-1 py-1 text-white/90 transition-colors hover:text-white bg-transparent border-0 cursor-pointer font-inherit"
+    className="hidden md:flex flex-col items-center gap-0.5 rounded-lg px-1 py-1 text-white/90 transition-colors hover:text-white bg-transparent border-0 cursor-pointer font-inherit"
   >
     {children}
-    <span className="hidden text-[10px] font-semibold uppercase tracking-wide sm:block">{label}</span>
-=======
-    className="hidden md:flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[#1d1d1f] transition-colors hover:text-[#0071e3] bg-transparent border-0 cursor-pointer font-inherit"
+    <span className="text-[10px] font-semibold uppercase tracking-wide">{label}</span>
+  </button>
+);
+
+/** Mobile / always-visible icon button on navy bar */
+const MobileNavBtn = ({ children, label, onClick, title }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    title={title || label}
+    className="flex flex-col items-center gap-0.5 rounded-lg px-1.5 py-1 text-white/90 transition-colors hover:text-white bg-transparent border-0 cursor-pointer font-inherit md:hidden"
   >
     {children}
-    <span className="text-[11px] font-medium">{label}</span>
->>>>>>> 301c3945ef7ea69de824bf37906cbe7d9d238fdd
+    {label ? <span className="text-[9px] font-semibold uppercase tracking-wide">{label}</span> : null}
   </button>
 );
 
@@ -99,21 +104,14 @@ const Navbar = () => {
   }, [meMenuOpen]);
 
   const homeRoute = user?.role === "admin" ? "/admin" : "/feed";
+  const goHome = () => navigate(user?.role === "admin" ? "/admin" : "/feed");
 
   return (
     <>
-<<<<<<< HEAD
       <nav className="sticky top-0 z-50 border-b border-white/10 bg-nitj-navy shadow-md">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 font-sans">
-=======
-      <nav className="sticky top-0 z-50 min-h-14 border-b border-black/[0.08] bg-white/80 backdrop-blur-2xl backdrop-saturate-150">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 font-apple">
-
-          {/* ── Logo ── */}
->>>>>>> 301c3945ef7ea69de824bf37906cbe7d9d238fdd
+        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 px-4 font-sans">
           <div
-            className="flex cursor-pointer items-center gap-3 flex-shrink-0"
-            className="flex cursor-pointer items-center gap-3 flex-shrink-0"
+            className="flex shrink-0 cursor-pointer items-center gap-3"
             onClick={() => navigate(homeRoute)}
             role="button"
             tabIndex={0}
@@ -124,18 +122,16 @@ const Navbar = () => {
                 ECE
               </div>
             </div>
-            <div className="flex flex-col leading-none">
+            <div className="hidden flex-col leading-none sm:flex">
               <span className="text-[16px] font-semibold tracking-tight text-white">MentorBridge</span>
-              <span className="mt-0.5 hidden text-[10px] font-medium uppercase tracking-[0.14em] text-white/70 sm:block">
+              <span className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-white/70">
                 ECE · NIT Jalandhar
               </span>
             </div>
           </div>
 
-          {/* ── Desktop search bar (md+) ── */}
-          {/* ── Desktop search bar (md+) ── */}
           {user && (user.role === "student" || user.role === "alumni") && (
-            <div className="hidden w-1/3 max-w-md items-center gap-2 rounded-full border border-white/15 bg-white/95 px-4 py-2 md:flex">
+            <div className="hidden max-w-md flex-1 items-center gap-2 rounded-full border border-white/15 bg-white/95 px-4 py-2 md:flex">
               <IconSearch />
               <input
                 type="text"
@@ -147,21 +143,9 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* ── Right-side controls ── */}
-          {/* ── Right-side controls ── */}
           {user && (
-<<<<<<< HEAD
-            <div className="flex items-center gap-1 sm:gap-2">
-              <NavBtn label="Home" onClick={() => navigate(user.role === "admin" ? "/admin" : "/feed")}>
-=======
-            <div className="flex items-center gap-1 text-[#1d1d1f]">
-
-              {/* Desktop nav buttons (hidden on mobile) */}
-              <NavBtn
-                label="Home"
-                onClick={() => navigate(user.role === "admin" ? "/admin" : "/feed")}
-              >
->>>>>>> 301c3945ef7ea69de824bf37906cbe7d9d238fdd
+            <div className="flex items-center gap-0.5 sm:gap-1">
+              <NavBtn label="Home" onClick={goHome}>
                 <IconHome />
               </NavBtn>
 
@@ -184,7 +168,11 @@ const Navbar = () => {
               </NavBtn>
 
               {user.role === "student" && (
-                <NavBtn label="Network" title="Browse alumni & send requests" onClick={() => navigate("/dashboard/student")}>
+                <NavBtn
+                  label="Network"
+                  title="Browse alumni & send requests"
+                  onClick={() => navigate("/dashboard/student")}
+                >
                   <IconNetwork />
                 </NavBtn>
               )}
@@ -195,20 +183,12 @@ const Navbar = () => {
                 </NavBtn>
               )}
 
-              {/* Messages — visible on ALL screen sizes */}
-              {/* Messages — visible on ALL screen sizes */}
               {user.role !== "admin" && (
                 <button
                   type="button"
                   onClick={() => toggleMessagesPanel()}
                   title="Messages"
-                  className="flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[#1d1d1f] transition-colors hover:text-[#0071e3] bg-transparent border-0 cursor-pointer font-inherit"
-                >
-                <button
-                  type="button"
-                  onClick={() => toggleMessagesPanel()}
-                  title="Messages"
-                  className="flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[#1d1d1f] transition-colors hover:text-[#0071e3] bg-transparent border-0 cursor-pointer font-inherit"
+                  className="flex flex-col items-center gap-0.5 rounded-lg px-1.5 py-1 text-white/90 transition-colors hover:text-white bg-transparent border-0 cursor-pointer font-inherit"
                 >
                   <span className="relative inline-flex">
                     <IconChat />
@@ -218,42 +198,16 @@ const Navbar = () => {
                       </span>
                     )}
                   </span>
-                  <span className="hidden md:block text-[11px] font-medium">Messages</span>
+                  <span className="hidden text-[9px] font-semibold uppercase tracking-wide md:block">Messages</span>
                 </button>
               )}
 
-              {/* Mobile search icon (visible only on small screens, for student/alumni) */}
               {(user.role === "student" || user.role === "alumni") && (
-                <button
-                  type="button"
-                  onClick={() => setIsSearchOpen(true)}
-                  title="Search"
-                  className="flex md:hidden flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[#1d1d1f] transition-colors hover:text-[#0071e3] bg-transparent border-0 cursor-pointer font-inherit"
-                >
-                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                  </svg>
-                </button>
-                  <span className="hidden md:block text-[11px] font-medium">Messages</span>
-                </button>
+                <MobileNavBtn title="Search" onClick={() => setIsSearchOpen(true)}>
+                  <IconSearch />
+                </MobileNavBtn>
               )}
 
-              {/* Mobile search icon (visible only on small screens, for student/alumni) */}
-              {(user.role === "student" || user.role === "alumni") && (
-                <button
-                  type="button"
-                  onClick={() => setIsSearchOpen(true)}
-                  title="Search"
-                  className="flex md:hidden flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[#1d1d1f] transition-colors hover:text-[#0071e3] bg-transparent border-0 cursor-pointer font-inherit"
-                >
-                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                  </svg>
-                </button>
-              )}
-
-              {/* Me avatar + dropdown — visible on ALL screen sizes */}
-              {/* Me avatar + dropdown — visible on ALL screen sizes */}
               <div className="relative pl-1" ref={meMenuRef}>
                 <button
                   type="button"
@@ -267,13 +221,9 @@ const Navbar = () => {
                   >
                     {user.name?.charAt(0)?.toUpperCase() || "U"}
                   </div>
-<<<<<<< HEAD
-                  <span className="hidden text-[10px] font-semibold uppercase tracking-wide text-white/90 sm:block">
+                  <span className="hidden text-[9px] font-semibold uppercase tracking-wide text-white/90 sm:block">
                     Me
                   </span>
-=======
-                  <span className="hidden md:block text-[11px] font-medium">Me</span>
->>>>>>> 301c3945ef7ea69de824bf37906cbe7d9d238fdd
                 </button>
 
                 {meMenuOpen && (
@@ -283,54 +233,42 @@ const Navbar = () => {
                     </p>
                     <button
                       type="button"
-<<<<<<< HEAD
                       onClick={() => {
                         setMeMenuOpen(false);
-                        navigate("/profile");
+                        goHome();
                       }}
-                      className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
-=======
-                      onClick={() => { setMeMenuOpen(false); navigate("/profile"); }}
-                      className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
->>>>>>> 301c3945ef7ea69de824bf37906cbe7d9d238fdd
-                    >
-                      View profile
-                    </button>
-                    <button
-                      type="button"
-<<<<<<< HEAD
-                      onClick={() => {
-                        setMeMenuOpen(false);
-                        navigate("/initiatives");
-                      }}
-                      className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
-=======
-                      onClick={() => { setMeMenuOpen(false); navigate("/feed"); }}
-                      className="block md:hidden w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
+                      className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel md:hidden"
                     >
                       Home
                     </button>
                     <button
                       type="button"
-                      onClick={() => { setMeMenuOpen(false); navigate("/initiatives"); }}
-                      className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
->>>>>>> 301c3945ef7ea69de824bf37906cbe7d9d238fdd
+                      onClick={() => {
+                        setMeMenuOpen(false);
+                        navigate("/profile");
+                      }}
+                      className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
+                    >
+                      View profile
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMeMenuOpen(false);
+                        navigate("/initiatives");
+                      }}
+                      className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
                     >
                       Initiatives
                     </button>
                     {(user.role === "student" || user.role === "alumni" || user.role === "admin") && (
                       <button
                         type="button"
-<<<<<<< HEAD
                         onClick={() => {
                           setMeMenuOpen(false);
                           navigate("/referrals");
                         }}
                         className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
-=======
-                        onClick={() => { setMeMenuOpen(false); navigate("/referrals"); }}
-                        className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
->>>>>>> 301c3945ef7ea69de824bf37906cbe7d9d238fdd
                       >
                         Referral board
                       </button>
@@ -338,16 +276,11 @@ const Navbar = () => {
                     {user.role === "student" && (
                       <button
                         type="button"
-<<<<<<< HEAD
                         onClick={() => {
                           setMeMenuOpen(false);
                           navigate("/dashboard/student");
                         }}
                         className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
-=======
-                        onClick={() => { setMeMenuOpen(false); navigate("/dashboard/student"); }}
-                        className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
->>>>>>> 301c3945ef7ea69de824bf37906cbe7d9d238fdd
                       >
                         Student dashboard
                       </button>
@@ -355,16 +288,11 @@ const Navbar = () => {
                     {user.role === "alumni" && (
                       <button
                         type="button"
-<<<<<<< HEAD
                         onClick={() => {
                           setMeMenuOpen(false);
                           navigate("/menteeProgram");
                         }}
                         className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
-=======
-                        onClick={() => { setMeMenuOpen(false); navigate("/menteeProgram"); }}
-                        className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
->>>>>>> 301c3945ef7ea69de824bf37906cbe7d9d238fdd
                       >
                         Mentee program
                       </button>
@@ -372,16 +300,11 @@ const Navbar = () => {
                     {user.role === "admin" && (
                       <button
                         type="button"
-<<<<<<< HEAD
                         onClick={() => {
                           setMeMenuOpen(false);
                           navigate("/admin");
                         }}
                         className="block w-full px-4 py-2.5 text-left text-[15px] text-gray-800 hover:bg-nitj-panel"
-=======
-                        onClick={() => { setMeMenuOpen(false); navigate("/admin"); }}
-                        className="block w-full px-4 py-2.5 text-left text-[15px] text-[#1d1d1f] hover:bg-[#f5f5f7]"
->>>>>>> 301c3945ef7ea69de824bf37906cbe7d9d238fdd
                       >
                         Admin dashboard
                       </button>

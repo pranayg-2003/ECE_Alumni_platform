@@ -5,9 +5,19 @@ const mongoose = require("mongoose");
 const User = require("../models/User");
 
 const connectDB = async () => {
+  const uri =
+    process.env.MONGO_URI ||
+    process.env.MONGODB_URI ||
+    "mongodb://127.0.0.1:27017/mentorship_platform";
+
+  if (!process.env.MONGO_URI && !process.env.MONGODB_URI) {
+    console.warn(
+      "⚠️  MONGO_URI not set in backend/.env — using local fallback mongodb://127.0.0.1:27017/mentorship_platform"
+    );
+  }
+
   try {
-    // Connect to MongoDB using the URI from environment variables
-    const conn = await mongoose.connect(process.env.MONGO_URI);
+    const conn = await mongoose.connect(uri);
 
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
 
