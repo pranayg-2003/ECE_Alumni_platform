@@ -53,6 +53,7 @@ const IconChat = () => (
 );
 
 /* Desktop-only nav button: hidden on mobile, visible md+ */
+/* Desktop-only nav button: hidden on mobile, visible md+ */
 const NavBtn = ({ children, label, onClick, title }) => (
   <button
     type="button"
@@ -112,6 +113,7 @@ const Navbar = () => {
 >>>>>>> 301c3945ef7ea69de824bf37906cbe7d9d238fdd
           <div
             className="flex cursor-pointer items-center gap-3 flex-shrink-0"
+            className="flex cursor-pointer items-center gap-3 flex-shrink-0"
             onClick={() => navigate(homeRoute)}
             role="button"
             tabIndex={0}
@@ -131,6 +133,7 @@ const Navbar = () => {
           </div>
 
           {/* ── Desktop search bar (md+) ── */}
+          {/* ── Desktop search bar (md+) ── */}
           {user && (user.role === "student" || user.role === "alumni") && (
             <div className="hidden w-1/3 max-w-md items-center gap-2 rounded-full border border-white/15 bg-white/95 px-4 py-2 md:flex">
               <IconSearch />
@@ -144,6 +147,7 @@ const Navbar = () => {
             </div>
           )}
 
+          {/* ── Right-side controls ── */}
           {/* ── Right-side controls ── */}
           {user && (
 <<<<<<< HEAD
@@ -192,7 +196,14 @@ const Navbar = () => {
               )}
 
               {/* Messages — visible on ALL screen sizes */}
+              {/* Messages — visible on ALL screen sizes */}
               {user.role !== "admin" && (
+                <button
+                  type="button"
+                  onClick={() => toggleMessagesPanel()}
+                  title="Messages"
+                  className="flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[#1d1d1f] transition-colors hover:text-[#0071e3] bg-transparent border-0 cursor-pointer font-inherit"
+                >
                 <button
                   type="button"
                   onClick={() => toggleMessagesPanel()}
@@ -223,8 +234,25 @@ const Navbar = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                   </svg>
                 </button>
+                  <span className="hidden md:block text-[11px] font-medium">Messages</span>
+                </button>
               )}
 
+              {/* Mobile search icon (visible only on small screens, for student/alumni) */}
+              {(user.role === "student" || user.role === "alumni") && (
+                <button
+                  type="button"
+                  onClick={() => setIsSearchOpen(true)}
+                  title="Search"
+                  className="flex md:hidden flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[#1d1d1f] transition-colors hover:text-[#0071e3] bg-transparent border-0 cursor-pointer font-inherit"
+                >
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                  </svg>
+                </button>
+              )}
+
+              {/* Me avatar + dropdown — visible on ALL screen sizes */}
               {/* Me avatar + dropdown — visible on ALL screen sizes */}
               <div className="relative pl-1" ref={meMenuRef}>
                 <button
